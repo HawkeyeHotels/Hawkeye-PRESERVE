@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1D4E6E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Room PM">
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Room PM Tablet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: tablet-first work screen. Sticky header + pace card, room grid by floor, bottom tab bar.
+   Palette: steel-blue accent on cool grey; green = passed, amber = slashed/needs repair, red = overdue. */
+:root{
+  --bg:#EDEFF1; --surface:#FFFFFF; --surface2:#F4F6F8; --ink:#17212B; --muted:#566373; --line:#D3D9E0;
+  --accent:#1D4E6E; --accent-ink:#FFFFFF; --pass:#17784A; --pass-bg:#E1F2E9; --slash:#9A4A07; --slash-bg:#FCEBD2;
+  --late:#B42318; --late-bg:#FBE4E1; --focus:#0B6BCB; --shadow:0 1px 2px rgba(23,33,43,.08);
+  --display:'Barlow Condensed','Arial Narrow',Arial,sans-serif; --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10171E; --surface:#19232D; --surface2:#212D39; --ink:#E8EDF2; --muted:#9BA9B8; --line:#344250;
+  --accent:#6FB1DC; --accent-ink:#0C1620; --pass:#55C98B; --pass-bg:#16332A; --slash:#F0A64A; --slash-bg:#3A2A12;
+  --late:#FF8A80; --late-bg:#3D1B18; --focus:#7DB8F0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10171E; --surface:#19232D; --surface2:#212D39; --ink:#E8EDF2; --muted:#9BA9B8; --line:#344250;
+  --accent:#6FB1DC; --accent-ink:#0C1620; --pass:#55C98B; --pass-bg:#16332A; --slash:#F0A64A; --slash-bg:#3A2A12;
+  --late:#FF8A80; --late-bg:#3D1B18; --focus:#7DB8F0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.4 var(--body);padding-inline:16px;padding-block:0 96px;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 8px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.top h1{font:700 30px/1 var(--display);letter-spacing:.02em;margin:0;text-transform:uppercase}
+.top .sub{color:var(--muted);font-size:14px}
+.who{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-weight:600;min-height:44px}
+.pace{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);display:grid;gap:10px}
+.pace .row1{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.pace b{font:700 26px/1 var(--display);letter-spacing:.02em}
+.bar{position:relative;height:14px;border-radius:7px;background:var(--surface2);border:1px solid var(--line);overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--pass)}
+.bar u{position:absolute;top:-2px;bottom:-2px;width:3px;background:var(--ink);opacity:.7}
+.tag{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600;border:1px solid transparent}
+.tag.ok{background:var(--pass-bg);color:var(--pass)} .tag.warn{background:var(--slash-bg);color:var(--slash)} .tag.bad{background:var(--late-bg);color:var(--late)}
+.muted{color:var(--muted)} .small{font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-block:14px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 16px;font-weight:500;min-height:44px}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.floor{margin-block:18px 8px;font:700 20px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 10px 9px;min-height:78px;box-shadow:var(--shadow)}
+.tile b{font:700 30px/1 var(--display);letter-spacing:.02em}
+.tile span{font-size:12.5px;color:var(--muted);line-height:1.2}
+.tile.done{background:var(--pass-bg);border-color:var(--pass)} .tile.done span{color:var(--pass);font-weight:600}
+.tile.repairs{background:var(--slash-bg);border-color:var(--slash)} .tile.repairs span{color:var(--slash);font-weight:600}
+.tile.draft{border-style:dashed;border-color:var(--accent)} .tile.draft span{color:var(--accent);font-weight:600}
+.tile.reopened{border-color:var(--late)} .tile.reopened span{color:var(--late);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.btn{border:0;border-radius:10px;padding:13px 18px;min-height:52px;font-weight:600;background:var(--accent);color:var(--accent-ink)}
+.btn.sec{background:var(--surface2);color:var(--ink);border:1.5px solid var(--line)}
+.btn.good{background:var(--pass);color:#fff} .btn[disabled]{opacity:.45;cursor:not-allowed}
+.nav{position:fixed;inset:auto 0 0 0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))}
+.nav button{flex:1;max-width:260px;min-height:52px;border:0;border-radius:10px;background:transparent;font:600 16px var(--body);color:var(--muted)}
+.nav button[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+.badge{display:inline-block;min-width:22px;border-radius:11px;background:var(--late);color:#fff;font-size:13px;padding:1px 7px;margin-left:6px}
+.who-list{display:grid;gap:12px;margin-top:20px}
+.who-list .btn{min-height:68px;font-size:20px;text-align:left}
+.csec{margin-block:12px}
+.shead{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 16px;min-height:62px}
+.shead .nm{flex:1;min-width:0;text-align:left;background:none;border:0;padding:6px 0;font:700 21px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase}
+.shead .nm small{display:block;font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted);margin-top:3px}
+.shead.complete .nm small{color:var(--pass);font-weight:600}
+.allok{border:1.5px solid var(--pass);color:var(--pass);background:transparent;border-radius:10px;padding:10px 16px;min-height:48px;font-weight:600;white-space:nowrap}
+.allok[disabled]{background:var(--pass-bg);opacity:1;cursor:default}
+.gname{padding:10px 16px 4px;font-weight:600;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+.item{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 16px;border-top:1px solid var(--line);min-height:62px}
+.item .lbl{flex:1;min-width:0;overflow-wrap:anywhere}
+.item .lbl em{display:block;font-style:normal;font-size:13px;color:var(--slash);margin-top:2px}
+.ctl{display:flex;gap:6px}
+.ctl button{width:54px;height:48px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface2);font:700 22px var(--body)}
+.ctl .ok[aria-pressed="true"]{background:var(--pass);border-color:var(--pass);color:#fff}
+.ctl .sl[aria-pressed="true"]{background:var(--slash);border-color:var(--slash);color:#fff}
+.ctl .na{width:auto;padding:0 10px;font:600 14px var(--body)} .ctl .na[aria-pressed="true"]{background:var(--muted);color:var(--surface);border-color:var(--muted)}
+.cbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cbar h2{font:700 34px/1 var(--display);margin:0;letter-spacing:.02em}
+.submit{position:fixed;inset:auto 0 0 0;z-index:7;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;justify-content:center;align-items:center}
+.submit .btn{flex:1;max-width:520px}
+.backdrop{position:fixed;inset:0;z-index:20;background:rgba(10,16,22,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:min(640px,100%);max-height:92%;overflow:auto;border-radius:18px 18px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:14px}
+.sheet h3{font:700 28px/1.05 var(--display);margin:0;letter-spacing:.02em}
+.tgl{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;min-height:60px;background:var(--surface2);width:100%;text-align:left;font-weight:500}
+.tgl[aria-pressed="true"]{border-color:var(--accent);background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.tgl i{font-style:normal;font-weight:700;color:var(--accent)}
+textarea,select,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px}
+textarea{min-height:84px}
+.photo{display:flex;gap:12px;align-items:center;border:2px dashed var(--line);border-radius:12px;padding:12px;min-height:74px;cursor:pointer;background:var(--surface2)}
+.photo img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+.photo{position:relative}
+.photo input{position:absolute;opacity:0;width:1px;height:1px}
+.photo:focus-within{outline:3px solid var(--focus)}
+.rank{display:inline-block;border-radius:10px;padding:4px 14px;font:700 26px var(--display);letter-spacing:.06em;text-transform:uppercase}
+.rank.Green{background:var(--pass-bg);color:var(--pass)} .rank.Clear{background:var(--slash-bg);color:var(--slash)} .rank.Red{background:var(--late-bg);color:var(--late)}
+.list{display:grid;gap:10px}
+.rep{display:flex;gap:12px;align-items:center;padding:12px 14px}
+.rep img{width:60px;height:60px;border-radius:8px;object-fit:cover}
+.rep .t{flex:1;min-width:0}
+.h2{font:700 24px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;margin:26px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+pre.mail{white-space:pre-wrap;font:14px/1.5 var(--body);margin:0;padding:14px 16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stat{display:flex;gap:16px;flex-wrap:wrap}
+.stat div{min-width:120px}
+.stat b{display:block;font:700 34px/1 var(--display)}
+.demo{background:var(--slash-bg);color:var(--slash);border-radius:10px;padding:8px 12px;font-size:14px;margin-top:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:520px){.item{flex-wrap:wrap}.ctl{margin-left:auto}.top h1{font-size:26px}}
+</style>
+
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="layer"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- data ---------- */
+var ROOMS = [{"n":"201","last":"2026-07-18","q4":null},{"n":"202","last":"2026-07-23","q4":null},{"n":"203","last":"2026-08-01","q4":null},{"n":"204","last":"2026-08-13","q4":null},{"n":"205","last":"2026-07-18","q4":null},{"n":"207","last":"2026-08-10","q4":null},{"n":"209","last":"2026-07-29","q4":null},{"n":"213","last":"2026-08-10","q4":null},{"n":"214","last":"2026-09-01","q4":null},{"n":"215","last":"2026-07-17","q4":null},{"n":"216","last":"2026-07-17","q4":null},{"n":"217","last":"2026-09-11","q4":null},{"n":"218","last":"2026-08-01","q4":null},{"n":"219","last":"2026-09-11","q4":null},{"n":"220","last":"2026-08-01","q4":null},{"n":"225","last":"2026-08-13","q4":null},{"n":"226","last":"2026-08-10","q4":null},{"n":"227","last":"2026-07-18","q4":null},{"n":"228","last":"2026-09-01","q4":null},{"n":"229","last":"2026-07-29","q4":null},{"n":"230","last":"2026-09-10","q4":null},{"n":"231","last":"2026-09-09","q4":null},{"n":"232","last":"2026-08-13","q4":null},{"n":"233","last":"2026-07-17","q4":null},{"n":"234","last":"2026-07-29","q4":null},{"n":"301","last":"2026-07-29","q4":null},{"n":"302","last":"2026-09-09","q4":null},{"n":"303","last":"2026-08-01","q4":null},{"n":"304","last":"2026-07-18","q4":null},{"n":"305","last":"2026-08-11","q4":null},{"n":"307","last":"2026-09-11","q4":null},{"n":"309","last":"2026-09-05","q4":null},{"n":"311","last":"2026-07-17","q4":null},{"n":"313","last":"2026-07-17","q4":null},{"n":"314","last":"2026-09-01","q4":null},{"n":"315","last":"2026-07-18","q4":null},{"n":"316","last":"2026-07-29","q4":null},{"n":"317","last":"2026-08-01","q4":null},{"n":"318","last":"2026-07-23","q4":null},{"n":"319","last":"2026-09-05","q4":null},{"n":"320","last":"2026-09-11","q4":null},{"n":"325","last":"2026-07-17","q4":null},{"n":"326","last":"2026-08-08","q4":null},{"n":"327","last":"2026-08-02","q4":null},{"n":"328","last":"2026-09-09","q4":null},{"n":"329","last":"2026-07-29","q4":null},{"n":"330","last":"2026-08-01","q4":null},{"n":"331","last":"2026-07-29","q4":null},{"n":"332","last":"2026-07-23","q4":null},{"n":"333","last":"2026-07-23","q4":null},{"n":"334","last":"2026-09-09","q4":null},{"n":"335","last":"2026-07-17","q4":null},{"n":"336","last":"2026-08-08","q4":null},{"n":"339","last":"2026-08-08","q4":null},{"n":"341","last":"2026-08-01","q4":null},{"n":"345","last":"2026-07-27","q4":null},{"n":"346","last":"2026-07-18","q4":null},{"n":"347","last":"2026-08-04","q4":null},{"n":"348","last":"2026-07-07","q4":null},{"n":"350","last":"2026-07-29","q4":null},{"n":"352","last":"2026-08-01","q4":null},{"n":"401","last":"2026-08-01","q4":null},{"n":"402","last":"2026-08-08","q4":null},{"n":"403","last":"2026-09-05","q4":null},{"n":"404","last":"2026-08-11","q4":null},{"n":"405","last":"2026-09-05","q4":null},{"n":"407","last":"2026-07-18","q4":null},{"n":"409","last":"2026-09-02","q4":null},{"n":"411","last":"2026-08-03","q4":null},{"n":"413","last":"2026-07-27","q4":null},{"n":"414","last":"2026-08-13","q4":null},{"n":"415","last":"2026-09-05","q4":null},{"n":"416","last":"2026-08-03","q4":null},{"n":"417","last":"2026-09-05","q4":null},{"n":"418","last":"2026-09-09","q4":null},{"n":"419","last":"2026-08-11","q4":null},{"n":"420","last":"2026-09-08","q4":null},{"n":"425","last":"2026-09-11","q4":null},{"n":"426","last":"2026-07-17","q4":"2026-10-03"},{"n":"427","last":"2026-07-18","q4":null},{"n":"428","last":"2026-08-01","q4":null},{"n":"429","last":"2026-08-20","q4":null},{"n":"430","last":"2026-08-11","q4":null},{"n":"431","last":"2026-07-25","q4":null},{"n":"432","last":"2026-07-17","q4":null},{"n":"433","last":"2026-09-11","q4":null},{"n":"434","last":"2026-08-13","q4":null},{"n":"435","last":"2026-09-01","q4":null},{"n":"436","last":"2026-09-09","q4":null},{"n":"437","last":"2026-07-18","q4":null},{"n":"439","last":"2026-09-11","q4":null},{"n":"441","last":"2026-07-17","q4":null},{"n":"445","last":"2026-09-11","q4":null},{"n":"446","last":"2026-07-29","q4":null},{"n":"447","last":"2026-08-13","q4":null},{"n":"448","last":"2026-08-08","q4":null},{"n":"450","last":"2026-08-30","q4":null},{"n":"452","last":"2026-08-03","q4":null},{"n":"501","last":"2026-08-08","q4":"2026-10-08"},{"n":"502","last":"2026-07-27","q4":null},{"n":"503","last":"2026-09-05","q4":"2026-10-05"},{"n":"504","last":"2026-08-10","q4":null},{"n":"505","last":"2026-08-10","q4":null},{"n":"507","last":"2026-08-10","q4":null},{"n":"511","last":"2026-08-10","q4":null},{"n":"513","last":"2026-07-14","q4":null},{"n":"514","last":"2026-09-01","q4":null},{"n":"515","last":"2026-09-05","q4":null},{"n":"516","last":"2026-09-05","q4":null},{"n":"517","last":"2026-08-13","q4":null},{"n":"518","last":"2026-08-01","q4":null},{"n":"519","last":"2026-09-07","q4":null},{"n":"520","last":"2026-08-18","q4":null},{"n":"525","last":"2026-09-05","q4":null},{"n":"526","last":"2026-09-01","q4":null},{"n":"527","last":"2026-07-06","q4":null},{"n":"528","last":"2026-09-05","q4":null},{"n":"529","last":"2026-09-10","q4":null},{"n":"530","last":"2026-08-08","q4":null},{"n":"531","last":"2026-07-18","q4":null},{"n":"532","last":"2026-09-11","q4":null},{"n":"533","last":"2026-08-09","q4":null},{"n":"534","last":"2026-09-01","q4":null},{"n":"535","last":"2026-07-29","q4":null},{"n":"536","last":"2026-07-23","q4":"2026-10-08"},{"n":"537","last":"2026-08-13","q4":"2026-10-05"},{"n":"539","last":"2026-08-11","q4":"2026-10-05"},{"n":"541","last":"2026-07-25","q4":null},{"n":"545","last":"2026-08-10","q4":null},{"n":"546","last":"2026-09-11","q4":null},{"n":"547","last":"2026-07-18","q4":null},{"n":"548","last":"2026-08-10","q4":null},{"n":"550","last":"2026-07-17","q4":null},{"n":"552","last":"2026-07-25","q4":null}];
+var CHECK_VERSION = "Hawkeye Room PM v1 (from paper checklist)";
+// marker suffixes: ! life-safety item, ~ N/A allowed, ^ N/A allowed unless ADA room; prefix ?attr: item shown only when room has attribute
+var CHECKLIST = [
+ {n:"Entry Door", items:["Room Number Signage","Entry Door Lock Operation and Deadbolt!","Door Closer - Door self closes/latches","Security Latch & Peephole Viewer!","Door Stop","Hinges - Quiet, Clean, Functional","Weather stripping/Smoke seals","Door/Door Frame/Trim - Paint/Finish Inside & Out","Law card and Fire Exit/Evacuation Plan"]},
+ {n:"Connecting Doors", cond:"connecting", items:["Lock Operation!","Door Stop","Hinges - Quiet, Clean, Functional","Weather stripping/Smoke seals","Door/Door Frame/Trim - Paint/Finish Inside & Out"]},
+ {n:"Bathroom Door", items:["Door handle/Privacy Lock","Door Stop","Hinges - Quiet, Clean, Functional","Door/Door Frame/Trim - Paint/Finish Inside & Out"]},
+ {n:"Walls and Ceilings", items:[
+   {g:"Guest room area walls/ceilings", items:["No signs of leaks/water damage","Texture and Paint Finish","Wallpaper~","Corner guards~","Baseboard/Cove Base"]},
+   {g:"Bathroom area walls/ceilings", items:["No signs of leaks/water damage","Texture and Paint Finish","Wallpaper~","Corner guards~"]},
+   {g:"Separate bedroom(s)", cond:"bedroom", items:["No signs of leaks/water damage","Texture and Paint Finish","Wallpaper~","Corner guards~"]}]},
+ {n:"Smoke Alarm", items:["Tested, functional, fresh batteries if applicable!"]},
+ {n:"Electrical and Lighting (including bathroom)", items:[
+   {g:"Outlets - Light switches - Cover plates", items:["Outlets and Light Switches Functional and Tight","Cover Plates - Secure, no cracks or paint spill over"]},
+   {g:"Lighting - Ensure matching luminosity throughout", items:["Ceiling Lights functional/clean/good condition","Lamps/Sconces functional/clean/good condition","All other lighting functional/clean/good condition"]}]},
+ {n:"Electronic Devices", items:[
+   {g:"Television", items:["Programmed (Channels/Guide/Internet Features)","Remote Control Present and Functional","Cord Management (Cords Secure and Inconspicuous)","TV Stand or Mount - Functional swivel, etc."]},
+   {g:"Phone", items:["Phone faceplate present/displays correct room #","Buttons work and do not stick","Cord Management (Cords Secure and Inconspicuous)","Message Light","Call front desk and confirm correct room # on caller ID"]},
+   {g:"Other electronics", items:["Alarm Clock - Correct Time, Batteries hold charge","Correct Time, Batteries hold charge","Coffee Maker Functional and Clean","All other property-specific electronic devices functional~"]}]},
+ {n:"Appliances", items:["Microwave clean and in working order. Correct time","Refrigerator - Clean coils/functional/maintains temp","?kitchen:Stove (and hood) clean and functional"]},
+ {n:"Closet Area", items:["Closet doors functional with ease of use","Walls and Ceiling Condition and Paint","Baseboard/Cove Base","Iron and Iron Caddy","Ironing Board","Hangers","Safe - Functional/Programmed"]},
+ {n:"Sprinkler", items:["Head is clean, leak free, and \"no hang\" sticker is present!"]},
+ {n:"FF&E", items:["Desk/Table","Chair Condition - Desk Chair/Sitting Chairs/Ottomans","Dressers/Drawers","Night Stands/Drawers","Artwork/Glass/Mirrors","Luggage Rack","Sofa Sleeper/Pullout Couch~","Bed Frames & Headboards","Box Spring/Mattress","Ensure mattress rotation compliant with rotation sticker"]},
+ {n:"Window Area", items:["Blackout Condition/Clean/Operational","Drapery/Shade/Sheers Condition/Clean/Operational","Window Condition - Cracks/Fogging/Leaks/Caulking","Window locks do not open more than 6 inches!"]},
+ {n:"HVAC", items:["Thermostat Correct Operation/Accurate Temperature","Heating, Cooling, and Fan all operational","Clean Filters/Fins/Coils/Fan & Fan Motor","Condensate drain free flowing and free of debris"]},
+ {n:"Bathroom", items:["Verify Hot/Cold water - Sink and Tub/Shower","Caulking - Vanity, Toilet, Tub/Shower, and all other","Faucets: Sink & Tub - Faucets, stoppers, trim rings, shower head","Toilet - Seat & toilet secure, flushes/fills, no leaks, bolt covers","Inspect water shutoff valves - behind toilet/under sink","Exhaust Fan - functional (tissue test) and clean","Mirror - Secure and free of cracks","Towel Bar/Rack secure","Toilet paper holder secure and functional","Shower Curtain - Rod secure, rings in place~","Shower Doors - Secure & functional, no glass cracks, leak free~","Hair Dryer functional and lint screen clean/clear","Test Outlets and GFCI!","Grab Bars & Rails secure, ADA seat secure and functional^"]},
+ {n:"Flooring (all flooring including bathroom)", items:["Carpet Condition - free of frays, rips & tears","Tile/Vinyl/Other - No cracks/damage - Grout intact","Action Item - Shampoo carpet and clean tile & grout"]}
+];
+var ITEMS = {}, SECS = [];
+(function(){var k=0;
+  function mk(s,g,raw,cond){var m=/^(?:\?(\w+):)?(.*?)([!~^]*)$/.exec(raw);k++;var id="i"+(k<10?"0":"")+k;
+    var it={id:id,label:m[2],sec:s.n,group:g,cond:m[1]||cond||null,safety:m[3].indexOf("!")>-1,na:m[3].indexOf("~")>-1||m[3].indexOf("^")>-1,naUnlessAda:m[3].indexOf("^")>-1};ITEMS[id]=it;return it}
+  CHECKLIST.forEach(function(sec){var out={name:sec.n,cond:sec.cond||null,groups:[]};
+    var loose=[];sec.items.forEach(function(x){ if(typeof x==="string"){loose.push(mk(sec,null,x,sec.cond))} else {out.groups.push({g:x.g,items:x.items.map(function(r){return mk(sec,x.g,r,x.cond||sec.cond)})})} });
+    if(loose.length) out.groups.unshift({g:null,items:loose}); SECS.push(out)});
+})();
+function visible(it,a){ if(!it.cond) return true; return !!(a&&a[it.cond]) }
+
+/* ---------- helpers ---------- */
+function $(s,r){return (r||document).querySelector(s)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function pad(n){return n<10?"0"+n:""+n}
+function iso(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function pd(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fd(x){var d=typeof x==="string"?pd(x.slice(0,10)):new Date(x);return MON[d.getMonth()]+" "+d.getDate()}
+function days(a,b){return Math.round((a-b)/864e5)}
+function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function qInfo(d){var y=d.getFullYear(),q=Math.floor(d.getMonth()/3)+1,start=new Date(y,(q-1)*3,1),end=new Date(y,q*3,0),cut=new Date(end);cut.setDate(end.getDate()-14);return{y:y,q:q,key:y+"Q"+q,start:start,end:end,cut:cut}}
+var NOW=new Date(), Q=qInfo(NOW), TODAY=new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate());
+
+/* ---------- state ---------- */
+var KEY="pm-proto-v1";
+var S=load();
+function fresh(){
+  var s={tech:null,view:"rooms",roster:["Tech A","Tech B","Chief Engineer"],rooms:{},pms:[],repairs:[],drafts:{},seq:1,settings:{minMin:6,maxDay:20}};
+  ROOMS.forEach(function(r){s.rooms[r.n]={attrs:null,last:r.last}});
+  if(Q.key==="2026Q4"){ROOMS.forEach(function(r){ if(r.q4){s.pms.push({id:"p"+(s.seq++),room:r.n,q:"2026Q4",tech:"Imported",end:pd(r.q4).getTime()+43200000,active:0,rank:null,slashCount:0,imported:true,verify:null})}})}
+  return s}
+function migrate(s){Object.keys(s.drafts||{}).forEach(function(n){var d=s.drafts[n];Object.keys(d.slashes||{}).forEach(function(id){if(d.results[id]!=="s")return;var has=s.repairs.some(function(r){return r.room===n&&r.item===id&&!r.pmId&&!r.fixedAt});if(!has){var now=Date.now();s.repairs.push({id:"r"+(s.seq++),pmId:null,room:n,item:id,note:d.slashes[id].note||"",photo:d.slashes[id].photo||null,created:now,due:dueFor(now),fixedAt:null})}})});return s}
+function load(){try{var t=localStorage.getItem(KEY);if(t){var s=JSON.parse(t);if(s&&s.pms)return migrate(s)}}catch(e){}return fresh()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var cur={filter:"all",open:{},room:null,pending:null,scroll:0};
+
+/* ---------- derived ---------- */
+function roomPMs(n){return S.pms.filter(function(p){return p.room===n&&p.q===Q.key})}
+function activePM(n){var l=roomPMs(n).filter(function(p){return !(p.verify&&p.verify.status==="fail")});return l[l.length-1]||null}
+function openReps(pmId){return S.repairs.filter(function(r){return r.pmId===pmId&&!r.fixedAt})}
+function status(n){var p=activePM(n);if(!p){ if(S.drafts[n])return"draft"; return roomPMs(n).length?"reopened":"todo"} return openReps(p.id).length?"repairs":"done"}
+function counts(){var c={done:0,repairs:0,todo:0,draft:0,reopened:0};ROOMS.forEach(function(r){c[status(r.n)]++});return c}
+function pace(){var c=counts(),total=ROOMS.length,W=days(Q.cut,Q.start)+1,el=Math.min(W,Math.max(1,days(TODAY,Q.start)+1));
+  var exp=Math.min(1,el/W),done=c.done/total,inspected=(c.done+c.repairs)/total,pastCut=TODAY>Q.cut;
+  var cps=[1,2,3].map(function(k){var d=new Date(Q.start);d.setDate(d.getDate()+Math.round(W*k/3)-1);return{pct:k/3,date:d}});
+  var next=cps.filter(function(c2){return c2.date>=TODAY})[0]||cps[2];
+  var st=pastCut?(done>=1?"ok":"bad"):(inspected>=exp-0.02?"ok":(inspected>=exp-0.12?"warn":"bad"));
+  return{c:c,total:total,exp:exp,done:done,inspected:inspected,st:st,cps:cps,next:next,W:W,pastCut:pastCut}}
+function techName(){return S.tech}
+function dueFor(ts){var d=new Date(ts);d.setDate(d.getDate()+14);return iso(d)}
+
+/* ---------- views ---------- */
+function paceCard(){var p=pace(),pct=Math.round(p.done*100),ins=Math.round(p.inspected*100);
+  var lab={ok:"On pace",warn:"Slightly behind",bad:"Behind pace"}[p.st];
+  var need=Math.max(0,Math.ceil(p.next.pct*p.total)-(p.c.done+p.c.repairs));
+  return '<div class="pace"><div class="row1"><div><b>'+Q.key.slice(0,4)+' Q'+Q.q+'</b> <span class="muted">· inspect every room by <b style="font-size:20px">'+fd(Q.cut)+'</b></span></div><span class="tag '+p.st+'">'+lab+'</span></div>'
+   +'<div class="bar" role="img" aria-label="'+ins+' percent of rooms inspected"><i style="width:'+ins+'%;opacity:.45"></i><i style="width:'+pct+'%"></i>'+p.cps.map(function(c){return '<u style="left:calc('+Math.round(c.pct*100*(p.W/p.W))+'% - 1px)"></u>'}).join("")+'</div>'
+   +'<div class="small muted"><b style="color:var(--ink)">'+p.c.done+' of '+p.total+' rooms complete</b> ('+pct+'%) · '+p.c.repairs+' waiting on repairs · '+Math.round(p.exp*100)+'% expected by today. Next checkpoint: '+Math.round(p.next.pct*100)+'% by '+fd(p.next.date)+(need>0?' ('+need+' more rooms)':'')+'.</div></div>'}
+
+function header(sub){return '<div class="top"><div><h1>Room PM</h1><div class="sub">OKCAL · '+ROOMS.length+' rooms · '+esc(sub||"")+'</div></div>'+(S.tech?'<button class="who" data-act="who" aria-label="Change name">'+esc(S.tech)+' ▾</button>':'')+'</div>'}
+
+function viewWho(){return header("Tap your name")+'<div class="demo">Prototype: nothing here is sent anywhere yet. Data stays on this device.</div><div class="who-list">'+S.roster.map(function(n){return '<button class="btn sec" data-act="pick" data-n="'+esc(n)+'">'+esc(n)+'</button>'}).join("")+'</div><p class="muted small">Not on the list? Ask your GM or maintenance lead to add you.</p>'}
+
+function tile(r){var st=status(r.n),p=activePM(r.n),cap;
+  if(st==="done")cap="Done "+fd(p.end);else if(st==="repairs")cap=openReps(p.id).length+" to fix";else if(st==="draft")cap="Resume "+Object.keys(S.drafts[r.n].results).length;else if(st==="reopened")cap="GM re-check";else cap=S.rooms[r.n].last?"Last "+fd(S.rooms[r.n].last):"Not started";
+  return '<button class="tile '+st+'" data-act="room" data-n="'+r.n+'" aria-label="Room '+r.n+', '+esc(cap)+'"><b>'+r.n+'</b><span>'+esc(cap)+'</span></button>'}
+
+function viewRooms(){var f=cur.filter,list=ROOMS.filter(function(r){var s=status(r.n);return f==="all"||(f==="todo"&&(s==="todo"||s==="draft"||s==="reopened"))||(f==="repairs"&&s==="repairs")});
+  var byFloor={};list.forEach(function(r){var fl=Math.floor(+r.n/100);(byFloor[fl]=byFloor[fl]||[]).push(r)});
+  var drafts=Object.keys(S.drafts);
+  var h=header(Q.key.slice(0,4)+" Q"+Q.q)+paceCard();
+  if(drafts.length){h+='<div class="card" style="margin-top:12px;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span>You left room <b>'+drafts[0]+'</b> unfinished.</span><button class="btn" data-act="room" data-n="'+drafts[0]+'">Resume room '+drafts[0]+'</button></div>'}
+  h+='<div class="chips" role="group" aria-label="Filter rooms">'+[["all","All rooms"],["todo","To do"],["repairs","Waiting on repairs"]].map(function(x){return '<button class="chip" data-act="filter" data-f="'+x[0]+'" aria-pressed="'+(f===x[0])+'">'+x[1]+'</button>'}).join("")+'</div>';
+  Object.keys(byFloor).forEach(function(fl){h+='<div class="floor">Floor '+fl+'</div><div class="grid">'+byFloor[fl].map(tile).join("")+'</div>'});
+  if(!list.length)h+='<p class="muted">Nothing here. Nice.</p>';
+  return h}
+
+function visItems(a){var out=[];SECS.forEach(function(sec){sec.groups.forEach(function(g){g.items.forEach(function(it){if(visible(it,a))out.push(it)})})});return out}
+function viewCheck(){var n=cur.room,a=S.rooms[n].attrs,d=S.drafts[n],items=visItems(a),done=items.filter(function(i){return d.results[i.id]}).length,left=items.length-done;
+  var h='<div class="cbar"><button class="btn sec" data-act="back">← Rooms</button><h2>Room '+n+'</h2><span class="tag '+(left?'warn':'ok')+'">'+done+' / '+items.length+'</span><span class="muted small">'+['connecting','kitchen','bedroom','ada'].filter(function(k){return a[k]}).map(function(k){return {connecting:"connecting door",kitchen:"stove",bedroom:"separate bedroom",ada:"ADA"}[k]}).join(" · ")+'</span></div>';
+  SECS.forEach(function(sec,si){ if(sec.cond&&!a[sec.cond])return;
+    var its=[];sec.groups.forEach(function(g){g.items.forEach(function(it){if(visible(it,a))its.push(it)})}); if(!its.length)return;
+    var dn=its.filter(function(i){return d.results[i.id]}).length,full=dn===its.length,open=!!cur.open[si],sl=its.filter(function(i){return d.results[i.id]==="s"}).length;
+    h+='<section class="card csec"><div class="shead'+(full?' complete':'')+'"><button class="nm" data-act="tog" data-s="'+si+'" aria-expanded="'+open+'">'+esc(sec.name)+'<small>'+(full?'✓ ':'')+dn+' of '+its.length+(sl?' · '+sl+' to fix':'')+' · '+(open?'tap to close':'tap to open')+'</small></button><button class="allok" data-act="allok" data-s="'+si+'" '+(full?'disabled':'')+'>'+(full?'✓ Done':'All OK')+'</button></div>';
+    if(open){sec.groups.forEach(function(g){var gi=g.items.filter(function(it){return visible(it,a)});if(!gi.length)return; if(g.g)h+='<div class="gname">'+esc(g.g)+'</div>';
+      gi.forEach(function(it){var v=d.results[it.id],naOk=it.na&&!(it.naUnlessAda&&a.ada),sd=d.slashes&&d.slashes[it.id];
+        h+='<div class="item"><div class="lbl">'+esc(it.label)+(v==="s"&&sd?'<em>Needs repair'+(sd.note?': '+esc(sd.note):'')+'</em>':'')+'</div><div class="ctl">'
+          +'<button class="ok" data-act="set" data-id="'+it.id+'" data-v="p" aria-pressed="'+(v==="p")+'" aria-label="OK: '+esc(it.label)+'">✓</button>'
+          +'<button class="sl" data-act="slash" data-id="'+it.id+'" aria-pressed="'+(v==="s")+'" aria-label="Needs repair: '+esc(it.label)+'">/</button>'
+          +(naOk?'<button class="na" data-act="set" data-id="'+it.id+'" data-v="n" aria-pressed="'+(v==="n")+'">N/A</button>':'')+'</div></div>'})})}
+    h+='</section>'});
+  h+='<div class="submit"><button class="btn good" data-act="submit" '+(left?'disabled':'')+'>'+(left?left+' items left to mark':'Submit room '+n)+'</button></div>';
+  return h}
+
+function viewRepairs(){var open=S.repairs.filter(function(r){return !r.fixedAt}).sort(function(a,b){return a.due<b.due?-1:1});
+  var h=header("Repairs from slashed items")+'<p class="muted">Each slash becomes a repair due 14 days after the inspection. A room counts as complete when its repairs are fixed.</p>';
+  if(!open.length)return h+'<div class="card" style="padding:18px">No open repairs.</div>';
+  h+='<div class="list">'+open.map(function(r){var late=pd(r.due)<TODAY,left=days(pd(r.due),TODAY);
+    return '<div class="card rep">'+(r.photo?'<img alt="" src="'+r.photo+'">':'')+'<div class="t"><b>Room '+r.room+'</b> · '+esc(ITEMS[r.item]?ITEMS[r.item].label:r.item)+(r.note?'<div class="muted small">'+esc(r.note)+'</div>':'')+'<div><span class="tag '+(late?'bad':left<=3?'warn':'ok')+'">'+(late?Math.abs(left)+' days overdue':'due '+fd(r.due)+(left<=3?' · '+left+' days':''))+'</span>'+(r.pmId?'':' <span class="tag warn">checklist still open</span>')+'</div></div><button class="btn" data-act="fix" data-r="'+r.id+'">Fixed</button></div>'}).join("")+'</div>';
+  return h}
+
+function techStats(){var m={};S.pms.filter(function(p){return !p.imported}).forEach(function(p){var t=m[p.tech]=m[p.tech]||{rooms:0,act:0,sl:0};t.rooms++;t.act+=p.active;t.sl+=p.slashCount});return m}
+function flags(){var out=[],byDay={};S.pms.filter(function(p){return !p.imported}).forEach(function(p){
+   if(p.active<S.settings.minMin*60)out.push({k:"Fast",t:"Room "+p.room+" · "+esc(p.tech)+" · "+(p.active/60).toFixed(1)+" min of active work (minimum "+S.settings.minMin+")"});
+   var k=p.tech+"|"+iso(new Date(p.end));byDay[k]=(byDay[k]||0)+1});
+  Object.keys(byDay).forEach(function(k){if(byDay[k]>S.settings.maxDay)out.push({k:"Volume",t:k.split("|")[0]+" · "+byDay[k]+" rooms on "+fd(k.split("|")[1])+" (limit "+S.settings.maxDay+"/day)"})});
+  return out}
+function verifyList(){return S.pms.filter(function(p){return p.q===Q.key&&p.verify})}
+
+function viewGM(){var p=pace(),c=p.c,vl=verifyList(),pend=vl.filter(function(v){return v.verify.status==="pending"}),open=S.repairs.filter(function(r){return !r.fixedAt}),late=open.filter(function(r){return pd(r.due)<TODAY}),fl=flags(),ts=techStats();
+  var h=header("GM view")+'<div class="card" style="padding:16px"><div class="stat"><div><b>'+c.done+' / '+p.total+'</b><span class="muted small">complete ('+Math.round(p.done*100)+'%)</span></div><div><b>'+c.repairs+'</b><span class="muted small">waiting on repairs</span></div><div><b>'+c.todo+'</b><span class="muted small">not started</span></div><div><b>'+late.length+'</b><span class="muted small">repairs overdue</span></div></div></div>';
+  h+=paceCard().replace('class="pace"','class="pace" style="margin-top:12px"');
+  h+='<div class="h2">Second-pair-of-eyes checks</div><p class="muted small" style="margin-top:-4px">The system picks about 10% of rooms at random after the tech submits. Verify with two photos.</p>';
+  if(!vl.length)h+='<div class="card" style="padding:16px">No rooms selected yet this quarter.</div>';
+  else h+='<div class="list">'+vl.map(function(x){var v=x.verify;return '<div class="card rep"><div class="t"><b>Room '+x.room+'</b> · inspected '+fd(x.end)+' by '+esc(x.tech)+'<div><span class="tag '+(v.status==="pending"?'warn':v.status==="ok"?'ok':'bad')+'">'+(v.status==="pending"?'Needs your check':v.status==="ok"?'Verified by '+esc(v.by):'Did not match: reopened')+'</span></div></div>'+(v.status==="pending"?'<button class="btn" data-act="verify" data-p="'+x.id+'">Verify</button>':'')+'</div>'}).join("")+'</div>';
+  h+='<div class="small muted" style="margin-top:8px">'+(vl.length-pend.length)+' of '+vl.length+' selected rooms verified.</div>';
+  h+='<div class="h2">Flags</div>'+(fl.length?'<div class="list">'+fl.map(function(f){return '<div class="card" style="padding:12px 16px"><span class="tag warn">'+f.k+'</span> '+f.t+'</div>'}).join("")+'</div>':'<div class="card" style="padding:16px">Nothing flagged.</div>');
+  h+='<div class="h2">By tech</div><div class="card scroll"><table><thead><tr><th>Name</th><th class="n">Rooms</th><th class="n">Avg active min</th><th class="n">Slashes / room</th></tr></thead><tbody>'+(Object.keys(ts).length?Object.keys(ts).map(function(k){var t=ts[k];return '<tr><td>'+esc(k)+'</td><td class="n">'+t.rooms+'</td><td class="n">'+(t.act/60/t.rooms).toFixed(1)+'</td><td class="n">'+(t.sl/t.rooms).toFixed(1)+'</td></tr>'}).join(""):'<tr><td colspan="4" class="muted">Submit a room to see this fill in.</td></tr>')+'</tbody></table></div>';
+  var need=Math.max(0,Math.ceil(p.next.pct*p.total)-(c.done+c.repairs));
+  h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GM, HPD, Corp Facilities Director\nSubject: OKCAL room PM pace · week of "+fd(TODAY)+"\n\n"+c.done+" of "+p.total+" rooms complete ("+Math.round(p.done*100)+"%). Expected by today: "+Math.round(p.exp*100)+"%. "+({ok:"On pace.",warn:"Slightly behind.",bad:"Behind pace."}[p.st])+"\nAll rooms must be inspected by "+fd(Q.cut)+" so repairs close before quarter end ("+fd(Q.end)+").\nNext checkpoint: "+Math.round(p.next.pct*100)+"% by "+fd(p.next.date)+(need?" ("+need+" more rooms).":".")+"\nOpen repairs: "+open.length+" ("+late.length+" overdue).\nGM checks pending: "+pend.length+".")+'</pre></div>';
+  h+='<div class="h2">Roster</div><div class="card" style="padding:16px;display:grid;gap:12px"><div class="row">'+S.roster.map(function(n){return '<span class="chip">'+esc(n)+' <button data-act="rmname" data-n="'+esc(n)+'" aria-label="Remove '+esc(n)+'" style="border:0;background:none;font-weight:700">×</button></span>'}).join("")+'</div><div class="row"><input type="text" id="newname" placeholder="Add a name" style="flex:1;min-width:160px"><button class="btn" data-act="addname">Add</button></div></div>';
+  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px" ><p class="small" style="margin:0 0 8px"><b>Rank (derived):</b> Green = no slashes. Clear = 1 to 3 slashes. Red = 4 or more slashes, or any life-safety item slashed (entry lock, peephole/latch, connecting door lock, smoke alarm, sprinkler, window locks, GFCI). Proposed, not yet approved.</p><p class="small" style="margin:0 0 8px"><b>Flags:</b> under '+S.settings.minMin+' minutes of active work in a room, or more than '+S.settings.maxDay+' rooms by one tech in a day.</p><p class="small" style="margin:0"><b>Checklist:</b> '+esc(CHECK_VERSION)+'. '+Object.keys(ITEMS).length+' items including the optional connecting-door, separate-bedroom and stove items. Prototype build v2 (Oct 17).</p><div style="margin-top:12px"><button class="btn sec" data-act="reset">Reset demo data</button></div></div>';
+  return h}
+
+function render(){var y=window.scrollY,v=S.view,h;
+  if(!S.tech)h=viewWho();else if(cur.room&&S.drafts[cur.room])h=viewCheck();else h=v==="rooms"?viewRooms():v==="repairs"?viewRepairs():viewGM();
+  var inCheck=S.tech&&cur.room&&S.drafts[cur.room];
+  if(S.tech&&!inCheck){var nrep=S.repairs.filter(function(r){return !r.fixedAt}).length;
+    h+='<nav class="nav" aria-label="Sections"><button data-act="tab" data-v="rooms" '+(v==="rooms"?'aria-current="page"':'')+'>Rooms</button><button data-act="tab" data-v="repairs" '+(v==="repairs"?'aria-current="page"':'')+'>Repairs'+(nrep?'<span class="badge">'+nrep+'</span>':'')+'</button><button data-act="tab" data-v="gm" '+(v==="gm"?'aria-current="page"':'')+'>GM</button></nav>'}
+  $("#app").innerHTML=h;window.scrollTo(0,cur.keepScroll?y:0);cur.keepScroll=false}
+
+/* ---------- sheets ---------- */
+function sheet(html){$("#layer").innerHTML='<div class="backdrop" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true">'+html+'</div></div>';var f=$("#layer button, #layer textarea");if(f&&f.focus)try{f.focus({preventScroll:true})}catch(e){}}
+function closeSheet(){$("#layer").innerHTML="";cur.pending=null}
+function photoField(id,label){return '<label class="photo" for="'+id+'"><input type="file" id="'+id+'" accept="image/*" capture="environment" data-photo="'+id+'"><span id="'+id+'img" style="font-size:30px;width:64px;text-align:center">📷</span><span><b>'+label+'</b><br><span class="muted small">Tap to take a photo</span></span></label>'}
+function readPhoto(file){return new Promise(function(res){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var s=360/Math.max(im.width,im.height,360),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.55))};im.onerror=function(){res(null)};im.src=fr.result};fr.onerror=function(){res(null)};fr.readAsDataURL(file)})}
+
+function openSetup(n){cur.pending={n:n,attrs:{connecting:false,kitchen:false,bedroom:false,ada:false}};
+  var opts=[["connecting","Connecting door"],["kitchen","Kitchen or stove"],["bedroom","Separate bedroom"],["ada","ADA room"]];
+  sheet('<h3>Room '+n+': first visit</h3><p class="muted" style="margin:0">Four quick questions, asked once. They decide which items show up for this room.</p>'+opts.map(function(o){return '<button class="tgl" data-act="attr" data-k="'+o[0]+'" aria-pressed="false">'+o[1]+'<i>No</i></button>'}).join("")+'<div class="row"><button class="btn" data-act="startcheck" style="flex:1">Start checklist</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+
+function openSlash(id){var d=S.drafts[cur.room],ex=d.slashes&&d.slashes[id];cur.pending={id:id,photo:ex?ex.photo:null};
+  sheet('<h3>Needs repair</h3><div><b>'+esc(ITEMS[id].label)+'</b><div class="muted small">Room '+cur.room+'</div></div>'+photoField("ph1","Photo of the problem")+'<div><label for="note" class="small muted">What needs fixing? (optional)</label><textarea id="note" placeholder="Short note for whoever fixes it">'+esc(ex?ex.note:"")+'</textarea></div><div class="row"><button class="btn" data-act="saveslash" id="saveslash" style="flex:1" '+(cur.pending.photo?'':'disabled')+'>Save repair</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');
+  if(cur.pending.photo)$("#ph1img").outerHTML='<img id="ph1img" alt="" src="'+cur.pending.photo+'">'}
+
+/* ---------- actions ---------- */
+function touch(d){var t=Date.now();if(d.last)d.active+=Math.min((t-d.last)/1000,120);d.last=t;if(!d.start)d.start=t}
+function startDraft(n){if(!S.drafts[n])S.drafts[n]={start:0,last:0,active:0,results:{},slashes:{}};cur.room=n}
+function submitRoom(n){var d=S.drafts[n],a=S.rooms[n].attrs,items=visItems(a);if(items.some(function(i){return !d.results[i.id]}))return;
+  var id="p"+(S.seq++),sl=items.filter(function(i){return d.results[i.id]==="s"}),crit=sl.some(function(i){return i.safety}),rank=(crit||sl.length>=4)?"Red":sl.length?"Clear":"Green",now=Date.now();
+  sl.forEach(function(i){var ex=S.repairs.filter(function(r){return r.room===n&&r.item===i.id&&!r.pmId&&!r.fixedAt})[0];if(ex){ex.pmId=id;return}var s=d.slashes[i.id]||{};S.repairs.push({id:"r"+(S.seq++),pmId:id,room:n,item:i.id,note:s.note||"",photo:s.photo||null,created:now,due:dueFor(now),fixedAt:null})});
+  S.pms.push({id:id,room:n,q:Q.key,tech:S.tech,end:now,active:Math.round(d.active),rank:rank,slashCount:sl.length,imported:false,version:CHECK_VERSION,verify:(hash(n+Q.key)%10===0)?{status:"pending"}:null});
+  delete S.drafts[n];S.rooms[n].last=iso(new Date(now));save();cur.room=null;cur.open={};
+  render();sheet('<h3>Room '+n+' saved</h3><div><span class="rank '+rank+'">'+rank+'</span></div>'+(sl.length?'<p style="margin:0">'+sl.length+' repair'+(sl.length>1?'s':'')+' created, due '+fd(dueFor(now))+'. Your GM gets a reminder.</p>':'<p style="margin:0">No repairs needed.</p>')+'<button class="btn" data-act="closesheet">Next room</button>')}
+
+function act(a,ds,el,ev){
+  if(a==="closebg"){ if(ev&&el===ev.target) closeSheet(); return }
+  if(a==="closesheet"){closeSheet();return}
+  if(a==="pick"){S.tech=ds.n;save();render();return}
+  if(a==="who"){S.tech=null;cur.room=null;save();render();return}
+  if(a==="tab"){S.view=ds.v;cur.room=null;save();render();return}
+  if(a==="filter"){cur.filter=ds.f;render();return}
+  if(a==="room"){var n=ds.n;if(status(n)==="done"||status(n)==="repairs"){return}if(!S.rooms[n].attrs){openSetup(n);return}startDraft(n);render();return}
+  if(a==="attr"){var k=ds.k;cur.pending.attrs[k]=!cur.pending.attrs[k];el.setAttribute("aria-pressed",cur.pending.attrs[k]);el.querySelector("i").textContent=cur.pending.attrs[k]?"Yes":"No";return}
+  if(a==="startcheck"){var n2=cur.pending.n;S.rooms[n2].attrs=cur.pending.attrs;closeSheet();startDraft(n2);save();render();return}
+  if(a==="back"){save();cur.room=null;render();return}
+  if(a==="tog"){cur.open[ds.s]=!cur.open[ds.s];cur.keepScroll=true;render();return}
+  var d=cur.room?S.drafts[cur.room]:null;
+  if(a==="allok"){var sec=SECS[+ds.s],a2=S.rooms[cur.room].attrs;touch(d);sec.groups.forEach(function(g){g.items.forEach(function(it){if(visible(it,a2)&&!d.results[it.id])d.results[it.id]="p"})});save();cur.keepScroll=true;render();return}
+  if(a==="set"){touch(d);var prev=d.results[ds.id];if(prev===ds.v){delete d.results[ds.id]}else{d.results[ds.id]=ds.v;if(d.slashes)delete d.slashes[ds.id]}if(prev==="s"){S.repairs=S.repairs.filter(function(r){return !(r.room===cur.room&&r.item===ds.id&&!r.pmId&&!r.fixedAt)})}save();cur.keepScroll=true;render();return}
+  if(a==="slash"){openSlash(ds.id);return}
+  if(a==="saveslash"){var note=$("#note").value.trim();touch(d);d.results[cur.pending.id]="s";d.slashes[cur.pending.id]={note:note,photo:cur.pending.photo};var iid=cur.pending.id,ex=S.repairs.filter(function(r){return r.room===cur.room&&r.item===iid&&!r.pmId&&!r.fixedAt})[0];if(ex){ex.note=note;ex.photo=cur.pending.photo}else{var t0=Date.now();S.repairs.push({id:"r"+(S.seq++),pmId:null,room:cur.room,item:iid,note:note,photo:cur.pending.photo,created:t0,due:dueFor(t0),fixedAt:null})}closeSheet();save();cur.keepScroll=true;render();return}
+  if(a==="submit"){submitRoom(cur.room);return}
+  if(a==="fix"){var r=S.repairs.filter(function(x){return x.id===ds.r})[0];cur.pending={r:r.id};sheet('<h3>Mark fixed</h3><div><b>Room '+r.room+'</b> · '+esc(ITEMS[r.item]?ITEMS[r.item].label:"")+'</div>'+photoField("ph1","After photo (optional)")+'<div class="row"><button class="btn good" data-act="savefix" style="flex:1">Fixed</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');return}
+  if(a==="savefix"){var rr=S.repairs.filter(function(x){return x.id===cur.pending.r})[0];rr.fixedAt=Date.now();rr.fixedBy=S.tech;if(!rr.pmId&&S.drafts[rr.room]){var dd=S.drafts[rr.room];dd.results[rr.item]="p";if(dd.slashes)delete dd.slashes[rr.item]}closeSheet();save();render();return}
+  if(a==="verify"){cur.pending={p:ds.p,p1:null,p2:null};sheet('<h3>Verify room '+S.pms.filter(function(x){return x.id===ds.p})[0].room+'</h3><p class="muted" style="margin:0">Walk the room and take two photos (suggest bathroom and HVAC or thermostat).</p>'+photoField("ph1","Photo 1")+photoField("ph2","Photo 2")+'<div><label for="vnote" class="small muted">Notes (optional)</label><textarea id="vnote"></textarea></div><div><label for="vby" class="small muted">Your name</label><select id="vby">'+S.roster.map(function(n){return '<option>'+esc(n)+'</option>'}).join("")+'</select></div><div class="row"><button class="btn good" data-act="vok" id="vok" style="flex:1" disabled>Matches the checklist</button><button class="btn" data-act="vfail" id="vfail" style="flex:1;background:var(--late);color:#fff" disabled>Does not match</button></div><button class="btn sec" data-act="closesheet">Cancel</button>');return}
+  if(a==="vok"||a==="vfail"){var pm=S.pms.filter(function(x){return x.id===cur.pending.p})[0];pm.verify={status:a==="vok"?"ok":"fail",by:$("#vby").value,at:Date.now(),note:$("#vnote").value.trim()};closeSheet();save();render();return}
+  if(a==="addname"){var v=$("#newname").value.trim();if(v&&S.roster.indexOf(v)<0){S.roster.push(v);save();render()}return}
+  if(a==="rmname"){S.roster=S.roster.filter(function(x){return x!==ds.n});save();render();return}
+  if(a==="reset"){try{localStorage.removeItem(KEY)}catch(e){}S=fresh();cur={filter:"all",open:{},room:null,pending:null};render();return}
+}
+document.addEventListener("click",function(e){var t=e.target.closest("[data-act]");if(!t)return;act(t.dataset.act,t.dataset,t,e)});
+document.addEventListener("change",function(e){var t=e.target;if(!t.matches||!t.matches("input[data-photo]")||!t.files||!t.files[0])return;
+  readPhoto(t.files[0]).then(function(url){if(!url||!cur.pending)return;var id=t.dataset.photo;var img=$("#"+id+"img");if(img)img.outerHTML='<img id="'+id+'img" alt="" src="'+url+'">';
+    if(cur.pending.id){cur.pending.photo=url;var b=$("#saveslash");if(b)b.disabled=false}
+    else if(cur.pending.p){cur.pending[id==="ph1"?"p1":"p2"]=url;if(cur.pending.p1&&cur.pending.p2){$("#vok").disabled=false;$("#vfail").disabled=false}}})});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("#layer").firstChild)closeSheet()});
+render();
+})();
+</script>
+
+</body>
+</html>
