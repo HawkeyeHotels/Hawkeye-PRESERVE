@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#1D4E6E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Room PM">
+<meta name="apple-mobile-web-app-title" content="PRESERVE">
 <style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}[hidden]{display:none!important}img{max-width:100%}</style>
-<title>Room PM Tablet</title>
+<title>PRESERVE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -19,17 +19,17 @@
 :root{
   --bg:#EDEFF1; --surface:#FFFFFF; --surface2:#F4F6F8; --ink:#17212B; --muted:#566373; --line:#D3D9E0;
   --accent:#1D4E6E; --accent-ink:#FFFFFF; --pass:#17784A; --pass-bg:#E1F2E9; --slash:#9A4A07; --slash-bg:#FCEBD2;
-  --late:#B42318; --late-bg:#FBE4E1; --focus:#0B6BCB; --shadow:0 1px 2px rgba(23,33,43,.08);
+  --late:#B42318; --late-bg:#FBE4E1; --focus:#0B6BCB; --info-bg:#E2EDF5; --shadow:0 1px 2px rgba(23,33,43,.08);
   --display:'Barlow Condensed','Arial Narrow',Arial,sans-serif; --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#10171E; --surface:#19232D; --surface2:#212D39; --ink:#E8EDF2; --muted:#9BA9B8; --line:#344250;
   --accent:#6FB1DC; --accent-ink:#0C1620; --pass:#55C98B; --pass-bg:#16332A; --slash:#F0A64A; --slash-bg:#3A2A12;
-  --late:#FF8A80; --late-bg:#3D1B18; --focus:#7DB8F0; color-scheme:dark}}
+  --late:#FF8A80; --late-bg:#3D1B18; --focus:#7DB8F0; --info-bg:#1B3246; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#10171E; --surface:#19232D; --surface2:#212D39; --ink:#E8EDF2; --muted:#9BA9B8; --line:#344250;
   --accent:#6FB1DC; --accent-ink:#0C1620; --pass:#55C98B; --pass-bg:#16332A; --slash:#F0A64A; --slash-bg:#3A2A12;
-  --late:#FF8A80; --late-bg:#3D1B18; --focus:#7DB8F0; color-scheme:dark}
+  --late:#FF8A80; --late-bg:#3D1B18; --focus:#7DB8F0; --info-bg:#1B3246; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:400 17px/1.4 var(--body);padding-inline:16px;padding-block:0 96px;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -96,7 +96,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tgl{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;min-height:60px;background:var(--surface2);width:100%;text-align:left;font-weight:500}
 .tgl[aria-pressed="true"]{border-color:var(--accent);background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .tgl i{font-style:normal;font-weight:700;color:var(--accent)}
-textarea,select,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px}
+textarea,select,input[type=text],input[type=date],input[type=number],input[type=search]{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px}
 textarea{min-height:84px}
 .photo{display:flex;gap:12px;align-items:center;border:2px dashed var(--line);border-radius:12px;padding:12px;min-height:74px;cursor:pointer;background:var(--surface2)}
 .photo img{width:64px;height:64px;object-fit:cover;border-radius:8px}
@@ -121,13 +121,38 @@ pre.mail{white-space:pre-wrap;font:14px/1.5 var(--body);margin:0;padding:14px 16
 .stat div{min-width:120px}
 .stat b{display:block;font:700 34px/1 var(--display)}
 .demo{background:var(--slash-bg);color:var(--slash);border-radius:10px;padding:8px 12px;font-size:14px;margin-top:6px}
+[hidden]{display:none!important}
+.tag.info{background:var(--info-bg);color:var(--accent)} .tag.mute{background:var(--surface2);color:var(--muted);border-color:var(--line)}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;margin-top:18px}
+.mod{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;min-height:156px;padding:18px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
+.mod .ic{font-size:34px;line-height:1}
+.mod b{font:700 30px/1.05 var(--display);letter-spacing:.03em;text-transform:uppercase}
+.mod[disabled]{opacity:.65;border-style:dashed;cursor:default;box-shadow:none}
+.mod:not([disabled]):hover{border-color:var(--accent)}
+.icard{display:grid;gap:6px;width:100%;text-align:left;padding:12px 14px}
+.icard .ih{font-size:18px;font-weight:600;line-height:1.25}
+.itags{display:flex;gap:6px;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px}
+.kv span{display:block;color:var(--muted);font-size:13px} .kv b{font-weight:600}
+.thr{display:grid;gap:10px}
+.msg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px}
+.msg.sys{background:transparent;border:0;padding:2px 4px;color:var(--muted);font-size:14px}
+.msg .who2{font-weight:600} .when{color:var(--muted);font-size:12.5px}
+.msg img,.thumbs img{border-radius:8px;border:1px solid var(--line);cursor:zoom-in}
+.msg img{max-width:min(100%,320px)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap} .thumbs img{width:84px;height:84px;object-fit:cover}
+.pri{display:grid;grid-template-columns:1fr 1fr;gap:8px} .pri .tgl{display:block}
+.warnbox{background:var(--slash-bg);color:var(--slash);border-radius:10px;padding:10px 12px;font-size:14.5px}
+.histbox{border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+.linkbtn{background:none;border:0;padding:4px 0;text-align:left;color:var(--accent);font-weight:600;text-decoration:underline;min-height:36px}
+.btn:focus-within{outline:3px solid var(--focus);outline-offset:2px}
+label.btn{display:inline-flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.bucket{display:grid;grid-template-columns:100px 1fr 40px;gap:10px;align-items:center;margin-block:6px}
+.rep .col{display:grid;gap:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:520px){.item{flex-wrap:wrap}.ctl{margin-left:auto}.top h1{font-size:26px}}
 </style>
 
-
-</head>
-<body>
 <div class="wrap" id="app"></div>
 <div id="layer"></div>
 
@@ -197,7 +222,7 @@ function fresh(){
 function migrate(s){Object.keys(s.drafts||{}).forEach(function(n){var d=s.drafts[n];Object.keys(d.slashes||{}).forEach(function(id){if(d.results[id]!=="s")return;var has=s.repairs.some(function(r){return r.room===n&&r.item===id&&!r.pmId&&!r.fixedAt});if(!has){var now=Date.now();s.repairs.push({id:"r"+(s.seq++),pmId:null,room:n,item:id,note:d.slashes[id].note||"",photo:d.slashes[id].photo||null,created:now,due:dueFor(now),fixedAt:null})}})});return s}
 function load(){try{var t=localStorage.getItem(KEY);if(t){var s=JSON.parse(t);if(s&&s.pms)return migrate(s)}}catch(e){}return fresh()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-var cur={filter:"all",open:{},room:null,pending:null,scroll:0};
+var cur={filter:"all",open:{},room:null,pending:null,scroll:0,mod:"home",tk:null,if:"open",q:"",li:null,lf:"action"};
 
 /* ---------- derived ---------- */
 function roomPMs(n){return S.pms.filter(function(p){return p.room===n&&p.q===Q.key})}
@@ -222,7 +247,7 @@ function paceCard(){var p=pace(),pct=Math.round(p.done*100),ins=Math.round(p.ins
    +'<div class="bar" role="img" aria-label="'+ins+' percent of rooms inspected"><i style="width:'+ins+'%;opacity:.45"></i><i style="width:'+pct+'%"></i>'+p.cps.map(function(c){return '<u style="left:calc('+Math.round(c.pct*100*(p.W/p.W))+'% - 1px)"></u>'}).join("")+'</div>'
    +'<div class="small muted"><b style="color:var(--ink)">'+p.c.done+' of '+p.total+' rooms complete</b> ('+pct+'%) · '+p.c.repairs+' waiting on repairs · '+Math.round(p.exp*100)+'% expected by today. Next checkpoint: '+Math.round(p.next.pct*100)+'% by '+fd(p.next.date)+(need>0?' ('+need+' more rooms)':'')+'.</div></div>'}
 
-function header(sub){return '<div class="top"><div><h1>Room PM</h1><div class="sub">OKCAL · '+ROOMS.length+' rooms · '+esc(sub||"")+'</div></div>'+(S.tech?'<button class="who" data-act="who" aria-label="Change name">'+esc(S.tech)+' ▾</button>':'')+'</div>'}
+function header(sub,title,scopeText){return '<div class="top"><div><h1>'+esc(title||"Room PM")+'</h1><div class="sub">'+esc(scopeText||("OKCAL · "+ROOMS.length+" rooms"))+' · '+esc(sub||"")+'</div></div>'+(S.tech?'<div class="row"><button class="who" data-act="go" data-m="home">⌂ Home</button><button class="who" data-act="who" aria-label="Change name">'+esc(S.tech)+' ▾</button></div>':'')+'</div>'}
 
 function viewWho(){return header("Tap your name")+'<div class="demo">Prototype: nothing here is sent anywhere yet. Data stays on this device.</div><div class="who-list">'+S.roster.map(function(n){return '<button class="btn sec" data-act="pick" data-n="'+esc(n)+'">'+esc(n)+'</button>'}).join("")+'</div><p class="muted small">Not on the list? Ask your GM or maintenance lead to add you.</p>'}
 
@@ -261,7 +286,7 @@ function viewRepairs(){var open=S.repairs.filter(function(r){return !r.fixedAt})
   var h=header("Repairs from slashed items")+'<p class="muted">Each slash becomes a repair due 14 days after the inspection. A room counts as complete when its repairs are fixed.</p>';
   if(!open.length)return h+'<div class="card" style="padding:18px">No open repairs.</div>';
   h+='<div class="list">'+open.map(function(r){var late=pd(r.due)<TODAY,left=days(pd(r.due),TODAY);
-    return '<div class="card rep">'+(r.photo?'<img alt="" src="'+r.photo+'">':'')+'<div class="t"><b>Room '+r.room+'</b> · '+esc(ITEMS[r.item]?ITEMS[r.item].label:r.item)+(r.note?'<div class="muted small">'+esc(r.note)+'</div>':'')+'<div><span class="tag '+(late?'bad':left<=3?'warn':'ok')+'">'+(late?Math.abs(left)+' days overdue':'due '+fd(r.due)+(left<=3?' · '+left+' days':''))+'</span>'+(r.pmId?'':' <span class="tag warn">checklist still open</span>')+'</div></div><button class="btn" data-act="fix" data-r="'+r.id+'">Fixed</button></div>'}).join("")+'</div>';
+    return '<div class="card rep">'+(r.photo?'<img alt="" src="'+r.photo+'">':'')+'<div class="t"><b>Room '+r.room+'</b> · '+esc(ITEMS[r.item]?ITEMS[r.item].label:r.item)+(r.note?'<div class="muted small">'+esc(r.note)+'</div>':'')+'<div><span class="tag '+(late?'bad':left<=3?'warn':'ok')+'">'+(late?Math.abs(left)+' days overdue':'due '+fd(r.due)+(left<=3?' · '+left+' days':''))+'</span>'+(r.pmId?'':' <span class="tag warn">checklist still open</span>')+(r.fac?' <span class="tag info">Sent to facilities · '+esc(r.fac)+'</span>':'')+'</div></div><div class="col"><button class="btn" data-act="fix" data-r="'+r.id+'">Fixed</button>'+(r.fac?'':'<button class="btn sec" data-act="i:fromrepair" data-r="'+r.id+'">Needs facilities help</button>')+'</div></div>'}).join("")+'</div>';
   return h}
 
 function techStats(){var m={};S.pms.filter(function(p){return !p.imported}).forEach(function(p){var t=m[p.tech]=m[p.tech]||{rooms:0,act:0,sl:0};t.rooms++;t.act+=p.active;t.sl+=p.slashCount});return m}
@@ -284,15 +309,22 @@ function viewGM(){var p=pace(),c=p.c,vl=verifyList(),pend=vl.filter(function(v){
   var need=Math.max(0,Math.ceil(p.next.pct*p.total)-(c.done+c.repairs));
   h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GM, HPD, Corp Facilities Director\nSubject: OKCAL room PM pace · week of "+fd(TODAY)+"\n\n"+c.done+" of "+p.total+" rooms complete ("+Math.round(p.done*100)+"%). Expected by today: "+Math.round(p.exp*100)+"%. "+({ok:"On pace.",warn:"Slightly behind.",bad:"Behind pace."}[p.st])+"\nAll rooms must be inspected by "+fd(Q.cut)+" so repairs close before quarter end ("+fd(Q.end)+").\nNext checkpoint: "+Math.round(p.next.pct*100)+"% by "+fd(p.next.date)+(need?" ("+need+" more rooms).":".")+"\nOpen repairs: "+open.length+" ("+late.length+" overdue).\nGM checks pending: "+pend.length+".")+'</pre></div>';
   h+='<div class="h2">Roster</div><div class="card" style="padding:16px;display:grid;gap:12px"><div class="row">'+S.roster.map(function(n){return '<span class="chip">'+esc(n)+' <button data-act="rmname" data-n="'+esc(n)+'" aria-label="Remove '+esc(n)+'" style="border:0;background:none;font-weight:700">×</button></span>'}).join("")+'</div><div class="row"><input type="text" id="newname" placeholder="Add a name" style="flex:1;min-width:160px"><button class="btn" data-act="addname">Add</button></div></div>';
-  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px" ><p class="small" style="margin:0 0 8px"><b>Rank (derived):</b> Green = no slashes. Clear = 1 to 3 slashes. Red = 4 or more slashes, or any life-safety item slashed (entry lock, peephole/latch, connecting door lock, smoke alarm, sprinkler, window locks, GFCI). Proposed, not yet approved.</p><p class="small" style="margin:0 0 8px"><b>Flags:</b> under '+S.settings.minMin+' minutes of active work in a room, or more than '+S.settings.maxDay+' rooms by one tech in a day.</p><p class="small" style="margin:0"><b>Checklist:</b> '+esc(CHECK_VERSION)+'. '+Object.keys(ITEMS).length+' items including the optional connecting-door, separate-bedroom and stove items. Prototype build v2 (Oct 17).</p><div style="margin-top:12px"><button class="btn sec" data-act="reset">Reset demo data</button></div></div>';
+  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px" ><p class="small" style="margin:0 0 8px"><b>Rank (derived):</b> Green = no slashes. Clear = 1 to 3 slashes. Red = 4 or more slashes, or any life-safety item slashed (entry lock, peephole/latch, connecting door lock, smoke alarm, sprinkler, window locks, GFCI). Proposed, not yet approved.</p><p class="small" style="margin:0 0 8px"><b>Flags:</b> under '+S.settings.minMin+' minutes of active work in a room, or more than '+S.settings.maxDay+' rooms by one tech in a day.</p><p class="small" style="margin:0"><b>Checklist:</b> '+esc(CHECK_VERSION)+'. '+Object.keys(ITEMS).length+' items including the optional connecting-door, separate-bedroom and stove items. Prototype build v3 (Oct 22).</p><div style="margin-top:12px"><button class="btn sec" data-act="reset">Reset demo data</button></div></div>';
   return h}
 
-function render(){var y=window.scrollY,v=S.view,h;
-  if(!S.tech)h=viewWho();else if(cur.room&&S.drafts[cur.room])h=viewCheck();else h=v==="rooms"?viewRooms():v==="repairs"?viewRepairs():viewGM();
-  var inCheck=S.tech&&cur.room&&S.drafts[cur.room];
-  if(S.tech&&!inCheck){var nrep=S.repairs.filter(function(r){return !r.fixedAt}).length;
-    h+='<nav class="nav" aria-label="Sections"><button data-act="tab" data-v="rooms" '+(v==="rooms"?'aria-current="page"':'')+'>Rooms</button><button data-act="tab" data-v="repairs" '+(v==="repairs"?'aria-current="page"':'')+'>Repairs'+(nrep?'<span class="badge">'+nrep+'</span>':'')+'</button><button data-act="tab" data-v="gm" '+(v==="gm"?'aria-current="page"':'')+'>GM</button></nav>'}
-  $("#app").innerHTML=h;window.scrollTo(0,cur.keepScroll?y:0);cur.keepScroll=false}
+function render(){var y=window.scrollY,v=S.view,h,m=cur.mod||"home";
+  if(!S.tech)h=viewWho();
+  else if(m==="home")h=viewHome();
+  else if(m==="issues")h=cur.tk?viewTicket():(I.view==="port"?viewPort():viewIssues());
+  else if(m==="lpi")h=cur.li?viewLpItem():(LP.view==="port"?viewLpPort():viewLpi());
+  else if(cur.room&&S.drafts[cur.room])h=viewCheck();else h=v==="rooms"?viewRooms():v==="repairs"?viewRepairs():viewGM();
+  var inCheck=m==="pm"&&S.tech&&cur.room&&S.drafts[cur.room];
+  if(S.tech&&m==="pm"&&!inCheck){var nrep=S.repairs.filter(function(r){return !r.fixedAt}).length;
+    h+='<nav class="nav" aria-label="Sections"><button data-act="tab" data-v="rooms" '+(v==="rooms"?'aria-current="page"':'')+'>Rooms</button><button data-act="tab" data-v="repairs" '+(v==="repairs"?'aria-current="page"':'')+'>Repairs'+(nrep?'<span class="badge">'+nrep+'</span>':'')+'</button><button data-act="tab" data-v="gm" '+(v==="gm"?'aria-current="page"':'')+'>GM</button><button data-act="go" data-m="home">Home</button></nav>'}
+  if(S.tech&&m==="issues"&&!cur.tk)h+=issuesNav();
+  if(S.tech&&m==="lpi"&&!cur.li)h+=lpNav();
+  $("#app").innerHTML=h;window.scrollTo(0,cur.toBottom?document.body.scrollHeight:(cur.keepScroll?y:0));cur.keepScroll=false;cur.toBottom=false;
+  if(S.tech&&m==="issues"&&!cur.tk&&I.view!=="port"&&cur.q){var si=$("#isearch");if(si&&si.value!==cur.q)si.value=cur.q}}
 
 /* ---------- sheets ---------- */
 function sheet(html){$("#layer").innerHTML='<div class="backdrop" data-act="closebg"><div class="sheet" role="dialog" aria-modal="true">'+html+'</div></div>';var f=$("#layer button, #layer textarea");if(f&&f.focus)try{f.focus({preventScroll:true})}catch(e){}}
@@ -318,11 +350,517 @@ function submitRoom(n){var d=S.drafts[n],a=S.rooms[n].attrs,items=visItems(a);if
   delete S.drafts[n];S.rooms[n].last=iso(new Date(now));save();cur.room=null;cur.open={};
   render();sheet('<h3>Room '+n+' saved</h3><div><span class="rank '+rank+'">'+rank+'</span></div>'+(sl.length?'<p style="margin:0">'+sl.length+' repair'+(sl.length>1?'s':'')+' created, due '+fd(dueFor(now))+'. Your GM gets a reminder.</p>':'<p style="margin:0">No repairs needed.</p>')+'<button class="btn" data-act="closesheet">Next room</button>')}
 
+/* ================= FACILITY ISSUES MODULE (prototype) =================
+   One ticket per problem. Chat thread, photos, approvals, close with vendor/cost/warranty, reopen,
+   per-location history. Demo data is synthetic; the real Mitti export is imported in the browser only. */
+const IKEY="pres-issues-v1";
+const CATS={hvac:"HVAC / AC",plumb:"Plumbing / water",elec:"Electrical / lighting",fire:"Fire & life safety",elev:"Elevator",pool:"Pool / spa",laundry:"Laundry / kitchen equipment",bldg:"Roof / building / exterior",other:"Other"};
+const PRI={urgent:"Urgent",high:"High",med:"Medium",low:"Low"}, PORD=["urgent","high","med","low"];
+const PHELP={urgent:"Guest safety or room out of order",high:"Hurting guests, fix this week",med:"Fix within a month",low:"When convenient"};
+const ROLES={hotel:"Hotel staff",fac:"Facilities team",owner:"Ownership"};
+const AREAS=["Whole property","Lobby","Pool","Fitness center","Laundry","Breakfast / kitchen","Roof","Parking lot","Exterior","Mechanical room"];
+const LIFE={fire:1,elev:1};
+const DSLA={urgent:2,high:7,med:30,low:60};
+var I=null;
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+
+/* ---- formatting + date helpers ---- */
+function fdy(x){const d=typeof x==="string"?pd(x.slice(0,10)):new Date(x);return MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear()}
+function fdt(t){const d=new Date(t),h=d.getHours();return MON[d.getMonth()]+" "+d.getDate()+", "+((h%12)||12)+":"+pad(d.getMinutes())+(h<12?" AM":" PM")}
+function money(n){return "$"+Math.round(+n||0).toLocaleString("en-US")}
+function dayOf(ts){const d=new Date(ts);return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function ahead(n){const d=new Date(TODAY);d.setDate(d.getDate()+n);return iso(d)}
+function dueFrom(ts,p){const d=new Date(ts),s=(I&&I.sla)||DSLA;d.setDate(d.getDate()+s[p]);return iso(d)}
+function nloc(s){return String(s||"").trim().toLowerCase().replace(/^(room|rm)\s*#?\s*/,"")}
+function fixLoc(s){s=String(s||"").trim();return /^\d{3,4}$/.test(s)?"Room "+s:s}
+
+/* ---- state ---- */
+function sysE(t,text,by,role){return{t:t,type:"sys",text:text,by:by||"",role:role||"",photo:null}}
+function msgE(t,by,role,text,photo){return{t:t,type:"msg",by:by,role:role,text:text,photo:photo||null}}
+function mkI(id,o){const pri=o.pri===undefined?"med":o.pri;
+  const i={id:id,hotel:o.hotel,loc:o.loc||"",cat:o.cat||"other",title:o.title,desc:o.desc||"",need:o.need||"",cause:o.cause||"",pri:pri,assignee:o.assignee||"",
+    due:o.due!==undefined?o.due:(pri?dueFrom(o.created,pri):""),created:o.created,by:o.by||"Tech A",photos:[],appr:o.appr||null,closes:o.closes||[],closedAt:o.closedAt||null,
+    events:o.events||[],src:o.src||"app",confirm:!!o.confirm};
+  i.updated=o.updated||(i.events.length?i.events[i.events.length-1].t:i.created);return i}
+function closeText(by,c){return by+" closed this: "+c.what+(c.vendor?" · "+c.vendor:"")+(c.cost?" · "+money(c.cost):"")+(c.warrantyTo?" · warranty through "+fdy(c.warrantyTo):"")}
+function seedIssues(){
+  const T=(d,h)=>Date.now()-d*864e5-(h||0)*36e5, out=[];
+  const FL="Facilities Lead",RE="Regional Engineer",CD="Corp Facilities Director",CE="Chief Engineer",TA="Tech A",TB="Tech B";
+  const c101={at:T(20),by:FL,what:"Replaced run capacitor and cleaned the coil. Room holding 70 degrees.",vendor:"Summit HVAC",cost:385,warrantyTo:ahead(344)};
+  out.push(mkI("FI-101",{hotel:"OKCAL",loc:"Room 214",cat:"hvac",pri:"med",title:"AC not cooling",desc:"Guest called twice. Room is 78 degrees with the thermostat at 68.",need:"Diagnose and repair the unit.",created:T(24),by:TA,assignee:FL,closedAt:c101.at,closes:[c101],
+    events:[sysE(T(24),"Ticket created by "+TA,TA,"hotel"),msgE(T(23.5),TA,"hotel","Fan runs but no cold air. Filter is clean."),sysE(T(23),"Routed to "+FL+" (default for OKCAL)"),msgE(T(22),FL,"fac","Summit HVAC is coming Thursday morning."),sysE(c101.at,closeText(FL,c101),FL,"fac")]}));
+  out.push(mkI("FI-122",{hotel:"OKCAL",loc:"Room 214",cat:"hvac",pri:"high",title:"AC down again, 3 weeks after the repair",desc:"Same unit as FI-101. Not cooling since last night.",need:"Check whether the capacitor repair is under warranty before calling a new vendor.",created:T(2),by:CE,assignee:FL,
+    events:[sysE(T(2),"Ticket created by "+CE,CE,"hotel"),msgE(T(1.8),CE,"hotel","Same symptoms as FI-101. Room is out of order tonight."),sysE(T(1.8),"Routed to "+FL+" (default for OKCAL)"),msgE(T(1.5),FL,"fac","Reading the FI-101 notes. Summit's warranty may cover this, so I will call them first.")]}));
+  out.push(mkI("FI-103",{hotel:"OKCAL",loc:"Pool",cat:"pool",pri:"high",title:"Pool dehumidifier not keeping up",desc:"Pool room is 88 degrees and humid. Windows are fogging.",need:"Replace the compressor or the unit.",created:T(18),by:CE,assignee:RE,
+    appr:{amt:6400,vendor:"Northline Mechanical (quote 5521)",why:"Compressor replacement. Two portable dehumidifiers are running as a stopgap.",by:CE,at:T(5),st:"pending",dec:"",decAt:null,note:""},
+    events:[sysE(T(18),"Ticket created by "+CE,CE,"hotel"),sysE(T(18),"Routed to "+RE),msgE(T(12),RE,"fac","Northline looked at it. Quote is in the approval request."),sysE(T(5),"Approval requested: "+money(6400)+" · goes to "+"Corp Facilities Director",CE,"hotel")]}));
+  out.push(mkI("FI-104",{hotel:"OKCAL",loc:"Roof",cat:"bldg",pri:"med",title:"Water stain below the roof drain, 5th floor",desc:"Stain is getting bigger after each rain.",need:"Roof contractor to inspect and patch.",created:T(40),by:TB,assignee:"",
+    events:[sysE(T(40),"Ticket created by "+TB,TB,"hotel")]}));
+  out.push(mkI("FI-105",{hotel:"OKCAL",loc:"Lobby",cat:"elec",pri:null,title:"Two lobby sign letters are out",created:T(1),by:TB,assignee:"",due:"",events:[sysE(T(1),"Ticket created by "+TB,TB,"hotel")]}));
+  out.push(mkI("FI-106",{hotel:"OKCAL",loc:"Mechanical room",cat:"fire",pri:"urgent",title:"Fire panel trouble light is on",desc:"Yellow trouble light on the main panel since the storm.",need:"Fire alarm vendor to diagnose today.",created:T(2),by:CE,assignee:RE,
+    events:[sysE(T(2),"Ticket created by "+CE,CE,"hotel"),sysE(T(2),"Routed to "+RE),msgE(T(1.9),RE,"fac","Vendor is scheduled for tomorrow at 9 AM. Fire watch not required yet.")]}));
+  out.push(mkI("FI-107",{hotel:"Demo Hotel B",loc:"Elevators",cat:"elev",pri:"high",title:"Elevator will not come to the 3rd floor",desc:"Call button works but the car never answers from 3.",need:"New control board per the elevator vendor.",created:T(10),by:"GM B",assignee:FL,
+    appr:{amt:1850,vendor:"Otis service quote",why:"Replace the 3rd floor call board.",by:"GM B",at:T(8),st:"approved",dec:FL,decAt:T(6),note:"Go ahead. Schedule after 9 AM."},
+    events:[sysE(T(10),"Ticket created by GM B","GM B","hotel"),sysE(T(10),"Routed to "+FL),sysE(T(8),"Approval requested: "+money(1850)+" · goes to Facilities Lead","GM B","hotel"),sysE(T(6),FL+" approved "+money(1850)+": Go ahead. Schedule after 9 AM.",FL,"fac"),msgE(T(3),"GM B","hotel","Part is ordered. Vendor says Tuesday.")]}));
+  out.push(mkI("FI-108",{hotel:"Demo Hotel B",loc:"Room 412",cat:"plumb",pri:"med",title:"Tub drain is slow",created:T(6),by:"Tech A",assignee:RE,events:[sysE(T(6),"Ticket created by Tech A","Tech A","hotel"),sysE(T(6),"Routed to "+RE)]}));
+  out.push(mkI("FI-109",{hotel:"Demo Hotel B",loc:"Laundry",cat:"laundry",pri:"high",title:"Both commercial washers failing, replace",desc:"Drum bearings are going on both. One is already down.",need:"Replace both washers (capital).",created:T(3),by:"GM B",assignee:FL,
+    appr:{amt:12500,vendor:"Quote from the laundry vendor",why:"Both machines are original to the building and past repair.",by:"GM B",at:T(3),st:"pending",dec:"",decAt:null,note:""},
+    events:[sysE(T(3),"Ticket created by GM B","GM B","hotel"),sysE(T(3),"Routed to "+FL),sysE(T(3),"Approval requested: "+money(12500)+" · goes to Ownership (capital)","GM B","hotel")]}));
+  out.push(mkI("FI-110",{hotel:"Demo Hotel C",loc:"Exterior",cat:"bldg",pri:"low",title:"Bricks missing at the canopy",created:T(70),by:"GM C",assignee:RE,events:[sysE(T(70),"Ticket created by GM C","GM C","hotel"),sysE(T(70),"Routed to "+RE),msgE(T(55),RE,"fac","Waiting on a mason to quote.")]}));
+  out.push(mkI("FI-111",{hotel:"Demo Hotel C",loc:"Room 105",cat:"hvac",pri:"med",title:"PTAC smells musty when it starts",created:T(9),by:"Tech A",assignee:FL,events:[sysE(T(9),"Ticket created by Tech A","Tech A","hotel"),sysE(T(9),"Routed to "+FL),msgE(T(2),"Tech A","hotel","Cleaned the coil. Smell came back after a day.")]}));
+  const c112={at:T(8),by:RE,what:"Replaced the gate arm and sensor.",vendor:"Gate Pros",cost:920,warrantyTo:ahead(80)};
+  out.push(mkI("FI-112",{hotel:"Demo Hotel C",loc:"Parking lot",cat:"other",pri:"med",title:"Parking gate arm broken",created:T(20),by:"GM C",assignee:RE,closedAt:c112.at,closes:[c112],events:[sysE(T(20),"Ticket created by GM C","GM C","hotel"),sysE(T(20),"Routed to "+RE),sysE(c112.at,closeText(RE,c112),RE,"fac")]}));
+  out.push(mkI("FI-113",{hotel:"Demo Hotel D",loc:"Whole property",cat:"fire",pri:"urgent",title:"Annual sprinkler inspection: repairs required",desc:"Inspector listed gauges, painted heads and a missing hose valve cap.",need:"Complete the vendor's repair list and get the re-inspection scheduled.",created:T(30),by:"GM D",assignee:CD,
+    appr:{amt:3200,vendor:"Fire protection vendor quote",why:"Repair list from the annual inspection.",by:"GM D",at:T(24),st:"approved",dec:CD,decAt:T(22),note:"Approved. Book the re-inspection."},
+    events:[sysE(T(30),"Ticket created by GM D","GM D","hotel"),sysE(T(30),"Routed to "+CD),sysE(T(24),"Approval requested: "+money(3200)+" · goes to Corp Facilities Director","GM D","hotel"),sysE(T(22),CD+" approved "+money(3200)+": Approved. Book the re-inspection.",CD,"fac")]}));
+  out.push(mkI("FI-114",{hotel:"Demo Hotel D",loc:"Room 220",cat:"plumb",pri:"high",title:"Ceiling leak, room is out of order",created:T(12),by:"GM D",assignee:RE,events:[sysE(T(12),"Ticket created by GM D","GM D","hotel"),sysE(T(12),"Routed to "+RE),msgE(T(9),RE,"fac","Plumber found a bad supply line above. Waiting on drywall.")]}));
+  out.push(demoLpiTicket());
+  return out}
+function freshI(){const s={issues:[],seq:123,role:"hotel",hotel:"OKCAL",view:"list",team:["Facilities Lead","Regional Engineer","Corp Facilities Director"],defAssignee:"Facilities Lead",sla:{urgent:2,high:7,med:30,low:60},lim:{dir:2500,own:10000},imported:false};I=s;s.issues=seedIssues();return s}
+function loadI(){try{const t=localStorage.getItem(IKEY);if(t){const s=JSON.parse(t);if(s&&s.issues&&s.sla)return s}}catch(e){}return freshI()}
+function saveI(){try{localStorage.setItem(IKEY,JSON.stringify(I))}catch(e){}}
+I=loadI();
+
+/* ---- derived ---- */
+function getI(id){return I.issues.filter(i=>i.id===id)[0]}
+function isOpen(i){return !i.closedAt}
+function lastClose(i){return i.closes[i.closes.length-1]||null}
+function overdue(i){return isOpen(i)&&!!i.due&&pd(i.due)<TODAY}
+function overdueDays(i){return days(TODAY,pd(i.due))}
+function ageDays(i){return Math.max(0,days(TODAY,dayOf(i.created)))}
+function sinceUpd(i){return Math.max(0,days(TODAY,dayOf(i.updated)))}
+function pendAppr(i){return isOpen(i)&&!!i.appr&&i.appr.st==="pending"}
+function msgCount(i){return i.events.filter(e=>e.type==="msg").length}
+function lastVendor(i){const c=lastClose(i);return (c&&c.vendor)||(i.appr&&i.appr.vendor)||""}
+function approver(a){return a>=I.lim.own?"Ownership (capital)":a>=I.lim.dir?"Corp Facilities Director":"Facilities Lead"}
+function hotels(){const s={OKCAL:1};I.issues.forEach(i=>{s[i.hotel]=1});return Object.keys(s).sort()}
+function scope(){return I.issues.filter(i=>!I.hotel||i.hotel===I.hotel)}
+function canCreate(){return I.role!=="owner"}
+function canClose(){return I.role!=="owner"}
+function canEdit(){return I.role==="fac"}
+function canApprove(){return I.role!=="hotel"}
+function history(p){const k=nloc(p.loc);if(!k)return[];return I.issues.filter(o=>o.id!==p.id&&o.hotel===p.hotel&&nloc(o.loc)===k).sort((a,b)=>b.created-a.created)}
+function warrantyFor(p){const k=nloc(p.loc),out=[];if(!k)return out;
+  I.issues.forEach(o=>{if(o.id===p.id||o.hotel!==p.hotel||nloc(o.loc)!==k)return;o.closes.forEach(c=>{if(c.warrantyTo&&pd(c.warrantyTo)>=TODAY)out.push({t:o,c:c,same:o.cat===p.cat})})});
+  return out.sort((a,b)=>(b.same?1:0)-(a.same?1:0))}
+function urg(i){return[overdue(i)?0:1,i.pri?PORD.indexOf(i.pri):4,i.created]}
+function cmpOpen(a,b){const x=urg(a),y=urg(b);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2]}
+
+/* ---- views ---- */
+function tagsFor(i){const t=[];
+  if(!isOpen(i)){const c=lastClose(i);t.push('<span class="tag mute">Closed '+fd(c.at)+'</span>');if(c.warrantyTo&&pd(c.warrantyTo)>=TODAY)t.push('<span class="tag info">Warranty to '+fdy(c.warrantyTo)+'</span>');return t.join(" ")}
+  if(i.pri)t.push('<span class="tag '+(i.pri==="urgent"?"bad":i.pri==="high"?"warn":"mute")+'">'+PRI[i.pri]+'</span>');else t.push('<span class="tag warn">Needs priority</span>');
+  if(overdue(i)){const n=overdueDays(i);t.push('<span class="tag bad">'+n+' day'+(n===1?"":"s")+' past due</span>')}else if(i.due)t.push('<span class="tag mute">Due '+fd(i.due)+'</span>');else t.push('<span class="tag warn">No due date</span>');
+  if(!i.assignee)t.push('<span class="tag bad">Unassigned</span>');
+  if(i.appr&&i.appr.st==="pending")t.push('<span class="tag info">Waiting approval '+money(i.appr.amt)+'</span>');
+  else if(i.appr&&i.appr.st==="approved")t.push('<span class="tag ok">Approved '+money(i.appr.amt)+'</span>');
+  else if(i.appr&&i.appr.st==="denied")t.push('<span class="tag bad">Denied</span>');
+  if(i.closes.length)t.push('<span class="tag info">Reopened</span>');
+  if(i.confirm)t.push('<span class="tag warn">Check: marked resolved in Mitti</span>');
+  else if(sinceUpd(i)>=7)t.push('<span class="tag warn">No update in '+sinceUpd(i)+' days</span>');
+  return t.join(" ")}
+function icard(i){return '<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+esc(i.id)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(i.hotel)+' · '+(i.loc?esc(i.loc):"no location")+' · '+esc(CATS[i.cat]||"Other")+'</div><div class="itags">'+tagsFor(i)+'</div><div class="muted small">'+(i.assignee?"Assigned to "+esc(i.assignee):"Not assigned")+' · opened '+ageDays(i)+'d ago · '+msgCount(i)+' update'+(msgCount(i)===1?"":"s")+'</div></button>'}
+function listHTML(){const f=cur.if||"open",q=(cur.q||"").trim().toLowerCase();
+  let L=scope().filter(i=>{
+    if(q){const hay=[i.id,i.title,i.loc,i.hotel,i.assignee,i.desc,CATS[i.cat],lastVendor(i)].join(" ").toLowerCase();return hay.indexOf(q)>=0}
+    if(f==="open")return isOpen(i);if(f==="closed")return !isOpen(i);if(f==="unassigned")return isOpen(i)&&!i.assignee;if(f==="overdue")return overdue(i);if(f==="approval")return pendAppr(i);return true});
+  L.sort((a,b)=>{const ao=isOpen(a),bo=isOpen(b);if(ao!==bo)return ao?-1:1;return ao?cmpOpen(a,b):lastClose(b).at-lastClose(a).at});
+  return (q?'<div class="muted small">Searching open and closed tickets for "'+esc(cur.q.trim())+'": '+L.length+' found</div>':"")+(L.length?L.map(icard).join(""):'<div class="card" style="padding:18px">Nothing here.</div>')}
+function roleBar(showHotel){const hs=hotels();
+  return '<div class="row" style="margin-top:10px"><span class="small muted">Preview as</span>'+Object.keys(ROLES).map(k=>'<button class="chip" data-act="i:role" data-r="'+k+'" aria-pressed="'+(I.role===k)+'">'+ROLES[k]+'</button>').join("")
+   +(showHotel?'<select id="ihotel" aria-label="Hotel" style="width:auto;min-width:200px">'+(I.role!=="hotel"?'<option value="">All hotels</option>':"")+hs.map(n=>'<option'+(I.hotel===n?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select>':"")+'</div><div class="small muted" style="margin-top:4px">In the real version, your login decides what you see.</div>'}
+function issuesNav(){const od=I.issues.filter(overdue).length;
+  return '<nav class="nav" aria-label="Sections"><button data-act="i:tab" data-v="list" '+(I.view!=="port"?'aria-current="page"':"")+'>Issues</button><button data-act="i:tab" data-v="port" '+(I.view==="port"?'aria-current="page"':"")+'>Rollup'+(od&&I.role!=="hotel"?'<span class="badge">'+od+'</span>':"")+'</button><button data-act="go" data-m="home">Home</button></nav>'}
+function viewIssues(){const L=scope(),open=L.filter(isOpen),f=cur.if||"open";
+  const c={open:open.length,unassigned:open.filter(i=>!i.assignee).length,overdue:open.filter(overdue).length,approval:open.filter(pendAppr).length,closed:L.length-open.length};
+  let h=header(I.hotel||"All hotels","Facility issues",ROLES[I.role])+'<div class="demo">Prototype: emails and reminders are previewed, not sent. Data stays on this device.</div>'+roleBar(true);
+  if(canCreate())h+='<div style="margin-top:12px"><button class="btn" data-act="i:new" style="width:100%">+ Report an issue</button></div>';
+  h+='<div class="chips" role="group" aria-label="Filter tickets">'+[["open","Open",c.open],["unassigned","Unassigned",c.unassigned],["overdue","Past due",c.overdue],["approval","Waiting approval",c.approval],["closed","Closed",c.closed]].map(x=>'<button class="chip" data-act="i:filter" data-f="'+x[0]+'" aria-pressed="'+(f===x[0]&&!(cur.q||"").trim())+'">'+x[1]+' ('+x[2]+')</button>').join("")+'</div>';
+  h+='<input type="search" id="isearch" placeholder="Find a room, vendor, or word (searches closed tickets too)" value="'+esc(cur.q||"")+'" aria-label="Search tickets"><div id="ilist" class="list" style="margin-top:12px">'+listHTML()+'</div>';
+  return h}
+function kv(a,b){return '<div><span>'+esc(a)+'</span><b>'+esc(b)+'</b></div>'}
+function apprCard(i){const a=i.appr;if(!a)return"";
+  const tag=a.st==="pending"?'<span class="tag warn">Waiting for '+esc(approver(a.amt))+'</span>':a.st==="approved"?'<span class="tag ok">Approved</span>':'<span class="tag bad">Denied</span>';
+  return '<div class="card" style="padding:14px 16px;display:grid;gap:8px;margin-top:12px"><div class="row" style="justify-content:space-between"><b style="font:700 22px var(--display);letter-spacing:.04em;text-transform:uppercase">Spend approval · '+money(a.amt)+'</b>'+tag+'</div>'
+   +'<div class="small">'+(a.vendor?'Vendor / quote: '+esc(a.vendor)+'<br>':"")+(a.why?esc(a.why)+'<br>':"")+'<span class="muted">Requested by '+esc(a.by)+' on '+fd(a.at)+(a.dec?" · "+(a.st==="approved"?"Approved":"Denied")+" by "+esc(a.dec)+" on "+fd(a.decAt)+(a.note?": "+esc(a.note):""):"")+'</span></div>'
+   +(a.st==="pending"&&canApprove()?'<div class="row"><button class="btn good" data-act="i:decide" data-v="approved">Approve</button><button class="btn sec" data-act="i:decide" data-v="denied">Deny</button></div>':"")+'</div>'}
+function thread(i){return '<div class="thr">'+i.events.map((e,k)=>{
+  if(e.type==="sys")return '<div class="msg sys">• '+esc(e.text)+' <span class="when">'+fdt(e.t)+'</span>'+(e.photo?'<img alt="Attached photo" data-act="i:zoom" data-k="e'+k+'" src="'+e.photo+'">':"")+'</div>';
+  return '<div class="msg"><div class="row" style="justify-content:space-between"><span class="who2">'+esc(e.by)+(e.role?' <span class="tag mute">'+esc(ROLES[e.role]||e.role)+'</span>':"")+'</span><span class="when">'+fdt(e.t)+'</span></div><div>'+esc(e.text).replace(/\n/g,"<br>")+'</div>'+(e.photo?'<img alt="Attached photo" data-act="i:zoom" data-k="e'+k+'" src="'+e.photo+'">':"")+'</div>'}).join("")+'</div>'}
+function viewTicket(){const i=getI(cur.tk);if(!i){cur.tk=null;return viewIssues()}
+  const open=isOpen(i);
+  let h='<div class="cbar"><button class="btn sec" data-act="i:list">← Issues</button><h2>'+esc(i.id)+'</h2><span class="muted small">'+esc(i.hotel)+' · '+esc(ROLES[I.role])+'</span></div>';
+  h+='<div class="card" style="padding:16px;display:grid;gap:12px"><div style="font:700 28px/1.1 var(--display);letter-spacing:.02em">'+esc(i.title)+'</div><div class="itags">'+tagsFor(i)+'</div>'
+   +'<div class="kv">'+kv("Location",i.loc||"Not set")+kv("Category",CATS[i.cat]||"Other")+kv("Assigned to",i.assignee||"Not assigned")+kv("Due",i.due?fdy(i.due):"Not set")+kv("Reported by",i.by+" · "+fd(i.created))+kv(open?"Open for":"Was open for",ageDays(i)+" days")+'</div></div>';
+  /* actions */
+  const acts=[];
+  if(open&&canEdit())acts.push('<button class="btn sec" data-act="i:edit">Assign / edit</button>');
+  if(open&&canCreate()&&(!i.appr||i.appr.st==="denied"))acts.push('<button class="btn sec" data-act="i:reqappr">Request approval</button>');
+  if(open&&canClose())acts.push('<button class="btn good" data-act="i:close">Close ticket</button>');
+  if(!open&&canClose())acts.push('<button class="btn" data-act="i:reopen">Reopen ticket</button>');
+  if(acts.length)h+='<div class="row" style="margin-top:12px">'+acts.join("")+'</div>';
+  if(i.lpi){const li=lpFind(i.lpi);if(li)h+='<div class="histbox" style="margin-top:12px"><div class="small"><b>Linked license or permit:</b> '+esc(lpLabel(li))+'</div><button class="linkbtn" data-act="l:openitem" data-id="'+esc(li.id)+'">Open the license record</button></div>'}
+  if(i.confirm){h+='<div class="warnbox" style="margin-top:12px">Mitti has a resolved date on this ticket but still shows it open. Close it here if the work is done, or <button class="linkbtn" data-act="i:keep">keep it open</button>.</div>'}
+  /* warranty + history */
+  const ws=warrantyFor(i);
+  ws.forEach(w=>{h+='<div class="warnbox" style="margin-top:12px">⚠ '+(w.same?"Warranty may apply":"Warranty on file at this location")+': '+esc(w.c.vendor||"vendor")+' did "'+esc(w.t.title)+'" ('+esc(w.t.id)+', closed '+fdy(w.c.at)+') and it is covered through <b>'+fdy(w.c.warrantyTo)+'</b>. Call them before paying for a repeat repair.</div>'});
+  const hs=history(i);
+  if(hs.length)h+='<div class="histbox" style="margin-top:12px"><div class="small"><b>Earlier tickets for '+esc(i.loc)+' ('+hs.length+')</b></div>'+hs.slice(0,6).map(o=>{const c=lastClose(o),st=isOpen(o)?"open":"closed "+fdy(c.at);return '<button class="linkbtn" data-act="i:open" data-id="'+esc(o.id)+'">'+esc(o.id)+' · '+esc(o.title)+' · '+st+'</button>'+(c&&!isOpen(o)?'<div class="small muted" style="margin-top:-4px">'+esc(c.what)+(c.vendor?" Vendor: "+esc(c.vendor)+".":"")+(c.cost?" "+money(c.cost)+".":"")+(c.warrantyTo?" Warranty through "+fdy(c.warrantyTo)+".":"")+'</div>':"")}).join("")+'</div>';
+  /* details */
+  const blocks=[["What is wrong",i.desc],["What needs to happen",i.need],["Likely cause",i.cause]].filter(b=>b[1]);
+  if(blocks.length||i.photos.length)h+='<div class="card" style="padding:14px 16px;display:grid;gap:10px;margin-top:12px">'+blocks.map(b=>'<div><div class="small muted">'+b[0]+'</div><div>'+esc(b[1]).replace(/\n/g,"<br>")+'</div></div>').join("")+(i.photos.length?'<div class="thumbs">'+i.photos.map((p,k)=>'<img alt="Ticket photo '+(k+1)+'" data-act="i:zoom" data-k="p'+k+'" src="'+p+'">').join("")+'</div>':"")+'</div>';
+  h+=apprCard(i);
+  h+='<div class="h2">Updates</div>'+thread(i);
+  h+='<div class="card" style="padding:14px;display:grid;gap:10px;margin-top:12px"><label for="ctext" class="small muted">Add an update for everyone on this ticket</label><textarea id="ctext" placeholder="What happened, who you talked to, what is next">'+esc(cur.cdraft||"")+'</textarea>'
+   +(cur.cphoto?'<div class="thumbs"><img src="'+cur.cphoto+'" alt="Photo to attach"></div>':"")
+   +'<div class="row"><label class="btn sec" for="cph">📷 Add photo<input type="file" id="cph" accept="image/*" data-photo="cph" style="position:absolute;opacity:0;width:1px;height:1px"></label><button class="btn" data-act="i:send" style="flex:1">Post update</button></div><div class="small muted">Posting emails the assignee, the person who reported it, and the GM.</div></div>';
+  return h}
+
+function viewPort(){
+  const L=I.role==="hotel"?scope():I.issues,open=L.filter(isOpen),od=open.filter(overdue),un=open.filter(i=>!i.assignee),pe=open.filter(pendAppr),old=open.filter(i=>ageDays(i)>90),pamt=pe.reduce((s,i)=>s+i.appr.amt,0);
+  let h=header(I.role==="hotel"?I.hotel:"All hotels","Facility rollup",ROLES[I.role])+roleBar(false);
+  h+='<div class="card" style="padding:16px;margin-top:12px"><div class="stat"><div><b>'+open.length+'</b><span class="muted small">open</span></div><div><b>'+od.length+'</b><span class="muted small">past due</span></div><div><b>'+un.length+'</b><span class="muted small">unassigned</span></div><div><b>'+pe.length+'</b><span class="muted small">waiting approval ('+money(pamt)+')</span></div><div><b>'+old.length+'</b><span class="muted small">open 90+ days</span></div></div></div>';
+  const H=Array.from(new Set(open.map(i=>i.hotel))).sort((a,b)=>open.filter(i=>i.hotel===b&&overdue(i)).length-open.filter(i=>i.hotel===a&&overdue(i)).length||(a<b?-1:1));
+  h+='<div class="h2">By hotel</div><div class="card scroll"><table><thead><tr><th>Hotel</th><th class="n">Open</th><th class="n">Past due</th><th class="n">Unassigned</th><th class="n">Approval</th><th class="n">Oldest (days)</th></tr></thead><tbody>'+(H.length?H.map(n=>{const o=open.filter(i=>i.hotel===n);return '<tr><td>'+esc(n)+'</td><td class="n">'+o.length+'</td><td class="n">'+o.filter(overdue).length+'</td><td class="n">'+o.filter(i=>!i.assignee).length+'</td><td class="n">'+o.filter(pendAppr).length+'</td><td class="n">'+Math.max.apply(null,o.map(ageDays))+'</td></tr>'}).join(""):'<tr><td colspan="6" class="muted">No open tickets.</td></tr>')+'</tbody></table></div>';
+  const B=[["0 to 30 days",0,30],["31 to 90",31,90],["91 to 180",91,180],["181 to 365",181,365],["Over a year",366,99999]].map(b=>[b[0],open.filter(i=>ageDays(i)>=b[1]&&ageDays(i)<=b[2]).length]),mx=Math.max(1,Math.max.apply(null,B.map(b=>b[1])));
+  h+='<div class="h2">How long tickets have been open</div><div class="card" style="padding:12px 16px">'+B.map(b=>'<div class="bucket"><span class="small">'+b[0]+'</span><div class="bar"><i style="width:'+Math.round(b[1]/mx*100)+'%"></i></div><b>'+b[1]+'</b></div>').join("")+'</div>';
+  if(pe.length)h+='<div class="h2">Waiting for approval</div><div class="list">'+pe.sort((a,b)=>b.appr.amt-a.appr.amt).map(i=>'<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+money(i.appr.amt)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(i.hotel)+' · asked '+days(TODAY,dayOf(i.appr.at))+' days ago · goes to '+esc(approver(i.appr.amt))+'</div></button>').join("")+'</div>';
+  const R=remind(L);
+  h+='<div class="h2">What the system would send today</div><p class="muted small" style="margin-top:-4px">Each rule emails a person so nobody has to chase tickets by hand.</p><div class="card scroll"><table><thead><tr><th>Rule</th><th>Goes to</th><th class="n">Tickets</th></tr></thead><tbody>'+R.map(r=>'<tr><td>'+esc(r.rule)+(r.items.length?'<div class="row" style="margin-top:6px;gap:6px">'+r.items.slice(0,6).map(i=>'<button class="linkbtn" data-act="i:open" data-id="'+esc(i.id)+'" style="min-height:0">'+esc(i.id)+'</button>').join("")+(r.items.length>6?'<span class="muted small">+'+(r.items.length-6)+' more</span>':"")+'</div>':"")+'</td><td>'+esc(r.to)+'</td><td class="n">'+r.items.length+'</td></tr>').join("")+'</tbody></table></div>';
+  const closedWk=L.filter(i=>!isOpen(i)&&days(TODAY,dayOf(lastClose(i).at))<=7).length,top=od.slice().sort((a,b)=>overdueDays(b)-overdueDays(a)).slice(0,5);
+  h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GM, HPD, Corp Facilities Director\nSubject: Facility issues · "+(I.role==="hotel"?I.hotel:"all hotels")+" · week of "+fd(TODAY)+"\n\n"+open.length+" open · "+od.length+" past due · "+un.length+" unassigned · "+pe.length+" waiting on approval ("+money(pamt)+"). "+closedWk+" closed in the last 7 days.\n"+(top.length?"\nMost overdue:\n"+top.map(i=>" - "+i.id+" "+i.hotel+": "+i.title+" ("+overdueDays(i)+" days past due"+(i.assignee?", "+i.assignee:", unassigned")+")").join("\n"):"\nNothing is past due."))+'</pre></div>';
+  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px"><p class="small" style="margin:0 0 8px"><b>Due dates start from priority:</b> Urgent '+I.sla.urgent+' days, High '+I.sla.high+', Medium '+I.sla.med+', Low '+I.sla.low+'. Proposed, you set them.</p><p class="small" style="margin:0 0 8px"><b>Routing:</b> every new ticket goes to the default facilities contact for that hotel, so nothing sits unassigned. Facilities can reassign.</p><p class="small" style="margin:0 0 8px"><b>Spend approval:</b> under '+money(I.lim.dir)+' goes to the Facilities Lead, '+money(I.lim.dir)+' and up to the Corp Facilities Director, '+money(I.lim.own)+' and up to Ownership as capital. Proposed thresholds.</p><p class="small" style="margin:0"><b>Closed tickets stay searchable</b> by room, vendor and word, with cost and warranty dates, so a repeat problem shows what was done last time.</p></div>';
+  h+='<div class="h2">Data</div><div class="card" style="padding:16px;display:grid;gap:12px"><div class="small muted">Import your Mitti export to see your real tickets here. The file is read in this browser and stays on this device. Nothing is uploaded.</div><div class="row"><label class="btn" for="icsv">Import Mitti export (CSV)<input type="file" id="icsv" accept=".csv,text/csv" style="position:absolute;opacity:0;width:1px;height:1px"></label><button class="btn sec" data-act="i:export">Export tickets (CSV)</button><button class="btn sec" data-act="i:resetI">Reset to demo tickets</button></div></div>';
+  return h}
+function remind(L){const open=L.filter(isOpen);
+  return[
+   {rule:"Nobody assigned after 2 days",to:"Facilities Lead",items:open.filter(i=>!i.assignee&&ageDays(i)>=2)},
+   {rule:"Past due",to:"Assignee, hotel GM and HPD (daily for Urgent and High)",items:open.filter(overdue)},
+   {rule:"Waiting on approval for 3+ days",to:"The approver for that amount",items:open.filter(i=>pendAppr(i)&&days(TODAY,dayOf(i.appr.at))>=3)},
+   {rule:"No update in 7+ days",to:"Assignee",items:open.filter(i=>i.assignee&&sinceUpd(i)>=7)},
+   {rule:"Fire, life safety or elevator that is past due or unassigned",to:"Corp Facilities Director, same day",items:open.filter(i=>LIFE[i.cat]&&(overdue(i)||!i.assignee))},
+   {rule:"No priority set",to:"Facilities Lead",items:open.filter(i=>!i.pri)}].concat(open.some(i=>i.confirm)?[{rule:"Marked resolved in Mitti but still open",to:"Facilities Lead to confirm",items:open.filter(i=>i.confirm)}]:[])}
+function mod(m,ic,name,sub,on){return '<button class="mod" '+(on?'data-act="go" data-m="'+m+'"':"disabled")+'><span class="ic" aria-hidden="true">'+ic+'</span><b>'+name+'</b><span class="muted">'+esc(sub)+'</span></button>'}
+function viewHome(){const sc=scope(),open=sc.filter(isOpen),od=open.filter(overdue).length,c=counts();
+  return '<div class="top"><div><h1>PRESERVE</h1><div class="sub">Hawkeye Hotels · OKCAL pilot</div></div>'+(S.tech?'<button class="who" data-act="who" aria-label="Change name">'+esc(S.tech)+' ▾</button>':"")+'</div><div class="demo">Prototype: nothing here is sent anywhere yet. Data stays on this device.</div>'
+   +'<div class="mods">'+mod("issues","🛠️","Facility issues",open.length+" open"+(od?" · "+od+" past due":""),true)+mod("pm","✅","Preventive maintenance",Q.key.slice(0,4)+" Q"+Q.q+" · "+c.done+" of "+ROOMS.length+" rooms done",true)+mod("","🧼","Deep clean","Coming 2027",false)+mod("lpi","📄","Licenses, permits and inspections",lpHome(),true)+'</div>'}
+
+/* ---- sheets ---- */
+function catFromSec(s){return /HVAC/i.test(s)?"hvac":/Bathroom/i.test(s)?"plumb":/Electrical|Lighting/i.test(s)?"elec":/Smoke|Sprinkler/i.test(s)?"fire":/Walls|Window/i.test(s)?"bldg":"other"}
+function openNew(pre){pre=pre||{};const hs=hotels(),hot=pre.hotel||(I.role==="hotel"?I.hotel:(I.hotel||hs[0]));if(hs.indexOf(hot)<0){hs.push(hot);hs.sort()}
+  cur.pending={kind:"issue",photos:(pre.photos||[]).slice(),fromRepair:pre.fromRepair||null,fromLpi:pre.fromLpi||null,f:{hotel:hot,loc:pre.loc||"",cat:pre.cat||"",pri:"",title:pre.title||"",desc:pre.desc||"",need:"",appr:false,amt:"",vendor:"",why:""}};
+  const f=cur.pending.f;
+  sheet('<h3>Report an issue</h3>'
+   +'<div><label class="small muted" for="nh">Hotel</label>'+(I.role==="hotel"?'<div><b>'+esc(hot)+'</b></div>':'<select id="nh" data-f="hotel">'+hs.map(n=>'<option'+(n===hot?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select>')+'</div>'
+   +'<div><label class="small muted" for="nloc">Where? Room number or area</label><input type="text" id="nloc" data-f="loc" list="locs" placeholder="214, Lobby, Pool" autocomplete="off" value="'+esc(f.loc)+'"><datalist id="locs">'+AREAS.map(a=>'<option value="'+esc(a)+'">').join("")+ROOMS.map(r=>'<option value="'+r.n+'">').join("")+'</datalist><div id="lochist" style="display:grid;gap:8px;margin-top:8px"></div></div>'
+   +'<div><label class="small muted" for="ncat">What kind of problem?</label><select id="ncat" data-f="cat"><option value="">Choose…</option>'+Object.keys(CATS).map(k=>'<option value="'+k+'"'+(f.cat===k?" selected":"")+'>'+CATS[k]+'</option>').join("")+'</select></div>'
+   +'<div><div class="small muted" style="margin-bottom:6px">How urgent?</div><div class="pri" id="npri">'+PORD.map(k=>'<button class="tgl" data-act="i:pri" data-p="'+k+'" aria-pressed="false"><span><b>'+PRI[k]+'</b><br><span class="muted small" style="font-weight:400">'+PHELP[k]+'</span></span></button>').join("")+'</div></div>'
+   +'<div><label class="small muted" for="ntitle">Short title</label><input type="text" id="ntitle" data-f="title" placeholder="Hot water out on the 3rd floor" value="'+esc(f.title)+'"></div>'
+   +'<div><label class="small muted" for="ndesc">What is wrong?</label><textarea id="ndesc" data-f="desc" placeholder="What you see, when it started, who is affected">'+esc(f.desc)+'</textarea></div>'
+   +'<div><label class="small muted" for="nneed">What do you think needs to happen? (optional)</label><textarea id="nneed" data-f="need"></textarea></div>'
+   +'<div><div class="thumbs" id="nthumbs"></div><label class="photo" for="iph" id="iphlab"><input type="file" id="iph" accept="image/*" data-photo="iph"><span style="font-size:30px;width:64px;text-align:center">📷</span><span><b>Add a photo</b><br><span class="muted small" id="iphn">Up to 5. Take one or choose from your photos.</span></span></label></div>'
+   +'<button class="tgl" data-act="i:needappr" aria-pressed="false">This needs a spend approval<i>No</i></button>'
+   +'<div id="appr" style="display:grid;gap:10px"><div><label class="small muted" for="namt">Estimated cost ($)</label><input type="number" id="namt" data-f="amt" inputmode="decimal" min="0" placeholder="3800"><div class="small muted" id="apprwho" style="margin-top:4px"></div></div><div><label class="small muted" for="nven">Vendor / quote</label><input type="text" id="nven" data-f="vendor" placeholder="Vendor name and quote number"></div><div><label class="small muted" for="nwhy">Why is this needed?</label><textarea id="nwhy" data-f="why"></textarea></div></div>'
+   +'<div class="row"><button class="btn" id="nsave" data-act="i:savenew" style="flex:1" disabled>Send to facilities team</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');
+  if($("#appr"))$("#appr").style.display="none";
+  thumbsNew();lochist();chkNew()}
+function newOk(){const f=cur.pending.f;return !!(f.hotel&&f.loc.trim()&&f.cat&&f.pri&&f.title.trim()&&(!f.appr||+f.amt>0))}
+function chkNew(){const b=$("#nsave");if(b)b.disabled=!newOk()}
+function apprwho(){const el=$("#apprwho"),a=+cur.pending.f.amt;if(el)el.textContent=a>0?"Goes to: "+approver(a):""}
+function thumbsNew(){const t=$("#nthumbs");if(!t)return;t.innerHTML=cur.pending.photos.map((p,k)=>'<img src="'+p+'" alt="Photo '+(k+1)+'">').join("");const n=cur.pending.photos.length,lab=$("#iphlab");if(lab)lab.hidden=n>=5;const m=$("#iphn");if(m)m.textContent=n?n+" of 5 added. Add another if it helps.":"Up to 5. Take one or choose from your photos."}
+function lochist(){const el=$("#lochist");if(!el||!cur.pending||!cur.pending.f)return;const f=cur.pending.f;if(!f.loc.trim()){el.innerHTML="";return}
+  const p={id:"",hotel:f.hotel,loc:fixLoc(f.loc),cat:f.cat},hs=history(p),ws=warrantyFor(p);let h="";
+  h+=ws.map(w=>'<div class="warnbox">⚠ Warranty may still apply: '+esc(w.c.vendor||"vendor")+" · "+esc(w.t.title)+" ("+esc(w.t.id)+") · through "+fdy(w.c.warrantyTo)+". Call them before paying for a repeat repair.</div>").join("");
+  if(hs.length)h+='<div class="histbox"><div class="small"><b>'+hs.length+" earlier ticket"+(hs.length>1?"s":"")+" for "+esc(fixLoc(f.loc))+".</b> Check before filing a new one.</div>"+hs.slice(0,3).map(o=>'<button class="linkbtn" data-act="i:open" data-id="'+esc(o.id)+'">'+esc(o.id)+" · "+esc(o.title)+" · "+(isOpen(o)?"open":"closed "+fd(lastClose(o).at))+"</button>").join("")+"</div>";
+  el.innerHTML=h}
+function openEdit(i){cur.pending={kind:"edit",id:i.id};const opt=(v,t,s)=>'<option value="'+esc(v)+'"'+(s?" selected":"")+'>'+esc(t)+'</option>';
+  sheet('<h3>Assign / edit</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div>'
+   +'<div><label class="small muted" for="eas">Assigned to</label><select id="eas">'+opt("","Unassigned",!i.assignee)+I.team.map(n=>opt(n,n,n===i.assignee)).join("")+'</select><input type="text" id="eas2" placeholder="Not on the list? Type a name" style="margin-top:8px"></div>'
+   +'<div><label class="small muted" for="epri">Priority</label><select id="epri">'+(i.pri?"":opt("","Choose…",true))+PORD.map(k=>opt(k,PRI[k],k===i.pri)).join("")+'</select></div>'
+   +'<div><label class="small muted" for="edue">Due date (set from priority, change if needed)</label><input type="date" id="edue" value="'+esc(i.due)+'"></div>'
+   +'<div><label class="small muted" for="ecat">Category</label><select id="ecat">'+Object.keys(CATS).map(k=>opt(k,CATS[k],k===i.cat)).join("")+'</select></div>'
+   +'<div class="row"><button class="btn" data-act="i:saveedit" style="flex:1">Save</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+function openAppr(i){cur.pending={kind:"appr",id:i.id};
+  sheet('<h3>Request approval</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="aamt">Estimated cost ($)</label><input type="number" id="aamt" inputmode="decimal" min="0" placeholder="3800"><div class="small muted" id="aw" style="margin-top:4px"></div></div><div><label class="small muted" for="aven">Vendor / quote</label><input type="text" id="aven" placeholder="Vendor name and quote number"></div><div><label class="small muted" for="awhy">Why is this needed?</label><textarea id="awhy"></textarea></div><div class="row"><button class="btn" id="asave" data-act="i:saveappr" style="flex:1" disabled>Send for approval</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+function openDecide(i,v){cur.pending={kind:"decide",id:i.id,v:v};
+  sheet('<h3>'+(v==="approved"?"Approve ":"Deny ")+money(i.appr.amt)+'</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="dnote">'+(v==="approved"?"Note (optional)":"Reason (required)")+'</label><textarea id="dnote"></textarea></div><div class="row"><button class="btn '+(v==="approved"?"good":"")+'" data-act="i:savedecide" style="flex:1">'+(v==="approved"?"Approve, go ahead":"Deny")+'</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+function openClose(i){cur.pending={kind:"close",id:i.id,photo:null};
+  sheet('<h3>Close ticket</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="cwhat">What was done? (required)</label><textarea id="cwhat" placeholder="What fixed it, in a sentence or two"></textarea></div><div><label class="small muted" for="cven">Who did the work? (vendor name, or leave blank for in-house)</label><input type="text" id="cven"></div><div><label class="small muted" for="ccost">Cost ($, optional)</label><input type="number" id="ccost" inputmode="decimal" min="0"></div><div><label class="small muted" for="cwar">Warranty through (optional)</label><input type="date" id="cwar"><div class="small muted" style="margin-top:4px">If this problem comes back before this date, the new ticket shows a warranty warning.</div></div><div><div class="thumbs" id="cthumb"></div><label class="photo" for="cph2"><input type="file" id="cph2" accept="image/*" data-photo="cph2"><span style="font-size:30px;width:64px;text-align:center">📷</span><span><b>After photo (optional)</b></span></label></div><div class="row"><button class="btn good" data-act="i:saveclose" style="flex:1">Close ticket</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+function openReopen(i){cur.pending={kind:"reopen",id:i.id};
+  sheet('<h3>Reopen ticket</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="rwhy">What happened? (required)</label><textarea id="rwhy" placeholder="It is happening again, or the fix did not hold"></textarea></div><div class="row"><button class="btn" data-act="i:savereopen" style="flex:1">Reopen</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+
+/* ---- Mitti CSV import (browser only) ---- */
+function parseCSV(t){const rows=[];let row=[],f="",q=false;if(t.charCodeAt(0)===0xFEFF)t=t.slice(1);
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===","){row.push(f);f=""}
+    else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;row.push(f);rows.push(row);row=[];f=""}else f+=c}
+  if(f!==""||row.length){row.push(f);rows.push(row)}return rows}
+function pdt(s){const m=/^(\d{1,2})\s+([A-Za-z]{3})\w*\s+(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/.exec((s||"").trim());if(!m)return null;
+  const mo=MON.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());if(mo<0)return null;return new Date(+m[3],mo,+m[1],+(m[4]||0),+(m[5]||0)).getTime()}
+function guessCat(t){return /\bFLS\b|fire|sprinkler|smoke|alarm|extinguish/i.test(t)?"fire":/elevator/i.test(t)?"elev":/pool|dehumid|\bspa\b/i.test(t)?"pool":/washer|dryer|laundry|fridge|refrigerator/i.test(t)?"laundry":/\broof\b|brick|balcony|canopy|parking|crater|window|door|ceiling/i.test(t)?"bldg":/leak|water|plumb|pipe|sink|toilet|\btub\b|drain|grinder|softener|boiler/i.test(t)?"plumb":/\bAC\b|HVAC|RTU|VTAC|PTAC|heat|furnace|AHU|thermostat|cooling|compressor|mini.?split|chiller|rooftop|exhaust|vent|a\/c/i.test(t)?"hvac":/light|sign\b|electric|outlet|driver/i.test(t)?"elec":"other"}
+function guessLoc(t,d){let m=/(?:room|rm)s?\s*#?\s*(\d{3,4})\b/i.exec(t)||/(?:room|rm)s?\s*#?\s*(\d{3,4})\b/i.exec(d);if(m)return "Room "+m[1];
+  m=/\b(\d{3})\b/.exec(t);if(m&&t.length<45)return "Room "+m[1];
+  const x=t+" "+d;return /\bpool\b|dehumid/i.test(x)?"Pool":/lobby/i.test(x)?"Lobby":/fitness/i.test(x)?"Fitness center":/laundry|washer|dryer/i.test(x)?"Laundry":/elevator/i.test(x)?"Elevators":/\broof\b/i.test(x)?"Roof":/parking|garage/i.test(x)?"Parking lot":/kitchen|breakfast/i.test(x)?"Breakfast / kitchen":""}
+function mapMitti(rows){if(rows.length<2)return[];const hd=rows[0].map(s=>s.trim()),ix=n=>hd.indexOf(n);if(ix("Unique ID")<0||ix("Title")<0)return[];
+  const g=(r,n)=>{const k=ix(n);return k<0?"":(r[k]||"").trim()},out=[];
+  rows.slice(1).forEach(r=>{if(r.length<3)return;const catRaw=g(r,"Category"),site=g(r,"Site");if(/test/i.test(catRaw+" "+site))return;
+    const hotel=(site||catRaw.replace(/^CMR\s*-\s*/i,"")).trim()||"Unknown",title=g(r,"Title"),desc=g(r,"Description");
+    const created=pdt(g(r,"Created"))||Date.now(),upd=pdt(g(r,"Last updated"))||created,due=pdt(g(r,"Due date")),res=pdt(g(r,"Resolved at"));
+    const pri={High:"high",Medium:"med",Low:"low"}[g(r,"Priority")]||null,closed=/clos|resolv|done|complete/i.test(g(r,"Status")),by=g(r,"Created by")||"Unknown",as=g(r,"Assignee");
+    const i=mkI(g(r,"Unique ID")||("IM-"+out.length),{hotel:hotel,loc:guessLoc(title,desc),cat:guessCat(title+" "+desc),pri:pri,title:title,desc:desc,need:g(r,"What needs to be done?"),cause:g(r,"What caused it?"),created:created,by:by,assignee:as,due:due?iso(new Date(due)):"",src:"mitti",confirm:!closed&&!!res,updated:upd,events:[sysE(created,"Imported from Mitti · created by "+by,by,"")]});
+    if(closed){const c={at:res||upd,by:as||"Mitti",what:"Closed in Mitti",vendor:"",cost:0,warrantyTo:""};i.closes.push(c);i.closedAt=c.at}
+    out.push(i)});
+  return out}
+function importFile(file){const fr=new FileReader();
+  fr.onload=()=>{let list=[];try{list=mapMitti(parseCSV(String(fr.result)))}catch(e){list=[]}
+    if(!list.length){sheet('<h3>Nothing to import</h3><p class="muted" style="margin:0">I did not find the Mitti columns in that file. On the Mitti Issues page, use the download button to export the list as CSV.</p><button class="btn" data-act="closesheet">OK</button>');return}
+    cur.pending={kind:"import",list:list};const open=list.filter(isOpen);
+    sheet('<h3>Import '+list.length+' issues?</h3><p style="margin:0">'+new Set(list.map(i=>i.hotel)).size+' hotels · '+open.filter(i=>!i.assignee).length+' unassigned · '+open.filter(i=>!i.due).length+' with no due date · '+open.filter(overdue).length+' past due · '+open.filter(i=>i.confirm).length+' to confirm (marked resolved in Mitti but still open).</p><p class="muted small" style="margin:0">This replaces the demo tickets on this device only. Nothing is uploaded anywhere.</p><div class="row"><button class="btn" data-act="i:doimport" style="flex:1">Import</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')};
+  fr.readAsText(file)}
+function exportCSV(){const cols=["ID","Hotel","Location","Category","Priority","Status","Assignee","Due","Created","Created by","Title","Description","Closed","Vendor","Cost","Warranty through"],q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const rows=I.issues.map(i=>{const c=lastClose(i);return[i.id,i.hotel,i.loc,CATS[i.cat],i.pri?PRI[i.pri]:"",isOpen(i)?"Open":"Closed",i.assignee,i.due,iso(new Date(i.created)),i.by,i.title,i.desc,(c&&!isOpen(i))?iso(new Date(c.at)):"",c?c.vendor:"",c?c.cost:"",c?c.warrantyTo:""].map(q).join(",")});
+  const blob=new Blob([cols.map(q).join(",")+"\n"+rows.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="facility-issues.csv";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600)}
+
+/* ---- actions ---- */
+function iact(a,ds,el,ev){
+  if(a==="tab"){I.view=ds.v;cur.tk=null;saveI();render();return}
+  if(a==="role"){I.role=ds.r;if(I.role==="hotel"&&!I.hotel)I.hotel=hotels()[0];saveI();render();return}
+  if(a==="filter"){cur.if=ds.f;cur.q="";render();return}
+  if(a==="open"){closeSheet();cur.mod="issues";cur.tk=ds.id;cur.cdraft="";cur.cphoto=null;render();return}
+  if(a==="list"){cur.tk=null;render();return}
+  if(a==="new"){openNew();return}
+  if(a==="fromrepair"){const r=S.repairs.filter(x=>x.id===ds.r)[0];if(!r)return;const it=ITEMS[r.item];cur.mod="issues";cur.tk=null;I.view="list";if(I.role==="owner")I.role="hotel";if(I.role==="hotel")I.hotel="OKCAL";render();
+    openNew({hotel:"OKCAL",loc:"Room "+r.room,title:(it?it.label:"Repair")+", room "+r.room,desc:r.note||"",cat:catFromSec(it?it.sec:""),photos:r.photo?[r.photo]:[],fromRepair:r.id});return}
+  if(a==="pri"){cur.pending.f.pri=ds.p;$$("#npri .tgl").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===ds.p));chkNew();return}
+  if(a==="needappr"){const f=cur.pending.f;f.appr=!f.appr;el.setAttribute("aria-pressed",f.appr);el.querySelector("i").textContent=f.appr?"Yes":"No";$("#appr").style.display=f.appr?"grid":"none";chkNew();return}
+  if(a==="savenew"){if(!newOk())return;const f=cur.pending.f,now=Date.now(),id="FI-"+(I.seq++),as=I.defAssignee;
+    const i=mkI(id,{hotel:f.hotel,loc:fixLoc(f.loc),cat:f.cat,pri:f.pri,title:f.title.trim(),desc:f.desc.trim(),need:f.need.trim(),created:now,by:S.tech,assignee:as,events:[sysE(now,"Ticket created by "+S.tech,S.tech,I.role),sysE(now,"Routed to "+as+" (default for "+f.hotel+")")]});
+    i.photos=cur.pending.photos.slice();
+    if(f.appr){i.appr={amt:+f.amt,vendor:f.vendor.trim(),why:f.why.trim(),by:S.tech,at:now,st:"pending",dec:"",decAt:null,note:""};i.events.push(sysE(now,"Approval requested: "+money(+f.amt)+" · goes to "+approver(+f.amt),S.tech,I.role))}
+    if(cur.pending.fromRepair){const r=S.repairs.filter(x=>x.id===cur.pending.fromRepair)[0];if(r){r.fac=id;save()}}
+    if(cur.pending.fromLpi){const li=lpFind(cur.pending.fromLpi);if(li){i.lpi=li.id;li.ticket=id;li.log.push({t:now,by:S.tech,text:"Repair ticket "+id+" created."});lpSave();i.events.splice(1,0,sysE(now,"Created from the "+LT[li.t].name+" record",S.tech,I.role))}}
+    I.issues.unshift(i);saveI();cur.mod="issues";cur.tk=id;cur.cdraft="";cur.cphoto=null;
+    sheet('<h3>Sent to facilities</h3><div><b>'+esc(id)+"</b> · "+esc(i.title)+'</div><ul class="small" style="margin:0;padding-left:20px;display:grid;gap:6px"><li>Emailed now: '+esc(as)+' (assigned) and your HPD.</li><li>Due '+fdy(i.due)+' ('+PRI[i.pri]+' priority).</li>'+(i.appr?'<li>Approval request goes to '+esc(approver(i.appr.amt))+'.</li>':"")+'<li>Reminders go out if there is no update for 7 days or it passes its due date.</li><li>The GM, HPD and Corp Facilities Director get the weekly rollup.</li></ul><button class="btn" data-act="closesheet">Done</button>');
+    render();return}
+  const i=cur.tk?getI(cur.tk):null;
+  if(a==="edit"&&i){openEdit(i);return}
+  if(a==="saveedit"&&i){const by=S.tech,as=($("#eas2").value.trim()||$("#eas").value),pri=$("#epri").value||null,due=$("#edue").value||"",cat=$("#ecat").value,ev=[];
+    if(as&&I.team.indexOf(as)<0)I.team.push(as);
+    if(as!==i.assignee){ev.push(as?"Assigned to "+as+" by "+by+" (email sent)":"Unassigned by "+by);i.assignee=as}
+    if(pri!==i.pri){ev.push("Priority "+(i.pri?PRI[i.pri]:"none")+" to "+(pri?PRI[pri]:"none"));i.pri=pri}
+    if(due!==i.due){ev.push(due?"Due date set to "+fdy(due):"Due date cleared");i.due=due}
+    if(cat!==i.cat){ev.push("Category changed to "+CATS[cat]);i.cat=cat}
+    const now=Date.now();ev.forEach(t=>i.events.push(sysE(now,t,by,I.role)));if(ev.length)i.updated=now;saveI();closeSheet();render();return}
+  if(a==="reqappr"&&i){openAppr(i);return}
+  if(a==="saveappr"&&i){const amt=+$("#aamt").value;if(!(amt>0))return;const now=Date.now();i.appr={amt:amt,vendor:$("#aven").value.trim(),why:$("#awhy").value.trim(),by:S.tech,at:now,st:"pending",dec:"",decAt:null,note:""};i.events.push(sysE(now,"Approval requested: "+money(amt)+" · goes to "+approver(amt),S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
+  if(a==="decide"&&i){openDecide(i,ds.v);return}
+  if(a==="savedecide"&&i){const v=cur.pending.v,note=$("#dnote").value.trim();if(v==="denied"&&!note){$("#dnote").placeholder="Add a reason so the hotel knows what to change";$("#dnote").focus();return}
+    const now=Date.now();Object.assign(i.appr,{st:v,dec:S.tech,decAt:now,note:note});i.events.push(sysE(now,S.tech+(v==="approved"?" approved ":" denied ")+money(i.appr.amt)+(note?": "+note:""),S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
+  if(a==="close"&&i){openClose(i);return}
+  if(a==="saveclose"&&i){const what=$("#cwhat").value.trim();if(!what){$("#cwhat").placeholder="Add a short note on what fixed it";$("#cwhat").focus();return}
+    const now=Date.now(),c={at:now,by:S.tech,what:what,vendor:$("#cven").value.trim(),cost:+$("#ccost").value||0,warrantyTo:$("#cwar").value||""};
+    i.closes.push(c);i.closedAt=now;i.confirm=false;const e=sysE(now,closeText(S.tech,c),S.tech,I.role);e.photo=cur.pending.photo||null;i.events.push(e);i.updated=now;saveI();closeSheet();render();return}
+  if(a==="reopen"&&i){openReopen(i);return}
+  if(a==="savereopen"&&i){const why=$("#rwhy").value.trim();if(!why){$("#rwhy").placeholder="Say what happened";$("#rwhy").focus();return}
+    const now=Date.now();i.closedAt=null;i.due=dueFrom(now,i.pri||"med");i.events.push(sysE(now,S.tech+" reopened this: "+why+". New due date "+fdy(i.due)+".",S.tech,I.role));
+    warrantyFor(i).concat(i.closes.filter(c=>c.warrantyTo&&pd(c.warrantyTo)>=TODAY).map(c=>({t:i,c:c}))).slice(0,1).forEach(w=>i.events.push(sysE(now,"Warranty on file: "+(w.c.vendor||"vendor")+" through "+fdy(w.c.warrantyTo)+". Call them first.","","")));
+    i.updated=now;saveI();closeSheet();render();return}
+  if(a==="keep"&&i){i.confirm=false;i.events.push(sysE(Date.now(),S.tech+" confirmed this is still open",S.tech,I.role));i.updated=Date.now();saveI();render();return}
+  if(a==="send"&&i){const t=($("#ctext")?$("#ctext").value:cur.cdraft||"").trim();if(!t&&!cur.cphoto)return;const now=Date.now();i.events.push(msgE(now,S.tech,I.role,t||"Photo added",cur.cphoto));i.updated=now;cur.cdraft="";cur.cphoto=null;saveI();cur.toBottom=true;render();return}
+  if(a==="zoom"&&i){const k=ds.k,src=k.charAt(0)==="p"?i.photos[+k.slice(1)]:i.events[+k.slice(1)].photo;if(src)sheet('<img alt="Photo" src="'+src+'" style="width:100%;border-radius:10px"><button class="btn sec" data-act="closesheet">Close</button>');return}
+  if(a==="doimport"){const list=cur.pending.list;I.issues=list;I.imported=true;list.forEach(x=>{if(x.assignee&&I.team.indexOf(x.assignee)<0)I.team.push(x.assignee)});
+    I.hotel=I.role==="hotel"?hotels().filter(n=>list.some(x=>x.hotel===n))[0]||hotels()[0]:"";cur.if="open";cur.q="";cur.tk=null;I.view="list";saveI();closeSheet();render();return}
+  if(a==="export"){exportCSV();return}
+  if(a==="resetI"){try{localStorage.removeItem(IKEY)}catch(e){}I=freshI();cur.tk=null;cur.if="open";cur.q="";saveI();render();return}
+}
+
+/* ================= LICENSES, PERMITS & INSPECTIONS (prototype) =================
+   One record per hotel per item type. Status comes from the expiration date. The GM uploads the new
+   certificate and date, reminders restart on their own, and a failed inspection becomes a repair ticket. */
+const LPK="pres-lpi-v1";
+const LTYPES=[["hotel","Hotel / motel license",45],["food","Food service license",45],["servsafe","ServSafe manager certificate",60],["pool","Pool / spa permit",45],["cpo","CPO certificate",45],["biz","Business license",45],["elev","Elevator permit",45],["misc","Misc permits",45],["liquor","Liquor license",60],["corp","Corp / LLC report",45],["fire","Fire panel / alarm inspection",45],["ext","Fire extinguisher inspection",45],["spr","Sprinkler inspection",45],["back","Backflow inspection",45],["gen","Generator inspection",45],["boil","Boiler inspection",45]];
+const LT={};LTYPES.forEach(t=>{LT[t[0]]={name:t[1],lead:t[2]}});
+const LPROLE={gm:"GM",hpd:"HPD",corp:"Corporate"};
+var LP=null;
+
+/* ---- demo ticket used by the demo elevator record ---- */
+function demoLpiTicket(){const T=d=>Date.now()-d*864e5;
+  const i=mkI("FI-115",{hotel:"OKCAL",loc:"Elevators",cat:"elev",pri:"high",title:"Elevator inspection: replace door sensor",desc:"Annual state inspection found a failing car door sensor. The part is $439. The permit renewal waits on this repair.",need:"Replace the sensor and schedule the re-inspection.",created:T(13),by:"GM A",assignee:"Facilities Lead",
+    appr:{amt:439,vendor:"Elevator vendor quote",why:"Required to pass the re-inspection.",by:"GM A",at:T(13),st:"pending",dec:"",decAt:null,note:""},
+    events:[sysE(T(13),"Ticket created by GM A from the Elevator permit record","GM A","hotel"),sysE(T(13),"Routed to Facilities Lead (default for OKCAL)"),sysE(T(13),"Approval requested: $439 · goes to Facilities Lead","GM A","hotel")]});
+  i.lpi="OKCAL|elev";return i}
+
+/* ---- state ---- */
+function lpSave(){try{localStorage.setItem(LPK,JSON.stringify(LP))}catch(e){}}
+function lpFresh(){
+  const hs=[{code:"OKCAL",name:"OKCAL",entity:"Demo Lodging LLC",gm:"GM A",hpd:"HPD North",st:"OK"},{code:"DEMOB",name:"Demo Hotel B",entity:"Demo Lodging B LLC",gm:"GM B",hpd:"HPD North",st:"IA"},{code:"DEMOC",name:"Demo Hotel C",entity:"Demo Lodging C LLC",gm:"GM C",hpd:"HPD South",st:"MN"},{code:"DEMOD",name:"Demo Hotel D",entity:"Demo Lodging D LLC",gm:"GM D",hpd:"HPD South",st:"WI"}];
+  const items=[];
+  hs.forEach(h=>LTYPES.forEach(t=>{const r=hash(h.code+t[0])%100;let exp="",na=false;
+    if(["liquor","gen","boil","cpo"].indexOf(t[0])>=0&&r<60)na=true;
+    else if(r<5)exp="";
+    else if(r<17)exp=ahead(-(3+(r*5)%55));
+    else if(r<34)exp=ahead(4+(r*3)%(t[2]-4));
+    else exp=ahead(70+(r*13)%600);
+    items.push({id:h.code+"|"+t[0],h:h.code,t:t[0],exp:exp,na:na,num:"",docs:[],log:[],ticket:null})}));
+  const by=id=>items.filter(x=>x.id===id)[0],T=d=>Date.now()-d*864e5;
+  let x=by("OKCAL|elev");x.exp=ahead(-12);x.ticket="FI-115";x.log.push({t:T(14),by:"GM A",text:"Annual inspection done. The inspector listed one repair: door sensor, $439 part."},{t:T(13),by:"GM A",text:"Repair ticket FI-115 created."});
+  x=by("OKCAL|fire");x.exp=ahead(20);
+  x=by("OKCAL|servsafe");x.exp=ahead(40);
+  x=by("OKCAL|biz");x.exp="";x.na=false;
+  x=by("OKCAL|liquor");x.exp="";x.na=true;
+  x=by("OKCAL|hotel");x.exp=ahead(240);x.num="H-20418";x.log.push({t:T(125),by:"GM A",text:"Renewed: new expiration "+fdy(ahead(240))+" (was "+fdy(ahead(-125))+"). 1 document uploaded."});
+  LP={hotels:hs,items:items,role:"gm",hotel:"OKCAL",hpd:"HPD North",view:"list",imported:false};
+  if(typeof I!=="undefined"&&I&&!I.imported&&!getI("FI-115")){I.issues.unshift(demoLpiTicket());saveI()}
+  return LP}
+function lpLoad(){try{const t=localStorage.getItem(LPK);if(t){const s=JSON.parse(t);if(s&&s.items&&s.hotels)return s}}catch(e){}return lpFresh()}
+LP=lpLoad();
+
+/* ---- derived ---- */
+function lpFind(id){return LP.items.filter(i=>i.id===id)[0]}
+function lpHotel(code){return LP.hotels.filter(h=>h.code===code)[0]}
+function lpItems(code){return LP.items.filter(i=>i.h===code)}
+function lpLead(t){return (LT[t]||{lead:45}).lead}
+function lpStat(it){if(it.na)return{k:"na",rank:5,d:0};if(!it.exp)return{k:"missing",rank:1,d:0};
+  const d=days(pd(it.exp),TODAY);if(d<0)return{k:"past",rank:0,d:-d};if(d<=lpLead(it.t))return{k:"soon",rank:2,d:d};return{k:"ok",rank:4,d:d}}
+function lpKey(it){const s=lpStat(it);return[s.rank,s.k==="past"?-s.d:s.d]}
+function lpCmp(a,b){const x=lpKey(a),y=lpKey(b);return x[0]-y[0]||x[1]-y[1]}
+function lpCounts(items){const c={past:0,missing:0,soon:0,ok:0,na:0};items.forEach(i=>{c[lpStat(i).k]++});return c}
+function lpScopeHotels(){return LP.role==="gm"?LP.hotels.filter(h=>h.code===LP.hotel):LP.role==="hpd"&&LP.hpd?LP.hotels.filter(h=>h.hpd===LP.hpd):LP.hotels}
+function lpAll(){const s=new Set(lpScopeHotels().map(h=>h.code));return LP.items.filter(i=>s.has(i.h))}
+function lpLabel(it){const h=lpHotel(it.h);return (h?h.name:it.h)+" · "+LT[it.t].name}
+function lpTicket(it){return it.ticket?getI(it.ticket):null}
+function lpHpds(){return Array.from(new Set(LP.hotels.map(h=>h.hpd).filter(Boolean))).sort()}
+function lpHome(){const c=lpCounts(lpAll());return c.past+" past due · "+c.soon+" due soon"}
+function lpTag(it){const s=lpStat(it);
+  return s.k==="past"?'<span class="tag bad">Past due '+s.d+' day'+(s.d===1?"":"s")+'</span>':s.k==="missing"?'<span class="tag warn">No date on file</span>':s.k==="soon"?'<span class="tag warn">Due in '+s.d+' day'+(s.d===1?"":"s")+'</span>':s.k==="na"?'<span class="tag mute">Not required</span>':'<span class="tag ok">Current through '+fdy(it.exp)+'</span>'}
+function lpTicketTag(it){const t=lpTicket(it);if(!t)return"";return isOpen(t)?' <span class="tag info">Repair ticket '+esc(t.id)+' open</span>':' <span class="tag warn">Repair done: upload new certificate</span>'}
+
+/* ---- views ---- */
+function lpRoleBar(){return '<div class="row" style="margin-top:10px"><span class="small muted">Preview as</span>'+Object.keys(LPROLE).map(k=>'<button class="chip" data-act="l:role" data-r="'+k+'" aria-pressed="'+(LP.role===k)+'">'+LPROLE[k]+'</button>').join("")+(LP.role==="hpd"?'<select id="lhpd" aria-label="HPD" style="width:auto;min-width:180px">'+lpHpds().map(n=>'<option'+(LP.hpd===n?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select>':"")+'</div><div class="small muted" style="margin-top:4px">In the real version, your login decides what you see.</div>'}
+function lpNav(){const c=lpCounts(lpAll());
+  return '<nav class="nav" aria-label="Sections"><button data-act="l:tab" data-v="list" '+(LP.view!=="port"?'aria-current="page"':"")+'>Licenses</button><button data-act="l:tab" data-v="port" '+(LP.view==="port"?'aria-current="page"':"")+'>Rollup'+(c.past?'<span class="badge">'+c.past+'</span>':"")+'</button><button data-act="go" data-m="home">Home</button></nav>'}
+function viewLpi(){const h=lpHotel(LP.hotel)||LP.hotels[0];
+  if(!h)return header("","Licenses and permits","No hotels yet")+'<div class="demo">Prototype: reminders are previewed, not sent. Data stays on this device.</div>'+lpRoleBar()+'<div class="card" style="padding:18px;margin-top:12px">No hotels loaded yet. Open the Rollup tab and import the LPI Summary tab.</div>';
+  const items=lpItems(h.code),c=lpCounts(items),f=cur.lf||"action";
+  const L2=items.filter(i=>f==="all"||["past","missing","soon"].indexOf(lpStat(i).k)>=0).sort(lpCmp);
+  let out=header(h.name,"Licenses and permits",LPROLE[LP.role])+'<div class="demo">Prototype: reminders are previewed, not sent. Data stays on this device.</div>'+lpRoleBar();
+  out+='<div class="row" style="margin-top:10px"><select id="lhotel" aria-label="Hotel" style="width:auto;min-width:240px">'+LP.hotels.map(x=>'<option value="'+esc(x.code)+'"'+(x.code===h.code?" selected":"")+'>'+esc(x.name)+'</option>').join("")+'</select></div>';
+  out+='<div class="card" style="padding:16px;margin-top:12px"><div class="stat"><div><b>'+c.past+'</b><span class="muted small">past due</span></div><div><b>'+c.missing+'</b><span class="muted small">no date on file</span></div><div><b>'+c.soon+'</b><span class="muted small">due soon</span></div><div><b>'+c.ok+'</b><span class="muted small">current</span></div></div><div class="small muted" style="margin-top:8px">GM: '+esc(h.gm||"not set")+' · HPD: '+esc(h.hpd||"not set")+'. Upload the new certificate and enter the new date. Reminders restart on their own.</div></div>';
+  out+='<div class="chips" role="group" aria-label="Filter">'+[["action","Needs action ("+(c.past+c.missing+c.soon)+")"],["all","All items ("+(items.length-c.na)+" required)"]].map(x=>'<button class="chip" data-act="l:filter" data-f="'+x[0]+'" aria-pressed="'+(f===x[0])+'">'+x[1]+'</button>').join("")+'</div>';
+  out+='<div class="list">'+(L2.length?L2.map(it=>'<button class="card icard" data-act="l:open" data-id="'+esc(it.id)+'"><div class="ih">'+esc(LT[it.t].name)+'</div><div class="itags">'+lpTag(it)+lpTicketTag(it)+'</div><div class="muted small">'+(it.exp&&!it.na?'Expires '+fdy(it.exp)+' · ':"")+it.docs.length+' document'+(it.docs.length===1?"":"s")+(it.num?' · No. '+esc(it.num):"")+'</div></button>').join(""):'<div class="card" style="padding:18px">Everything for this hotel is current.</div>')+'</div>';
+  return out}
+function viewLpItem(){const it=lpFind(cur.li);if(!it){cur.li=null;return viewLpi()}
+  const h=lpHotel(it.h)||{name:it.h},t=lpTicket(it),s=lpStat(it);
+  let o='<div class="cbar"><button class="btn sec" data-act="l:back">← Licenses</button><h2>'+esc(LT[it.t].name)+'</h2><span class="muted small">'+esc(h.name)+'</span></div>';
+  o+='<div class="card" style="padding:16px;display:grid;gap:12px"><div class="itags">'+lpTag(it)+lpTicketTag(it)+'</div><div class="kv">'+kv("Expires",it.na?"Not required":it.exp?fdy(it.exp):"No date on file")+kv("License or permit number",it.num||"Not entered")+kv("Renewal starts",lpLead(it.t)+" days before expiry")+kv("GM",h.gm||"Not set")+kv("HPD",h.hpd||"Not set")+kv("Documents",String(it.docs.length))+'</div></div>';
+  const acts=[];
+  if(!it.na)acts.push('<button class="btn good" data-act="l:upload">Upload renewal or new certificate</button>');
+  if(!it.na&&!(t&&isOpen(t)))acts.push('<button class="btn sec" data-act="l:ticket">Inspection found a repair? Create ticket</button>');
+  if(LP.role==="corp")acts.push('<button class="btn sec" data-act="l:na">'+(it.na?"Mark as required":"Mark as not required here")+'</button>');
+  if(acts.length)o+='<div class="row" style="margin-top:12px">'+acts.join("")+'</div>';
+  if(t&&!isOpen(t)&&(s.k==="past"||s.k==="soon"||s.k==="missing")){const c=lastClose(t);o+='<div class="warnbox" style="margin-top:12px">Repair ticket '+esc(t.id)+' was closed '+fdy(c.at)+'. Upload the new certificate or inspection report to finish this renewal.</div>'}
+  if(t)o+='<div class="histbox" style="margin-top:12px"><div class="small"><b>Repair ticket '+esc(t.id)+'</b> · '+esc(t.title)+'</div><div class="itags">'+tagsFor(t)+'</div><button class="linkbtn" data-act="l:openticket" data-id="'+esc(t.id)+'">Open the ticket</button></div>';
+  if(it.docs.length)o+='<div class="h2">Documents</div><div class="thumbs">'+it.docs.map((d,k)=>'<img alt="Document '+(k+1)+'" data-act="l:zoom" data-k="'+k+'" src="'+d.photo+'">').join("")+'</div>';
+  o+='<div class="h2">History</div>'+(it.log.length?'<div class="thr">'+it.log.map(e=>'<div class="msg sys">• '+esc(e.text)+' <span class="when">'+esc(e.by)+' · '+fdt(e.t)+'</span></div>').join("")+'</div>':'<div class="muted small">No changes recorded yet.</div>');
+  return o}
+function lpRemind(items){
+  const soon=items.filter(i=>lpStat(i).k==="soon"),past=items.filter(i=>lpStat(i).k==="past"),mis=items.filter(i=>lpStat(i).k==="missing");
+  return[{rule:"Renewal window is open (45 days, 60 for liquor and ServSafe)",to:"GM, weekly until renewed",items:soon},
+   {rule:"14 days or less to expiration",to:"GM and HPD",items:soon.filter(i=>lpStat(i).d<=14)},
+   {rule:"Past due",to:"GM daily, HPD copied",items:past},
+   {rule:"No date on file",to:"GM weekly, HPD copied",items:mis},
+   {rule:"Repair ticket closed but new certificate not uploaded",to:"GM",items:items.filter(i=>{const t=lpTicket(i);return t&&!isOpen(t)&&["past","soon","missing"].indexOf(lpStat(i).k)>=0})}]}
+function viewLpPort(){const hsc=lpScopeHotels(),items=lpAll(),c=lpCounts(items),openT=items.filter(i=>{const t=lpTicket(i);return t&&isOpen(t)}).length;
+  const who=LP.role==="hpd"&&LP.hpd?LP.hpd:LP.role==="gm"?((lpHotel(LP.hotel)||{}).name||""):"All hotels";
+  let h=header(who,"LPI rollup",LPROLE[LP.role])+lpRoleBar();
+  h+='<div class="card" style="padding:16px;margin-top:12px"><div class="stat"><div><b>'+c.past+'</b><span class="muted small">past due</span></div><div><b>'+c.missing+'</b><span class="muted small">no date on file</span></div><div><b>'+c.soon+'</b><span class="muted small">due soon</span></div><div><b>'+c.ok+'</b><span class="muted small">current</span></div><div><b>'+openT+'</b><span class="muted small">open repair tickets</span></div></div></div>';
+  const rows=hsc.map(x=>{const cc=lpCounts(lpItems(x.code));return{h:x,c:cc}}).sort((a,b)=>b.c.past-a.c.past||b.c.missing-a.c.missing||(a.h.name<b.h.name?-1:1));
+  h+='<div class="h2">By hotel</div><div class="card scroll"><table><thead><tr><th>Hotel</th><th>HPD</th><th class="n">Past due</th><th class="n">No date</th><th class="n">Due soon</th></tr></thead><tbody>'+rows.map(r=>'<tr><td><button class="linkbtn" data-act="l:hotel" data-code="'+esc(r.h.code)+'" style="min-height:0">'+esc(r.h.name)+'</button></td><td>'+esc(r.h.hpd||"")+'</td><td class="n">'+r.c.past+'</td><td class="n">'+r.c.missing+'</td><td class="n">'+r.c.soon+'</td></tr>').join("")+'</tbody></table></div>';
+  if(LP.role==="corp"){const g={};rows.forEach(r=>{const k=r.h.hpd||"Not set";const o=g[k]=g[k]||{n:0,past:0,missing:0,soon:0};o.n++;o.past+=r.c.past;o.missing+=r.c.missing;o.soon+=r.c.soon});
+    h+='<div class="h2">By HPD</div><div class="card scroll"><table><thead><tr><th>HPD</th><th class="n">Hotels</th><th class="n">Past due</th><th class="n">No date</th><th class="n">Due soon</th></tr></thead><tbody>'+Object.keys(g).sort((a,b)=>g[b].past-g[a].past).map(k=>'<tr><td>'+esc(k)+'</td><td class="n">'+g[k].n+'</td><td class="n">'+g[k].past+'</td><td class="n">'+g[k].missing+'</td><td class="n">'+g[k].soon+'</td></tr>').join("")+'</tbody></table></div>'}
+  const next=items.filter(i=>["past","soon"].indexOf(lpStat(i).k)>=0).sort(lpCmp).slice(0,10);
+  h+='<div class="h2">Most urgent</div><div class="list">'+(next.length?next.map(it=>'<button class="card icard" data-act="l:open" data-id="'+esc(it.id)+'"><div class="ih">'+esc(lpLabel(it))+'</div><div class="itags">'+lpTag(it)+lpTicketTag(it)+'</div></button>').join(""):'<div class="card" style="padding:16px">Nothing is past due or coming due.</div>')+'</div>';
+  const R=lpRemind(items);
+  h+='<div class="h2">What the system would send today</div><p class="muted small" style="margin-top:-4px">Reminders go to the GM and the HPD. Nobody has to open a spreadsheet to find out what is due.</p><div class="card scroll"><table><thead><tr><th>Rule</th><th>Goes to</th><th class="n">Items</th></tr></thead><tbody>'+R.map(r=>'<tr><td>'+esc(r.rule)+(r.items.length?'<div class="row" style="margin-top:6px;gap:6px">'+r.items.slice(0,4).map(i=>'<button class="linkbtn" data-act="l:open" data-id="'+esc(i.id)+'" style="min-height:0">'+esc(lpLabel(i))+'</button>').join("")+(r.items.length>4?'<span class="muted small">+'+(r.items.length-4)+' more</span>':"")+'</div>':"")+'</td><td>'+esc(r.to)+'</td><td class="n">'+r.items.length+'</td></tr>').join("")+'</tbody></table></div>';
+  const top=items.filter(i=>lpStat(i).k==="past").sort(lpCmp).slice(0,5);
+  h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GMs and HPDs\nSubject: LPI status · "+who+" · week of "+fd(TODAY)+"\n\n"+c.past+" past due · "+c.missing+" with no date on file · "+c.soon+" coming due.\n"+(top.length?"\nMost overdue:\n"+top.map(i=>" - "+lpLabel(i)+" ("+lpStat(i).d+" days past due)").join("\n"):"\nNothing is past due."))+'</pre></div>';
+  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px"><p class="small" style="margin:0 0 8px"><b>Status comes from the expiration date.</b> A blank date means no date on file. "Not required" is set by Corporate for items a hotel does not need.</p><p class="small" style="margin:0 0 8px"><b>Renewal window:</b> 45 days before expiration, 60 for liquor and ServSafe (your SOP). Proposed reminder rules are in the table above.</p><p class="small" style="margin:0 0 8px"><b>Renewals:</b> the GM uploads the new certificate and enters the new date. That is the only step. The old dates stay in the history.</p><p class="small" style="margin:0"><b>Applications and payments</b> stay with AP and BI for now. This prototype tracks the record, not the payment.</p></div>';
+  h+='<div class="h2">Data</div><div class="card" style="padding:16px;display:grid;gap:12px"><div class="small muted">Import the Summary tab of your LPI sheet to see your real hotels here. In Google Sheets, open the Summary tab and choose File, Download, Comma Separated Values. The file is read in this browser and stays on this device. Nothing is uploaded.</div><div class="row"><label class="btn" for="lcsv">Import Summary tab (CSV)<input type="file" id="lcsv" accept=".csv,text/csv" style="position:absolute;opacity:0;width:1px;height:1px"></label><button class="btn sec" data-act="l:export">Export (CSV)</button><button class="btn sec" data-act="l:reset">Reset to demo data</button></div></div>';
+  return h}
+
+/* ---- sheets ---- */
+function openLpUpload(it){cur.pending={kind:"lupload",id:it.id,photos:[],fix:false};
+  sheet('<h3>Upload renewal</h3><div class="muted small">'+esc(lpLabel(it))+'</div>'
+   +'<div><label class="small muted" for="ldate">New expiration date (required)</label><input type="date" id="ldate"></div>'
+   +'<div><label class="small muted" for="lnum">License or permit number (optional)</label><input type="text" id="lnum" value="'+esc(it.num||"")+'"></div>'
+   +'<div><div class="thumbs" id="lthumb"></div><label class="photo" for="lph" id="lphlab"><input type="file" id="lph" accept="image/*" data-photo="lph"><span style="font-size:30px;width:64px;text-align:center">📷</span><span><b>Add the certificate or report</b><br><span class="muted small" id="lphn">Take a clear photo or choose a scan. Up to 3.</span></span></label></div>'
+   +'<button class="tgl" data-act="l:datefix" aria-pressed="false">I am only fixing a wrong date, no new document<i>No</i></button>'
+   +'<div class="row"><button class="btn good" id="lsave" data-act="l:saveupload" style="flex:1" disabled>Save</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+function lthumbs(){const t=$("#lthumb");if(!t)return;t.innerHTML=cur.pending.photos.map((p,k)=>'<img src="'+p+'" alt="Document '+(k+1)+'">').join("");const n=cur.pending.photos.length,l=$("#lphlab");if(l)l.hidden=n>=3;const m=$("#lphn");if(m)m.textContent=n?n+" of 3 added.":"Take a clear photo or choose a scan. Up to 3."}
+function lchk(){const b=$("#lsave"),d=$("#ldate");if(b&&d&&cur.pending)b.disabled=!(d.value&&(cur.pending.fix||cur.pending.photos.length>0))}
+
+/* ---- import of the LPI Summary tab (browser only) ---- */
+function lpNorm(s){return String(s||"").toLowerCase().replace(/[^a-z]/g,"")}
+const LPCOL={hotelmotel:"hotel",foodservice:"food",servsafemanager:"servsafe",poolspa:"pool",cpocertificate:"cpo",business:"biz",elevator:"elev",miscpermits:"misc",liquor:"liquor",corpllcc:"corp",corpllc:"corp",firepanelalarm:"fire",extinguisher:"ext",sprinkler:"spr",backflow:"back",generator:"gen",boiler:"boil"};
+function lpDate(s){s=String(s||"").trim();if(!s)return{v:"",bad:false};if(/^(na|n\/a)$/i.test(s))return{v:"NA",bad:false};
+  let m;if(/^\d{5}$/.test(s)){const d=new Date(Date.UTC(1899,11,30)+(+s)*864e5);return{v:d.getUTCFullYear()+"-"+pad(d.getUTCMonth()+1)+"-"+pad(d.getUTCDate()),bad:false}}
+  m=/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/.exec(s);if(m){let y=+m[3];if(y<100)y+=2000;if(y>=2000&&y<=2100&&+m[1]>=1&&+m[1]<=12&&+m[2]>=1&&+m[2]<=31)return{v:y+"-"+pad(+m[1])+"-"+pad(+m[2]),bad:false}}
+  return{v:"",bad:true}}
+function lpMapSummary(rows){let hi=-1;for(let i=0;i<rows.length;i++){const n=rows[i].map(lpNorm);if(n.indexOf("company")>=0&&n.indexOf("property")>=0){hi=i;break}}
+  if(hi<0)return null;const hd=rows[hi].map(lpNorm),col=n=>hd.indexOf(n),cmap={};hd.forEach((n,k)=>{if(LPCOL[n]&&cmap[LPCOL[n]]===undefined)cmap[LPCOL[n]]=k});
+  const hotels=[],items=[],used={};let bad=0;
+  for(let r=hi+1;r<rows.length;r++){const row=rows[r],g=n=>{const k=col(n);return k<0?"":String(row[k]||"").trim()};const name=g("property");if(!name)continue;
+    let code=g("code")||name;if(used[code])code=code+"#"+r;used[code]=1;
+    hotels.push({code:code,name:name,entity:g("company"),gm:g("gm"),hpd:g("rdo")||g("hpd"),st:g("st")});
+    LTYPES.forEach(t=>{const k=cmap[t[0]];if(k===undefined)return;const d=lpDate(row[k]);if(d.bad)bad++;items.push({id:code+"|"+t[0],h:code,t:t[0],exp:d.v==="NA"?"":d.v,na:d.v==="NA",num:"",docs:[],log:[],ticket:null})})}
+  return{hotels:hotels,items:items,bad:bad,types:Object.keys(cmap).length}}
+function lpImportFile(file){const fr=new FileReader();
+  fr.onload=()=>{let m=null;try{m=lpMapSummary(parseCSV(String(fr.result)))}catch(e){m=null}
+    if(!m||!m.hotels.length){sheet('<h3>Nothing to import</h3><p class="muted" style="margin:0">I did not find the Summary columns (Company, Property, Code, GM, RDO and the license columns). In your LPI sheet, open the Summary tab first, then choose File, Download, Comma Separated Values.</p><button class="btn" data-act="closesheet">OK</button>');return}
+    cur.pending={kind:"lpimport",m:m};const c=lpCounts(m.items);
+    sheet('<h3>Import '+m.hotels.length+' hotels?</h3><p style="margin:0">'+m.items.length+' license and inspection records across '+m.types+' types: '+c.past+' past due, '+c.missing+' with no date on file, '+c.soon+' coming due, '+c.na+' marked not required.'+(m.bad?' I could not read '+m.bad+' cells and left them as no date on file.':"")+'</p><p class="muted small" style="margin:0">This replaces the demo records on this device only. Nothing is uploaded anywhere.</p><div class="row"><button class="btn" data-act="l:doimport" style="flex:1">Import</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')};
+  fr.readAsText(file)}
+function lpExport(){const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"',cols=["Hotel","Code","GM","HPD","Item","Expiration","Status","Number","Documents"];
+  const rows=LP.items.map(i=>{const h=lpHotel(i.h)||{},s=lpStat(i);return[h.name,i.h,h.gm,h.hpd,LT[i.t].name,i.na?"":i.exp,{past:"Past due",missing:"No date",soon:"Due soon",ok:"Current",na:"Not required"}[s.k],i.num,i.docs.length].map(q).join(",")});
+  const blob=new Blob([cols.map(q).join(",")+"\n"+rows.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lpi-records.csv";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600)}
+
+/* ---- actions ---- */
+function lact(a,ds,el,ev){
+  if(a==="tab"){LP.view=ds.v;cur.li=null;lpSave();render();return}
+  if(a==="role"){LP.role=ds.r;if(LP.role==="hpd"&&!LP.hpd)LP.hpd=lpHpds()[0]||"";lpSave();render();return}
+  if(a==="filter"){cur.lf=ds.f;render();return}
+  if(a==="hotel"){LP.hotel=ds.code;LP.view="list";cur.li=null;lpSave();render();return}
+  if(a==="open"){closeSheet();const it=lpFind(ds.id);if(!it)return;LP.hotel=it.h;cur.mod="lpi";cur.li=ds.id;lpSave();render();return}
+  if(a==="back"){cur.li=null;render();return}
+  if(a==="openticket"){if(!getI(ds.id))return;cur.mod="issues";cur.li=null;cur.tk=ds.id;cur.cdraft="";cur.cphoto=null;render();return}
+  if(a==="openitem"){const it=lpFind(ds.id);if(!it)return;LP.hotel=it.h;cur.mod="lpi";cur.tk=null;cur.li=ds.id;render();return}
+  if(a==="datefix"){cur.pending.fix=!cur.pending.fix;el.setAttribute("aria-pressed",cur.pending.fix);el.querySelector("i").textContent=cur.pending.fix?"Yes":"No";lchk();return}
+  if(a==="import"){return}
+  if(a==="doimport"){const m=cur.pending.m;LP.hotels=m.hotels;LP.items=m.items;LP.imported=true;LP.hotel=m.hotels[0].code;LP.hpd=lpHpds()[0]||"";LP.view="list";cur.li=null;cur.lf="action";lpSave();closeSheet();render();return}
+  if(a==="export"){lpExport();return}
+  if(a==="reset"){try{localStorage.removeItem(LPK)}catch(e){}lpFresh();lpSave();cur.li=null;render();return}
+  const it=cur.li?lpFind(cur.li):null;
+  if(a==="upload"&&it){openLpUpload(it);return}
+  if(a==="saveupload"&&it){const d=$("#ldate").value;if(!d)return;if(!cur.pending.fix&&!cur.pending.photos.length)return;const now=Date.now(),old=it.exp,n=$("#lnum").value.trim(),np=cur.pending.photos.length,fix=cur.pending.fix;
+    it.exp=d;it.na=false;if(n)it.num=n;cur.pending.photos.forEach(p=>it.docs.push({t:now,by:S.tech,photo:p}));
+    it.log.push({t:now,by:S.tech,text:(fix?"Date corrected: ":"Renewed: ")+"new expiration "+fdy(d)+(old?" (was "+fdy(old)+")":" (was missing)")+(np?". "+np+" document"+(np===1?"":"s")+" uploaded.":".")});
+    lpSave();const nxt=new Date(pd(d));nxt.setDate(nxt.getDate()-lpLead(it.t));
+    render();sheet('<h3>Saved</h3><div><b>'+esc(LT[it.t].name)+'</b> is current through '+fdy(d)+'.</div><p class="small" style="margin:0">Reminders restart on their own. The next one goes to the GM on '+fdy(iso(nxt))+', '+lpLead(it.t)+' days before it expires.</p><button class="btn" data-act="closesheet">Done</button>');return}
+  if(a==="na"&&it){it.na=!it.na;it.log.push({t:Date.now(),by:S.tech,text:it.na?"Marked not required for this hotel.":"Marked required again."});lpSave();render();return}
+  if(a==="zoom"&&it){const d=it.docs[+ds.k];if(d)sheet('<img alt="Document" src="'+d.photo+'" style="width:100%;border-radius:10px"><button class="btn sec" data-act="closesheet">Close</button>');return}
+  if(a==="ticket"&&it){const h=lpHotel(it.h)||{name:it.h},t=LT[it.t];cur.mod="issues";cur.tk=null;cur.li=null;I.view="list";if(I.role==="owner")I.role="hotel";if(I.role==="hotel")I.hotel=h.name;render();
+    openNew({hotel:h.name,loc:it.t==="elev"?"Elevators":it.t==="pool"?"Pool":"Whole property",title:t.name+": repair needed",desc:"Found during the "+t.name.toLowerCase()+". Attach the inspector's list so facilities can see exactly what is required.",cat:({elev:"elev",fire:"fire",ext:"fire",spr:"fire",pool:"pool",boil:"hvac"})[it.t]||"other",fromLpi:it.id});return}
+}
+
 function act(a,ds,el,ev){
-  if(a==="closebg"){ if(ev&&el===ev.target) closeSheet(); return }
+  if(a==="closebg"){ if(cur.pending&&cur.pending.kind)return; if(ev&&el===ev.target) closeSheet(); return }
   if(a==="closesheet"){closeSheet();return}
-  if(a==="pick"){S.tech=ds.n;save();render();return}
-  if(a==="who"){S.tech=null;cur.room=null;save();render();return}
+  if(a==="pick"){S.tech=ds.n;cur.mod="home";save();render();return}
+  if(a==="who"){S.tech=null;cur.room=null;cur.tk=null;cur.li=null;save();render();return}
+  if(a==="go"){cur.mod=ds.m;cur.room=null;cur.tk=null;cur.li=null;render();return}
+  if(a.slice(0,2)==="i:"){iact(a.slice(2),ds,el,ev);return}
+  if(a.slice(0,2)==="l:"){lact(a.slice(2),ds,el,ev);return}
   if(a==="tab"){S.view=ds.v;cur.room=null;save();render();return}
   if(a==="filter"){cur.filter=ds.f;render();return}
   if(a==="room"){var n=ds.n;if(status(n)==="done"||status(n)==="repairs"){return}if(!S.rooms[n].attrs){openSetup(n);return}startDraft(n);render();return}
@@ -342,11 +880,31 @@ function act(a,ds,el,ev){
   if(a==="vok"||a==="vfail"){var pm=S.pms.filter(function(x){return x.id===cur.pending.p})[0];pm.verify={status:a==="vok"?"ok":"fail",by:$("#vby").value,at:Date.now(),note:$("#vnote").value.trim()};closeSheet();save();render();return}
   if(a==="addname"){var v=$("#newname").value.trim();if(v&&S.roster.indexOf(v)<0){S.roster.push(v);save();render()}return}
   if(a==="rmname"){S.roster=S.roster.filter(function(x){return x!==ds.n});save();render();return}
-  if(a==="reset"){try{localStorage.removeItem(KEY)}catch(e){}S=fresh();cur={filter:"all",open:{},room:null,pending:null};render();return}
+  if(a==="reset"){try{localStorage.removeItem(KEY)}catch(e){}S=fresh();cur={filter:"all",open:{},room:null,pending:null,mod:"pm",tk:null,if:"open",q:"",li:null,lf:"action"};render();return}
 }
 document.addEventListener("click",function(e){var t=e.target.closest("[data-act]");if(!t)return;act(t.dataset.act,t.dataset,t,e)});
-document.addEventListener("change",function(e){var t=e.target;if(!t.matches||!t.matches("input[data-photo]")||!t.files||!t.files[0])return;
-  readPhoto(t.files[0]).then(function(url){if(!url||!cur.pending)return;var id=t.dataset.photo;var img=$("#"+id+"img");if(img)img.outerHTML='<img id="'+id+'img" alt="" src="'+url+'">';
+document.addEventListener("input",function(e){var t=e.target;
+  if(t.id==="ldate"){lchk();return}
+  if(t.id==="isearch"){cur.q=t.value;var l=$("#ilist");if(l)l.innerHTML=listHTML();return}
+  if(t.id==="ctext"){cur.cdraft=t.value;return}
+  if(t.id==="aamt"){var ab=$("#asave"),aw=$("#aw");if(ab)ab.disabled=!(+t.value>0);if(aw)aw.textContent=+t.value>0?"Goes to: "+approver(+t.value):"";return}
+  if(t.dataset&&t.dataset.f&&cur.pending&&cur.pending.f){cur.pending.f[t.dataset.f]=t.value;if(t.dataset.f==="loc")lochist();if(t.dataset.f==="amt")apprwho();chkNew()}});
+document.addEventListener("change",function(e){var t=e.target;
+  if(t.id==="ldate"){lchk();return}
+  if(t.id==="lhotel"){LP.hotel=t.value;lpSave();render();return}
+  if(t.id==="lhpd"){LP.hpd=t.value;lpSave();render();return}
+  if(t.id==="lcsv"&&t.files&&t.files[0]){lpImportFile(t.files[0]);t.value="";return}
+  if(t.id==="ihotel"){I.hotel=t.value;saveI();render();return}
+  if(t.id==="epri"&&t.value){var ed=$("#edue");if(ed)ed.value=dueFrom(Date.now(),t.value);return}
+  if(t.id==="icsv"&&t.files&&t.files[0]){importFile(t.files[0]);t.value="";return}
+  if(t.dataset&&t.dataset.f&&cur.pending&&cur.pending.f){cur.pending.f[t.dataset.f]=t.value;if(t.dataset.f==="loc"||t.dataset.f==="hotel")lochist();chkNew();return}
+  if(!t.matches||!t.matches("input[data-photo]")||!t.files||!t.files[0])return;
+  readPhoto(t.files[0]).then(function(url){var pid=t.dataset.photo;t.value="";if(!url)return;
+    if(pid==="cph"){cur.cphoto=url;cur.keepScroll=true;render();return}
+    if(pid==="iph"){if(cur.pending&&cur.pending.kind==="issue"&&cur.pending.photos.length<5){cur.pending.photos.push(url);thumbsNew()}return}
+    if(pid==="lph"){if(cur.pending&&cur.pending.kind==="lupload"&&cur.pending.photos.length<3){cur.pending.photos.push(url);lthumbs();lchk()}return}
+    if(pid==="cph2"){if(cur.pending&&cur.pending.kind==="close"){cur.pending.photo=url;var th=$("#cthumb");if(th)th.innerHTML='<img src="'+url+'" alt="After photo">'}return}
+    if(!cur.pending)return;var id=pid;var img=$("#"+id+"img");if(img)img.outerHTML='<img id="'+id+'img" alt="" src="'+url+'">';
     if(cur.pending.id){cur.pending.photo=url;var b=$("#saveslash");if(b)b.disabled=false}
     else if(cur.pending.p){cur.pending[id==="ph1"?"p1":"p2"]=url;if(cur.pending.p1&&cur.pending.p2){$("#vok").disabled=false;$("#vfail").disabled=false}}})});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("#layer").firstChild)closeSheet()});
