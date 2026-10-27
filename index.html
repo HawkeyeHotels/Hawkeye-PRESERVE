@@ -122,6 +122,11 @@ pre.mail{white-space:pre-wrap;font:14px/1.5 var(--body);margin:0;padding:14px 16
 .stat b{display:block;font:700 34px/1 var(--display)}
 .demo{background:var(--slash-bg);color:var(--slash);border-radius:10px;padding:8px 12px;font-size:14px;margin-top:6px}
 [hidden]{display:none!important}
+.critbox{background:var(--late-bg);color:var(--late);border:2px solid var(--late);border-radius:12px;padding:12px 14px;margin-top:12px;display:grid;gap:6px}
+.critbox b{font-size:16px;letter-spacing:.02em}.critbox .linkbtn{color:var(--late);text-align:left;min-height:0;font-weight:700}
+.btn.escb{background:#b42318;color:#fff;border-color:#b42318}
+.acct{font-size:14px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:26px 0 12px}
 .tag.info{background:var(--info-bg);color:var(--accent)} .tag.mute{background:var(--surface2);color:var(--muted);border-color:var(--line)}
 .mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;margin-top:18px}
 .mod{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;min-height:156px;padding:18px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
@@ -247,7 +252,7 @@ function paceCard(){var p=pace(),pct=Math.round(p.done*100),ins=Math.round(p.ins
    +'<div class="bar" role="img" aria-label="'+ins+' percent of rooms inspected"><i style="width:'+ins+'%;opacity:.45"></i><i style="width:'+pct+'%"></i>'+p.cps.map(function(c){return '<u style="left:calc('+Math.round(c.pct*100*(p.W/p.W))+'% - 1px)"></u>'}).join("")+'</div>'
    +'<div class="small muted"><b style="color:var(--ink)">'+p.c.done+' of '+p.total+' rooms complete</b> ('+pct+'%) · '+p.c.repairs+' waiting on repairs · '+Math.round(p.exp*100)+'% expected by today. Next checkpoint: '+Math.round(p.next.pct*100)+'% by '+fd(p.next.date)+(need>0?' ('+need+' more rooms)':'')+'.</div></div>'}
 
-function header(sub,title,scopeText){return '<div class="top"><div><h1>'+esc(title||"Room PM")+'</h1><div class="sub">'+esc(scopeText||("OKCAL · "+ROOMS.length+" rooms"))+' · '+esc(sub||"")+'</div></div>'+(S.tech?'<div class="row"><button class="who" data-act="go" data-m="home">⌂ Home</button><button class="who" data-act="who" aria-label="Change name">'+esc(S.tech)+' ▾</button></div>':'')+'</div>'}
+function header(sub,title,scopeText){return '<div class="top"><div><h1>'+esc(title||"Room PM")+'</h1><div class="sub">'+esc(scopeText||("OKCAL · "+ROOMS.length+" rooms"))+' · '+esc(sub||"")+'</div></div>'+(S.tech?'<div class="row"><button class="who" data-act="go" data-m="home">⌂ Home</button><button class="who" data-act="who" aria-label="Sign out">Sign out</button></div>':'')+'</div>'}
 
 function viewWho(){return header("Tap your name")+'<div class="demo">Prototype: nothing here is sent anywhere yet. Data stays on this device.</div><div class="who-list">'+S.roster.map(function(n){return '<button class="btn sec" data-act="pick" data-n="'+esc(n)+'">'+esc(n)+'</button>'}).join("")+'</div><p class="muted small">Not on the list? Ask your GM or maintenance lead to add you.</p>'}
 
@@ -309,17 +314,21 @@ function viewGM(){var p=pace(),c=p.c,vl=verifyList(),pend=vl.filter(function(v){
   var need=Math.max(0,Math.ceil(p.next.pct*p.total)-(c.done+c.repairs));
   h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GM, HPD, Corp Facilities Director\nSubject: OKCAL room PM pace · week of "+fd(TODAY)+"\n\n"+c.done+" of "+p.total+" rooms complete ("+Math.round(p.done*100)+"%). Expected by today: "+Math.round(p.exp*100)+"%. "+({ok:"On pace.",warn:"Slightly behind.",bad:"Behind pace."}[p.st])+"\nAll rooms must be inspected by "+fd(Q.cut)+" so repairs close before quarter end ("+fd(Q.end)+").\nNext checkpoint: "+Math.round(p.next.pct*100)+"% by "+fd(p.next.date)+(need?" ("+need+" more rooms).":".")+"\nOpen repairs: "+open.length+" ("+late.length+" overdue).\nGM checks pending: "+pend.length+".")+'</pre></div>';
   h+='<div class="h2">Roster</div><div class="card" style="padding:16px;display:grid;gap:12px"><div class="row">'+S.roster.map(function(n){return '<span class="chip">'+esc(n)+' <button data-act="rmname" data-n="'+esc(n)+'" aria-label="Remove '+esc(n)+'" style="border:0;background:none;font-weight:700">×</button></span>'}).join("")+'</div><div class="row"><input type="text" id="newname" placeholder="Add a name" style="flex:1;min-width:160px"><button class="btn" data-act="addname">Add</button></div></div>';
-  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px" ><p class="small" style="margin:0 0 8px"><b>Rank (derived):</b> Green = no slashes. Clear = 1 to 3 slashes. Red = 4 or more slashes, or any life-safety item slashed (entry lock, peephole/latch, connecting door lock, smoke alarm, sprinkler, window locks, GFCI). Proposed, not yet approved.</p><p class="small" style="margin:0 0 8px"><b>Flags:</b> under '+S.settings.minMin+' minutes of active work in a room, or more than '+S.settings.maxDay+' rooms by one tech in a day.</p><p class="small" style="margin:0"><b>Checklist:</b> '+esc(CHECK_VERSION)+'. '+Object.keys(ITEMS).length+' items including the optional connecting-door, separate-bedroom and stove items. Prototype build v3 (Oct 22).</p><div style="margin-top:12px"><button class="btn sec" data-act="reset">Reset demo data</button></div></div>';
+  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px" ><p class="small" style="margin:0 0 8px"><b>Rank (derived):</b> Green = no slashes. Clear = 1 to 3 slashes. Red = 4 or more slashes, or any life-safety item slashed (entry lock, peephole/latch, connecting door lock, smoke alarm, sprinkler, window locks, GFCI). Proposed, not yet approved.</p><p class="small" style="margin:0 0 8px"><b>Flags:</b> under '+S.settings.minMin+' minutes of active work in a room, or more than '+S.settings.maxDay+' rooms by one tech in a day.</p><p class="small" style="margin:0"><b>Checklist:</b> '+esc(CHECK_VERSION)+'. '+Object.keys(ITEMS).length+' items including the optional connecting-door, separate-bedroom and stove items. Prototype build v5 (Oct 26).</p><div style="margin-top:12px"><button class="btn sec" data-act="reset">Reset demo data</button></div></div>';
   return h}
 
 function render(){var y=window.scrollY,v=S.view,h,m=cur.mod||"home";
-  if(!S.tech)h=viewWho();
+  var pmEmpty=m==="pm"&&A.user&&myHotel()!=="OKCAL";
+  if(!A.user||!S.tech)h=viewSignIn();
   else if(m==="home")h=viewHome();
+  else if(m==="pf")h=viewPortfolio();
+  else if(pmEmpty)h=viewPmEmpty();
   else if(m==="issues")h=cur.tk?viewTicket():(I.view==="port"?viewPort():viewIssues());
   else if(m==="lpi")h=cur.li?viewLpItem():(LP.view==="port"?viewLpPort():viewLpi());
   else if(cur.room&&S.drafts[cur.room])h=viewCheck();else h=v==="rooms"?viewRooms():v==="repairs"?viewRepairs():viewGM();
   var inCheck=m==="pm"&&S.tech&&cur.room&&S.drafts[cur.room];
-  if(S.tech&&m==="pm"&&!inCheck){var nrep=S.repairs.filter(function(r){return !r.fixedAt}).length;
+  if(A.user&&S.tech&&!inCheck)h+='<div class="foot"><button class="linkbtn" data-act="a:sug">Suggest a change</button><span class="muted small">PRESERVE beta v5</span></div>';
+  if(S.tech&&m==="pm"&&!inCheck&&!pmEmpty){var nrep=S.repairs.filter(function(r){return !r.fixedAt}).length;
     h+='<nav class="nav" aria-label="Sections"><button data-act="tab" data-v="rooms" '+(v==="rooms"?'aria-current="page"':'')+'>Rooms</button><button data-act="tab" data-v="repairs" '+(v==="repairs"?'aria-current="page"':'')+'>Repairs'+(nrep?'<span class="badge">'+nrep+'</span>':'')+'</button><button data-act="tab" data-v="gm" '+(v==="gm"?'aria-current="page"':'')+'>GM</button><button data-act="go" data-m="home">Home</button></nav>'}
   if(S.tech&&m==="issues"&&!cur.tk)h+=issuesNav();
   if(S.tech&&m==="lpi"&&!cur.li)h+=lpNav();
@@ -350,6 +359,128 @@ function submitRoom(n){var d=S.drafts[n],a=S.rooms[n].attrs,items=visItems(a);if
   delete S.drafts[n];S.rooms[n].last=iso(new Date(now));save();cur.room=null;cur.open={};
   render();sheet('<h3>Room '+n+' saved</h3><div><span class="rank '+rank+'">'+rank+'</span></div>'+(sl.length?'<p style="margin:0">'+sl.length+' repair'+(sl.length>1?'s':'')+' created, due '+fd(dueFor(now))+'. Your GM gets a reminder.</p>':'<p style="margin:0">No repairs needed.</p>')+'<button class="btn" data-act="closesheet">Next room</button>')}
 
+/* ================= HOTELS, SIGN-IN, PORTFOLIO, SUGGESTIONS (prototype) =================
+   Hotel names, brands, cities and room counts are public facts. Who covers each hotel is shown by role, with
+   first names only for the three facilities directors. Everything else in the shell hotels is sample data. */
+const HOTELS=[
+ {code:"OKCAL",name:"Aloft Oklahoma City Downtown - Bricktown",short:"Aloft OKC (OKCAL)",brand:"Marriott",city:"Oklahoma City",st:"OK",rooms:134,fd:"Matt",hpd:"HPD",live:true},
+ {code:"CIDCO",name:"Fairfield Inn & Suites Coralville",short:"Fairfield Coralville",brand:"Marriott",city:"Coralville",st:"IA",rooms:95,fd:"Eric",hpd:"HPD",live:false},
+ {code:"CIDVL",name:"Residence Inn Coralville",short:"Residence Inn Coralville",brand:"Marriott",city:"Coralville",st:"IA",rooms:100,fd:"Eric",hpd:"HPD",live:false},
+ {code:"MN206",name:"Cambria Suites Minneapolis Downtown",short:"Cambria Minneapolis",brand:"Choice Hotels",city:"Minneapolis",st:"MN",rooms:121,fd:"Matt",hpd:"HPD",live:false},
+ {code:"MSPTH",name:"Holiday Inn Express & Suites Bloomington (Mall of America)",short:"Holiday Inn Express Bloomington",brand:"IHG",city:"Bloomington",st:"MN",rooms:171,fd:"Matt",hpd:"HPD",live:false}];
+const FDS=["Doug","Eric","Matt"], VP="Matt";
+const AROLES={gm:"General Manager",mnt:"Hotel maintenance",hpd:"Hotel Performance Director",fac:"Facilities Director",am:"Asset Manager",own:"Ownership",adm:"Admin"};
+const AHELP={gm:"Sees their own hotel",mnt:"Sees their own hotel",hpd:"Sees every hotel they cover",fac:"Works escalated tickets (Matt can approve spend)",am:"Approves spend above $250 for their hotel",own:"Sees the portfolio, read only",adm:"Runs the system and decides on suggested changes"};
+const AKEY="pres-acct-v1", SKEY="pres-sug-v1";
+function HOTEL(c){return HOTELS.filter(h=>h.code===c)[0]||null}
+function hname(c){const h=HOTEL(c);return h?h.short:(c||"")}
+function fdOf(c){const h=HOTEL(c);return h?h.fd:""}
+function hotelList(){return HOTELS}
+
+/* ---- account ---- */
+var A={user:null};
+function aLoad(){try{const t=localStorage.getItem(AKEY);if(t){const s=JSON.parse(t);if(s&&s.user!==undefined)return s}}catch(e){}return{user:null}}
+function aSave(){try{localStorage.setItem(AKEY,JSON.stringify(A))}catch(e){}}
+A=aLoad();
+function hotelRole(){return !!A.user&&(A.user.role==="gm"||A.user.role==="mnt"||A.user.role==="am")}
+function canSeeAll(){return !!A.user&&!hotelRole()}
+function isAdmin(){return !!A.user&&A.user.role==="adm"}
+function myHotel(){return hotelRole()?A.user.hotel:"OKCAL"}
+function applyAcct(){const u=A.user;if(!u)return;S.tech=u.name;
+  I.role=u.role==="am"?"am":hotelRole()?"hotel":u.role==="hpd"?"hpd":u.role==="fac"?"fac":u.role==="own"?"owner":"adm";
+  I.hotel=hotelRole()?u.hotel:"";
+  LP.role=hotelRole()?"gm":u.role==="hpd"?"hpd":"corp";LP.hotel=hotelRole()?u.hotel:(LP.hotel||HOTELS[0].code);LP.hpd="HPD";
+  cur.mod="home";cur.tk=null;cur.li=null;cur.room=null;cur.if="open";cur.q="";cur.lf="action";save();saveI();lpSave()}
+function aBoot(){if(A.user){I.role=A.user.role==="am"?"am":hotelRole()?"hotel":A.user.role==="hpd"?"hpd":A.user.role==="fac"?"fac":A.user.role==="own"?"owner":"adm";if(hotelRole())I.hotel=A.user.hotel;S.tech=A.user.name;LP.role=hotelRole()?"gm":A.user.role==="hpd"?"hpd":"corp";if(hotelRole())LP.hotel=A.user.hotel}}
+function acctBar(sel,id,val,all){const u=A.user;
+  return '<div class="acct small muted" style="margin-top:8px">Signed in as <b>'+esc(u?u.name:"")+'</b>'+(u&&u.name!==AROLES[u.role]?' · '+esc(AROLES[u.role]):"")+'</div>'
+   +(sel&&canSeeAll()?'<div class="row" style="margin-top:10px"><select id="'+id+'" aria-label="Hotel" style="width:auto;min-width:240px">'+(all?'<option value="">All hotels</option>':"")+HOTELS.map(h=>'<option value="'+esc(h.code)+'"'+(val===h.code?" selected":"")+'>'+esc(h.short)+'</option>').join("")+'</select></div>':"")}
+
+/* ---- sign-in page ---- */
+function viewSignIn(){const s=cur.si||(cur.si={role:"gm",hotel:"OKCAL",fd:"Matt"});
+  return '<div class="top"><div><h1>PRESERVE</h1><div class="sub">Hawkeye Hotels</div></div></div>'
+   +'<div class="card" style="padding:18px;margin-top:14px;display:grid;gap:14px">'
+   +'<div><div style="font:700 26px var(--display);letter-spacing:.03em">Sign in</div><div class="muted small">Use your Hawkeye Google account.</div></div>'
+   +'<button class="btn" disabled style="width:100%">Sign in with Google (turns on in the live version)</button>'
+   +'<div class="demo" style="margin-top:0">Beta preview: pick who you want to try PRESERVE as. In the live version your Hawkeye email decides your role and your hotels, and nobody types a password.</div>'
+   +'<div><div class="small muted" style="margin-bottom:6px">Try it as</div><div class="chips" role="group" aria-label="Role">'+Object.keys(AROLES).map(k=>'<button class="chip" data-act="a:role" data-r="'+k+'" aria-pressed="'+(s.role===k)+'">'+AROLES[k]+'</button>').join("")+'</div><div class="small muted" style="margin-top:6px">'+esc(AHELP[s.role])+'</div></div>'
+   +((s.role==="gm"||s.role==="mnt"||s.role==="am")?'<div><label class="small muted" for="sih">'+(s.role==="am"?"Which hotel does this AM cover?":"Hotel")+'</label><select id="sih">'+HOTELS.map(h=>'<option value="'+esc(h.code)+'"'+(s.hotel===h.code?" selected":"")+'>'+esc(h.short)+'</option>').join("")+'</select></div>':"")
+   +(s.role==="fac"?'<div><label class="small muted" for="sif">Which director?</label><select id="sif">'+FDS.map(n=>'<option'+(s.fd===n?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select></div>':"")
+   +'<button class="btn good" data-act="a:signin" style="width:100%">Continue</button></div>'
+   +'<p class="small muted" style="margin-top:12px">Prototype: nothing here is sent anywhere. Data stays on this device. Hotel names, brands and room counts are real. Tickets, license dates and people are sample data.</p>'}
+
+/* ---- home ---- */
+function critOpen(){return scope().filter(i=>isOpen(i)&&i.crit)}
+function critBanner(L){L=L||critOpen();if(!L.length)return"";
+  return '<div class="critbox" role="alert"><b>CRITICAL · '+L.length+' open</b>'+L.map(i=>'<button class="linkbtn" data-act="i:open" data-id="'+esc(i.id)+'">'+esc(hname(i.hotel))+' · '+esc(i.title)+' · '+i.crit.rooms+' room'+(i.crit.rooms===1?"":"s")+' · '+(i.crit.ack?'on it: '+esc(i.crit.ack.by):'NOT ACKNOWLEDGED '+Math.max(1,Math.round((Date.now()-i.crit.at)/6e4))+' min')+'</button>').join("")+'</div>'}
+function pmSub(){const h=myHotel();return h==="OKCAL"?Q.key.slice(0,4)+" Q"+Q.q+" · "+counts().done+" of "+ROOMS.length+" rooms done":"Room list not loaded yet"}
+function viewHome(){const sc=scope(),open=sc.filter(isOpen),od=open.filter(overdue).length,cr=open.filter(i=>i.crit).length;
+  return '<div class="top"><div><h1>PRESERVE</h1><div class="sub">Hawkeye Hotels · '+(hotelRole()?esc(hname(A.user.hotel)):"All hotels")+'</div></div><div class="row"><button class="who" data-act="who" aria-label="Sign out">Sign out</button></div></div>'
+   +'<div class="demo">Prototype: nothing here is sent anywhere yet. Data stays on this device.</div>'+acctBar(false)+critBanner()
+   +'<div class="mods">'+(canSeeAll()?mod("pf","📊","Portfolio","Every hotel at a glance",true):"")
+   +mod("issues","🛠️","Facility issues",open.length+" open"+(cr?" · "+cr+" critical":"")+(od?" · "+od+" past due":""),true)
+   +mod("pm","✅","Preventive maintenance",pmSub(),true)+mod("lpi","📄","Licenses, permits and inspections",lpHome(),true)
+   +mod("","🔧","Major mechanical","Coming soon",false)+mod("","🛏️","Room inspection","Coming 2027",false)+mod("","🧼","Deep clean","Coming 2027",false)+'</div>'}
+function viewPmEmpty(){const h=HOTEL(myHotel());
+  return header("Room PM","Preventive maintenance",h?h.short:"")+'<div class="demo">Prototype: nothing here is sent anywhere yet.</div>'+acctBar(false)
+   +'<div class="card" style="padding:18px;margin-top:12px;display:grid;gap:10px"><b>Rooms for '+esc(h?h.short:"this hotel")+' are not loaded yet.</b><div class="muted">'+(h?h.rooms+' rooms. ':'')+'An admin loads each hotel\'s room list once from a spreadsheet. After that, quarterly room PM works the same way it does in the OKCAL beta: the checklist, photos for repairs, the 14 day repair clock and the GM verification.</div></div>'}
+
+/* ---- portfolio ---- */
+function pfHotels(){const m={};HOTELS.forEach(h=>{m[h.code]=h});
+  LP.hotels.forEach(x=>{if(!m[x.code])m[x.code]={code:x.code,short:x.name,fd:"",hpd:x.hpd||"",live:false}});
+  I.issues.forEach(i=>{if(!m[i.hotel])m[i.hotel]={code:i.hotel,short:i.hotel,fd:"",hpd:"",live:false}});
+  return Object.keys(m).map(k=>m[k])}
+function apprWho(i){return apprTier(i.appr.amt)==="hpd"?"HPD":VP+" or the AM"}
+function pfRows(){return pfHotels().map(h=>{const o=I.issues.filter(i=>i.hotel===h.code&&isOpen(i)),lc=lpCounts(lpItems(h.code)),pe=o.filter(pendAppr);
+  return{h:h,open:o.length,od:o.filter(overdue).length,crit:o.filter(i=>i.crit).length,esc:o.filter(i=>i.esc).length,pe:pe.length,pamt:pe.reduce((s,i)=>s+i.appr.amt,0),lp:lc.past,lm:lc.missing,ls:lc.soon,
+   pm:h.code==="OKCAL"?counts().done+" of "+ROOMS.length:"Not started"}}).sort((a,b)=>b.crit-a.crit||b.od-a.od||b.lp-a.lp||(a.h.short<b.h.short?-1:1))}
+function viewPortfolio(){const R=pfRows(),all=I.issues.filter(isOpen),pe=all.filter(pendAppr),cr=all.filter(i=>i.crit),sum=(f)=>R.reduce((s,r)=>s+f(r),0);
+  let h=header("Portfolio","Portfolio","All hotels")+'<div class="demo">Prototype: Tickets, license dates and people shown for the shell hotels are sample data. Hotel names and room counts are real.</div>'+acctBar(false)+critBanner(cr);
+  h+='<div class="card" style="padding:16px;margin-top:12px"><div class="stat"><div><b>'+R.length+'</b><span class="muted small">hotels</span></div><div><b>'+all.length+'</b><span class="muted small">open tickets</span></div><div><b>'+sum(r=>r.od)+'</b><span class="muted small">past due</span></div><div><b>'+pe.length+'</b><span class="muted small">waiting approval ('+money(pe.reduce((s,i)=>s+i.appr.amt,0))+')</span></div><div><b>'+sum(r=>r.lp)+'</b><span class="muted small">licenses past due</span></div><div><b>'+sum(r=>r.lm)+'</b><span class="muted small">no license date</span></div></div></div>';
+  h+='<div class="h2">By hotel</div><div class="card scroll"><table><thead><tr><th>Hotel</th><th>Facility Director</th><th class="n">Open</th><th class="n">Past due</th><th class="n">Critical</th><th class="n">Waiting approval</th><th class="n">Licenses past due</th><th class="n">No date</th><th>Room PM</th></tr></thead><tbody>'
+   +R.map(r=>'<tr><td><button class="linkbtn" data-act="a:pfhotel" data-code="'+esc(r.h.code)+'" style="min-height:0">'+esc(r.h.short)+'</button>'+(r.h.live?"":' <span class="tag mute">sample</span>')+'</td><td>'+esc(r.h.fd||"")+'</td><td class="n">'+r.open+'</td><td class="n">'+r.od+'</td><td class="n">'+(r.crit?'<b style="color:var(--late)">'+r.crit+'</b>':0)+'</td><td class="n">'+r.pe+(r.pamt?' ('+money(r.pamt)+')':'')+'</td><td class="n">'+r.lp+'</td><td class="n">'+r.lm+'</td><td>'+esc(r.pm)+'</td></tr>').join("")+'</tbody></table></div>';
+  const who={};pe.forEach(i=>{const k=apprTier(i.appr.amt)==='hpd'?'HPD':VP;(who[k]=who[k]||{n:0,amt:0}).n++;who[k].amt+=i.appr.amt});
+  const fdr=FDS.map(n=>{const hs=R.filter(r=>r.h.fd===n);return{n:n,hotels:hs.length,open:hs.reduce((s,r)=>s+r.open,0),od:hs.reduce((s,r)=>s+r.od,0),esc:hs.reduce((s,r)=>s+r.esc,0),w:who[n]||{n:0,amt:0}}});
+  h+='<div class="h2">By person</div><div class="card scroll"><table><thead><tr><th>Person</th><th class="n">Hotels</th><th class="n">Open tickets</th><th class="n">Past due</th><th class="n">Escalated to them</th><th class="n">Approvals on their desk</th></tr></thead><tbody>'
+   +fdr.map(r=>'<tr><td>'+esc(r.n)+(r.n===VP?' (VP)':'')+'</td><td class="n">'+r.hotels+'</td><td class="n">'+r.open+'</td><td class="n">'+r.od+'</td><td class="n">'+r.esc+'</td><td class="n">'+r.w.n+(r.w.amt?' ('+money(r.w.amt)+')':'')+'</td></tr>').join("")
+   +'<tr><td>HPD</td><td class="n">'+R.length+'</td><td class="n">'+all.length+'</td><td class="n">'+all.filter(overdue).length+'</td><td class="n">–</td><td class="n">'+((who.HPD||{n:0}).n)+((who.HPD||{amt:0}).amt?' ('+money(who.HPD.amt)+')':'')+'</td></tr></tbody></table></div>';
+  if(pe.length)h+='<div class="h2">Decisions waiting</div><div class="list">'+pe.sort((a,b)=>b.appr.amt-a.appr.amt).map(i=>'<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+money(i.appr.amt)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(hname(i.hotel))+' · asked '+days(TODAY,dayOf(i.appr.at))+' days ago · waiting on '+esc(apprWho(i))+(i.appr.bids&&i.appr.bids.length?' · '+i.appr.bids.length+' bid'+(i.appr.bids.length===1?"":"s")+' attached':' · no bid attached')+'</div></button>').join("")+'</div>';
+  h+='<div class="row" style="margin-top:12px"><button class="btn sec" data-act="a:apexp">Download approvals log for Accounting (CSV)</button></div>';
+  const sg=sgLoad();
+  if(isAdmin()){h+='<div class="h2">Suggested changes ('+sg.list.filter(x=>x.st==="new").length+' new)</div><div class="list">'+(sg.list.length?sg.list.slice().reverse().map(x=>'<div class="card" style="padding:14px;display:grid;gap:8px"><div class="row" style="justify-content:space-between"><b>'+esc(x.type)+'</b><span class="tag '+(x.st==="new"?"warn":x.st==="declined"?"mute":"ok")+'">'+esc({new:"New",accepted:"Accepted",declined:"Declined",done:"Done"}[x.st])+'</span></div><div>'+esc(x.text).replace(/\n/g,"<br>")+'</div><div class="muted small">'+esc(x.by)+' · '+esc(x.screen)+' · '+fdt(x.t)+(x.decBy?' · '+esc(x.decBy)+' set '+esc(x.st):"")+'</div><div class="row"><button class="btn sec" data-act="a:sugset" data-id="'+x.id+'" data-v="accepted">Accept</button><button class="btn sec" data-act="a:sugset" data-id="'+x.id+'" data-v="declined">Decline</button><button class="btn sec" data-act="a:sugset" data-id="'+x.id+'" data-v="done">Mark done</button></div></div>').join(""):'<div class="card" style="padding:16px">No suggestions yet. Anyone can send one from the Suggest a change link at the bottom of every screen.</div>')+'</div>'}
+  h+='<div class="h2">Notes</div><div class="card" style="padding:16px"><p class="small" style="margin:0 0 8px"><b>Adding a hotel</b> is one row in the Hotels sheet: name, brand, rooms, GM, HPD, AM and Facility Director. It shows up here and everywhere else with no code change.</p><p class="small" style="margin:0"><b>Ownership</b> sees this screen and every list, read only.</p></div>';
+  return h}
+
+/* ---- suggestions ---- */
+function sgLoad(){try{const t=localStorage.getItem(SKEY);if(t){const s=JSON.parse(t);if(s&&s.list)return s}}catch(e){}return{seq:1,list:[]}}
+function sgSave(s){try{localStorage.setItem(SKEY,JSON.stringify(s))}catch(e){}}
+function screenName(){const m=cur.mod||"home";return m==="issues"?(cur.tk?"Facility issues · "+cur.tk:"Facility issues"):m==="pm"?"Preventive maintenance":m==="lpi"?"Licenses and permits":m==="pf"?"Portfolio":"Home"}
+function openSuggest(){cur.pending={kind:"sug"};
+  sheet('<h3>Suggest a change</h3><div class="muted small">Screen: '+esc(screenName())+' · '+esc(A.user?A.user.name:"")+'</div>'
+   +'<div><label class="small muted" for="sgt">What kind?</label><select id="sgt"><option>Something is wrong</option><option>Something is confusing</option><option>A new idea</option></select></div>'
+   +'<div><label class="small muted" for="sgx">What would make this better? (required)</label><textarea id="sgx" placeholder="What you were trying to do, and what got in the way"></textarea></div>'
+   +'<div class="row"><button class="btn" data-act="a:sugsave" style="flex:1">Send</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+
+/* ---- actions ---- */
+function aact(a,ds,el,ev){
+  const s=cur.si||(cur.si={role:"gm",hotel:"OKCAL",fd:"Matt"});
+  if(a==="role"){s.role=ds.r;render();return}
+  if(a==="signin"){let u;
+    if(s.role==="gm"||s.role==="mnt"||s.role==="am")u={role:s.role,hotel:s.hotel,name:(s.role==="gm"?"GM":s.role==="am"?"AM":"Maintenance")+" · "+hname(s.hotel)};
+    else if(s.role==="fac")u={role:"fac",fd:s.fd,name:s.fd+" (Facilities)"};
+    else u={role:s.role,name:AROLES[s.role]};
+    A.user=u;aSave();applyAcct();render();return}
+  if(a==="pfhotel"){I.hotel=ds.code;I.view="list";cur.mod="issues";cur.tk=null;cur.if="open";cur.q="";saveI();render();return}
+  if(a==="apexp"){const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"',cols=["Ticket","Hotel","Title","Amount","Vendor / quote","Requested by","Requested on","Bids attached","Status","Decided by","Decided on","Note"];
+    const rows=I.issues.filter(i=>i.appr).sort((x,y)=>y.appr.at-x.appr.at).map(i=>{const a=i.appr;return[i.id,hname(i.hotel),i.title,a.amt,a.vendor,a.by,iso(new Date(a.at)),(a.bids||[]).length,a.st==="pending"?"Waiting for "+approver(a.amt,i.hotel):a.st==="approved"?"Approved":"Denied",a.dec||"",a.decAt?iso(new Date(a.decAt)):"",a.note||""].map(q).join(",")});
+    const blob=new Blob([cols.map(q).join(",")+"\n"+rows.join("\n")],{type:"text/csv"}),x=document.createElement("a");x.href=URL.createObjectURL(blob);x.download="approvals-log.csv";document.body.appendChild(x);x.click();setTimeout(()=>{URL.revokeObjectURL(x.href);x.remove()},600);return}
+  if(a==="sug"){openSuggest();return}
+  if(a==="sugsave"){const t=$("#sgx").value.trim();if(!t){$("#sgx").placeholder="Add a sentence so the admins know what you mean";$("#sgx").focus();return}
+    const g=sgLoad();g.list.push({id:g.seq++,t:Date.now(),by:A.user?A.user.name:"",role:A.user?A.user.role:"",screen:screenName(),hotel:cur.mod==="home"?"":(I.hotel||LP.hotel||""),type:$("#sgt").value,text:t,st:"new",decBy:"",decAt:null});sgSave(g);
+    sheet('<h3>Thanks, sent</h3><p style="margin:0">The PRESERVE admins get an email with the screen you were on. In the live version you will see what they decide.</p><button class="btn" data-act="closesheet">Done</button>');return}
+  if(a==="sugset"&&isAdmin()){const g=sgLoad(),x=g.list.filter(q=>String(q.id)===String(ds.id))[0];if(!x)return;x.st=ds.v;x.decBy=A.user.name;x.decAt=Date.now();sgSave(g);render();return}
+}
+
 /* ================= FACILITY ISSUES MODULE (prototype) =================
    One ticket per problem. Chat thread, photos, approvals, close with vendor/cost/warranty, reopen,
    per-location history. Demo data is synthetic; the real Mitti export is imported in the browser only. */
@@ -357,7 +488,8 @@ const IKEY="pres-issues-v1";
 const CATS={hvac:"HVAC / AC",plumb:"Plumbing / water",elec:"Electrical / lighting",fire:"Fire & life safety",elev:"Elevator",pool:"Pool / spa",laundry:"Laundry / kitchen equipment",bldg:"Roof / building / exterior",other:"Other"};
 const PRI={urgent:"Urgent",high:"High",med:"Medium",low:"Low"}, PORD=["urgent","high","med","low"];
 const PHELP={urgent:"Guest safety or room out of order",high:"Hurting guests, fix this week",med:"Fix within a month",low:"When convenient"};
-const ROLES={hotel:"Hotel staff",fac:"Facilities team",owner:"Ownership"};
+const ROLES={hotel:"Hotel team",hpd:"HPD",fac:"Facilities",am:"Asset Manager",owner:"Ownership",adm:"Admin"};
+const HMN="Hotel maintenance",FDN="Facility Director";
 const AREAS=["Whole property","Lobby","Pool","Fitness center","Laundry","Breakfast / kitchen","Roof","Parking lot","Exterior","Mechanical room"];
 const LIFE={fire:1,elev:1};
 const DSLA={urgent:2,high:7,med:30,low:60};
@@ -380,44 +512,52 @@ function msgE(t,by,role,text,photo){return{t:t,type:"msg",by:by,role:role,text:t
 function mkI(id,o){const pri=o.pri===undefined?"med":o.pri;
   const i={id:id,hotel:o.hotel,loc:o.loc||"",cat:o.cat||"other",title:o.title,desc:o.desc||"",need:o.need||"",cause:o.cause||"",pri:pri,assignee:o.assignee||"",
     due:o.due!==undefined?o.due:(pri?dueFrom(o.created,pri):""),created:o.created,by:o.by||"Tech A",photos:[],appr:o.appr||null,closes:o.closes||[],closedAt:o.closedAt||null,
-    events:o.events||[],src:o.src||"app",confirm:!!o.confirm};
+    events:o.events||[],src:o.src||"app",confirm:!!o.confirm,esc:o.esc||null,crit:o.crit||null};
   i.updated=o.updated||(i.events.length?i.events[i.events.length-1].t:i.created);return i}
 function closeText(by,c){return by+" closed this: "+c.what+(c.vendor?" · "+c.vendor:"")+(c.cost?" · "+money(c.cost):"")+(c.warrantyTo?" · warranty through "+fdy(c.warrantyTo):"")}
+function bidSvg(t,a){return "data:image/svg+xml;utf8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="320"><rect width="240" height="320" fill="#fff" stroke="#999"/><text x="16" y="40" font-family="sans-serif" font-size="16" font-weight="700">SAMPLE BID</text><text x="16" y="72" font-family="sans-serif" font-size="14">'+t+'</text><text x="16" y="104" font-family="sans-serif" font-size="14">Total: '+a+'</text><rect x="16" y="130" width="208" height="6" fill="#ddd"/><rect x="16" y="150" width="160" height="6" fill="#ddd"/><rect x="16" y="170" width="190" height="6" fill="#ddd"/></svg>')}
+function escE(t,h,by,note){return sysE(t,"Escalated to Facility Director"+(fdOf(h)?" ("+fdOf(h)+")":"")+" by "+by+": "+note+" (email sent)",by,"hotel")}
 function seedIssues(){
-  const T=(d,h)=>Date.now()-d*864e5-(h||0)*36e5, out=[];
-  const FL="Facilities Lead",RE="Regional Engineer",CD="Corp Facilities Director",CE="Chief Engineer",TA="Tech A",TB="Tech B";
-  const c101={at:T(20),by:FL,what:"Replaced run capacitor and cleaned the coil. Room holding 70 degrees.",vendor:"Summit HVAC",cost:385,warrantyTo:ahead(344)};
-  out.push(mkI("FI-101",{hotel:"OKCAL",loc:"Room 214",cat:"hvac",pri:"med",title:"AC not cooling",desc:"Guest called twice. Room is 78 degrees with the thermostat at 68.",need:"Diagnose and repair the unit.",created:T(24),by:TA,assignee:FL,closedAt:c101.at,closes:[c101],
-    events:[sysE(T(24),"Ticket created by "+TA,TA,"hotel"),msgE(T(23.5),TA,"hotel","Fan runs but no cold air. Filter is clean."),sysE(T(23),"Routed to "+FL+" (default for OKCAL)"),msgE(T(22),FL,"fac","Summit HVAC is coming Thursday morning."),sysE(c101.at,closeText(FL,c101),FL,"fac")]}));
-  out.push(mkI("FI-122",{hotel:"OKCAL",loc:"Room 214",cat:"hvac",pri:"high",title:"AC down again, 3 weeks after the repair",desc:"Same unit as FI-101. Not cooling since last night.",need:"Check whether the capacitor repair is under warranty before calling a new vendor.",created:T(2),by:CE,assignee:FL,
-    events:[sysE(T(2),"Ticket created by "+CE,CE,"hotel"),msgE(T(1.8),CE,"hotel","Same symptoms as FI-101. Room is out of order tonight."),sysE(T(1.8),"Routed to "+FL+" (default for OKCAL)"),msgE(T(1.5),FL,"fac","Reading the FI-101 notes. Summit's warranty may cover this, so I will call them first.")]}));
-  out.push(mkI("FI-103",{hotel:"OKCAL",loc:"Pool",cat:"pool",pri:"high",title:"Pool dehumidifier not keeping up",desc:"Pool room is 88 degrees and humid. Windows are fogging.",need:"Replace the compressor or the unit.",created:T(18),by:CE,assignee:RE,
-    appr:{amt:6400,vendor:"Northline Mechanical (quote 5521)",why:"Compressor replacement. Two portable dehumidifiers are running as a stopgap.",by:CE,at:T(5),st:"pending",dec:"",decAt:null,note:""},
-    events:[sysE(T(18),"Ticket created by "+CE,CE,"hotel"),sysE(T(18),"Routed to "+RE),msgE(T(12),RE,"fac","Northline looked at it. Quote is in the approval request."),sysE(T(5),"Approval requested: "+money(6400)+" · goes to "+"Corp Facilities Director",CE,"hotel")]}));
-  out.push(mkI("FI-104",{hotel:"OKCAL",loc:"Roof",cat:"bldg",pri:"med",title:"Water stain below the roof drain, 5th floor",desc:"Stain is getting bigger after each rain.",need:"Roof contractor to inspect and patch.",created:T(40),by:TB,assignee:"",
-    events:[sysE(T(40),"Ticket created by "+TB,TB,"hotel")]}));
-  out.push(mkI("FI-105",{hotel:"OKCAL",loc:"Lobby",cat:"elec",pri:null,title:"Two lobby sign letters are out",created:T(1),by:TB,assignee:"",due:"",events:[sysE(T(1),"Ticket created by "+TB,TB,"hotel")]}));
-  out.push(mkI("FI-106",{hotel:"OKCAL",loc:"Mechanical room",cat:"fire",pri:"urgent",title:"Fire panel trouble light is on",desc:"Yellow trouble light on the main panel since the storm.",need:"Fire alarm vendor to diagnose today.",created:T(2),by:CE,assignee:RE,
-    events:[sysE(T(2),"Ticket created by "+CE,CE,"hotel"),sysE(T(2),"Routed to "+RE),msgE(T(1.9),RE,"fac","Vendor is scheduled for tomorrow at 9 AM. Fire watch not required yet.")]}));
-  out.push(mkI("FI-107",{hotel:"Demo Hotel B",loc:"Elevators",cat:"elev",pri:"high",title:"Elevator will not come to the 3rd floor",desc:"Call button works but the car never answers from 3.",need:"New control board per the elevator vendor.",created:T(10),by:"GM B",assignee:FL,
-    appr:{amt:1850,vendor:"Otis service quote",why:"Replace the 3rd floor call board.",by:"GM B",at:T(8),st:"approved",dec:FL,decAt:T(6),note:"Go ahead. Schedule after 9 AM."},
-    events:[sysE(T(10),"Ticket created by GM B","GM B","hotel"),sysE(T(10),"Routed to "+FL),sysE(T(8),"Approval requested: "+money(1850)+" · goes to Facilities Lead","GM B","hotel"),sysE(T(6),FL+" approved "+money(1850)+": Go ahead. Schedule after 9 AM.",FL,"fac"),msgE(T(3),"GM B","hotel","Part is ordered. Vendor says Tuesday.")]}));
-  out.push(mkI("FI-108",{hotel:"Demo Hotel B",loc:"Room 412",cat:"plumb",pri:"med",title:"Tub drain is slow",created:T(6),by:"Tech A",assignee:RE,events:[sysE(T(6),"Ticket created by Tech A","Tech A","hotel"),sysE(T(6),"Routed to "+RE)]}));
-  out.push(mkI("FI-109",{hotel:"Demo Hotel B",loc:"Laundry",cat:"laundry",pri:"high",title:"Both commercial washers failing, replace",desc:"Drum bearings are going on both. One is already down.",need:"Replace both washers (capital).",created:T(3),by:"GM B",assignee:FL,
-    appr:{amt:12500,vendor:"Quote from the laundry vendor",why:"Both machines are original to the building and past repair.",by:"GM B",at:T(3),st:"pending",dec:"",decAt:null,note:""},
-    events:[sysE(T(3),"Ticket created by GM B","GM B","hotel"),sysE(T(3),"Routed to "+FL),sysE(T(3),"Approval requested: "+money(12500)+" · goes to Ownership (capital)","GM B","hotel")]}));
-  out.push(mkI("FI-110",{hotel:"Demo Hotel C",loc:"Exterior",cat:"bldg",pri:"low",title:"Bricks missing at the canopy",created:T(70),by:"GM C",assignee:RE,events:[sysE(T(70),"Ticket created by GM C","GM C","hotel"),sysE(T(70),"Routed to "+RE),msgE(T(55),RE,"fac","Waiting on a mason to quote.")]}));
-  out.push(mkI("FI-111",{hotel:"Demo Hotel C",loc:"Room 105",cat:"hvac",pri:"med",title:"PTAC smells musty when it starts",created:T(9),by:"Tech A",assignee:FL,events:[sysE(T(9),"Ticket created by Tech A","Tech A","hotel"),sysE(T(9),"Routed to "+FL),msgE(T(2),"Tech A","hotel","Cleaned the coil. Smell came back after a day.")]}));
-  const c112={at:T(8),by:RE,what:"Replaced the gate arm and sensor.",vendor:"Gate Pros",cost:920,warrantyTo:ahead(80)};
-  out.push(mkI("FI-112",{hotel:"Demo Hotel C",loc:"Parking lot",cat:"other",pri:"med",title:"Parking gate arm broken",created:T(20),by:"GM C",assignee:RE,closedAt:c112.at,closes:[c112],events:[sysE(T(20),"Ticket created by GM C","GM C","hotel"),sysE(T(20),"Routed to "+RE),sysE(c112.at,closeText(RE,c112),RE,"fac")]}));
-  out.push(mkI("FI-113",{hotel:"Demo Hotel D",loc:"Whole property",cat:"fire",pri:"urgent",title:"Annual sprinkler inspection: repairs required",desc:"Inspector listed gauges, painted heads and a missing hose valve cap.",need:"Complete the vendor's repair list and get the re-inspection scheduled.",created:T(30),by:"GM D",assignee:CD,
-    appr:{amt:3200,vendor:"Fire protection vendor quote",why:"Repair list from the annual inspection.",by:"GM D",at:T(24),st:"approved",dec:CD,decAt:T(22),note:"Approved. Book the re-inspection."},
-    events:[sysE(T(30),"Ticket created by GM D","GM D","hotel"),sysE(T(30),"Routed to "+CD),sysE(T(24),"Approval requested: "+money(3200)+" · goes to Corp Facilities Director","GM D","hotel"),sysE(T(22),CD+" approved "+money(3200)+": Approved. Book the re-inspection.",CD,"fac")]}));
-  out.push(mkI("FI-114",{hotel:"Demo Hotel D",loc:"Room 220",cat:"plumb",pri:"high",title:"Ceiling leak, room is out of order",created:T(12),by:"GM D",assignee:RE,events:[sysE(T(12),"Ticket created by GM D","GM D","hotel"),sysE(T(12),"Routed to "+RE),msgE(T(9),RE,"fac","Plumber found a bad supply line above. Waiting on drywall.")]}));
+  const T=(d,h)=>Date.now()-d*864e5-(h||0)*36e5, out=[], HM=HMN, FD=FDN;
+  const CE="Chief Engineer",TA="Tech A",TB="Tech B",MT="Matt (Facilities)",ER="Eric (Facilities)";
+  const asg=(t,h)=>sysE(t,"Assigned to hotel maintenance"+(h?" ("+h+")":""));
+  const c101={at:T(20),by:MT,what:"Replaced run capacitor and cleaned the coil. Room holding 70 degrees.",vendor:"Summit HVAC",cost:385,warrantyTo:ahead(344)};
+  out.push(mkI("FI-101",{hotel:"OKCAL",loc:"Room 214",cat:"hvac",pri:"med",title:"AC not cooling",desc:"Guest called twice. Room is 78 degrees with the thermostat at 68.",need:"Diagnose and repair the unit.",created:T(24),by:TA,assignee:FD,esc:T(23),closedAt:c101.at,closes:[c101],
+    events:[sysE(T(24),"Ticket created by "+TA,TA,"hotel"),asg(T(24)),msgE(T(23.5),TA,"hotel","Fan runs but no cold air. Filter is clean."),escE(T(23),"OKCAL",TA,"cleaned the filter and checked the breaker, still no cold air"),msgE(T(22),MT,"fac","Summit HVAC is coming Thursday morning."),sysE(c101.at,closeText(MT,c101),MT,"fac")]}));
+  out.push(mkI("FI-122",{hotel:"OKCAL",loc:"Room 214",cat:"hvac",pri:"high",title:"AC down again, 3 weeks after the repair",desc:"Same unit as FI-101. Not cooling since last night.",need:"Check whether the capacitor repair is under warranty before calling a new vendor.",created:T(2),by:CE,assignee:FD,esc:T(1.8),
+    events:[sysE(T(2),"Ticket created by "+CE,CE,"hotel"),asg(T(2)),msgE(T(1.9),CE,"hotel","Same symptoms as FI-101. Room is out of order tonight."),escE(T(1.8),"OKCAL",CE,"same unit as FI-101, please check the warranty first"),msgE(T(1.5),MT,"fac","Reading the FI-101 notes. Summit's warranty may cover this, so I will call them first.")]}));
+  out.push(mkI("FI-103",{hotel:"OKCAL",loc:"Pool",cat:"pool",pri:"high",title:"Pool dehumidifier not keeping up",desc:"Pool room is 88 degrees and humid. Windows are fogging.",need:"Replace the compressor or the unit.",created:T(18),by:CE,assignee:FD,esc:T(12),
+    appr:{amt:6400,vendor:"Northline Mechanical (quote 5521)",why:"Compressor replacement. Two portable dehumidifiers are running as a stopgap.",by:CE,at:T(5),st:"pending",dec:"",decAt:null,note:"",bids:[{name:"Northline quote 5521",kind:"img",data:bidSvg("Northline Mechanical","$6,400")},{name:"Second bid, Delta Air Systems",kind:"img",data:bidSvg("Delta Air Systems","$7,150")}]},
+    events:[sysE(T(18),"Ticket created by "+CE,CE,"hotel"),asg(T(18)),escE(T(12),"OKCAL",CE,"two vendors looked at it, needs a compressor"),sysE(T(5),"Approval requested: "+money(6400)+" · goes to Matt (VP) or the AM · 2 bids attached",CE,"hotel")]}));
+  out.push(mkI("FI-104",{hotel:"OKCAL",loc:"Roof",cat:"bldg",pri:"med",title:"Water stain below the roof drain, 5th floor",desc:"Stain is getting bigger after each rain.",need:"Roof contractor to inspect and patch.",created:T(40),by:TB,assignee:HM,
+    events:[sysE(T(40),"Ticket created by "+TB,TB,"hotel"),asg(T(40))]}));
+  out.push(mkI("FI-105",{hotel:"OKCAL",loc:"Lobby",cat:"elec",pri:null,title:"Two lobby sign letters are out",created:T(1),by:TB,assignee:HM,due:"",events:[sysE(T(1),"Ticket created by "+TB,TB,"hotel"),asg(T(1))]}));
+  out.push(mkI("FI-106",{hotel:"OKCAL",loc:"Mechanical room",cat:"fire",pri:"urgent",title:"Fire panel trouble light is on",desc:"Yellow trouble light on the main panel since the storm.",need:"Fire alarm vendor to diagnose today.",created:T(2),by:CE,assignee:FD,esc:T(2),
+    events:[sysE(T(2),"Ticket created by "+CE,CE,"hotel"),asg(T(2)),escE(T(2),"OKCAL",CE,"life safety, needs a fire alarm vendor"),msgE(T(1.9),MT,"fac","Vendor is scheduled for tomorrow at 9 AM. Fire watch not required yet.")]}));
+  out.push(mkI("FI-107",{hotel:"CIDCO",loc:"Elevators",cat:"elev",pri:"high",title:"Elevator will not come to the 3rd floor",desc:"Call button works but the car never answers from 3.",need:"New control board per the elevator vendor.",created:T(10),by:"GM",assignee:FD,esc:T(9),
+    appr:{amt:1850,vendor:"Otis service quote",why:"Replace the 3rd floor call board.",by:"GM",at:T(8),st:"approved",dec:MT,decAt:T(6),note:"Go ahead. Schedule after 9 AM.",bids:[{name:"Otis service quote",kind:"img",data:bidSvg("Otis service","$1,850")}]},
+    events:[sysE(T(10),"Ticket created by GM","GM","hotel"),asg(T(10)),escE(T(9),"CIDCO","GM","maintenance cannot service the elevator"),sysE(T(8),"Approval requested: "+money(1850)+" · goes to Matt (VP) or the AM · 1 bid attached","GM","hotel"),sysE(T(6),MT+" approved "+money(1850)+": Go ahead. Schedule after 9 AM.",MT,"fac"),msgE(T(3),"GM","hotel","Part is ordered. Vendor says Tuesday.")]}));
+  out.push(mkI("FI-108",{hotel:"CIDCO",loc:"Room 412",cat:"plumb",pri:"med",title:"Tub drain is slow",created:T(6),by:"Tech A",assignee:HM,events:[sysE(T(6),"Ticket created by Tech A","Tech A","hotel"),asg(T(6)),msgE(T(4),"Tech A","hotel","Snaked it, draining better. Watching it.")]}));
+  out.push(mkI("FI-109",{hotel:"CIDVL",loc:"Laundry",cat:"laundry",pri:"high",title:"Both commercial washers failing, replace",desc:"Drum bearings are going on both. One is already down.",need:"Replace both washers (capital).",created:T(3),by:"GM",assignee:FD,esc:T(3),
+    appr:{amt:12500,vendor:"Quote from the laundry vendor",why:"Both machines are original to the building and past repair.",by:"GM",at:T(3),st:"pending",dec:"",decAt:null,note:"",bids:[{name:"Laundry vendor quote",kind:"img",data:bidSvg("Laundry vendor","$12,500")}]},
+    events:[sysE(T(3),"Ticket created by GM","GM","hotel"),asg(T(3)),escE(T(3),"CIDVL","GM","both machines past repair, needs capital"),sysE(T(3),"Approval requested: "+money(12500)+" · goes to Matt (VP) or the AM · 1 bid attached","GM","hotel")]}));
+  out.push(mkI("FI-110",{hotel:"CIDVL",loc:"Exterior",cat:"bldg",pri:"low",title:"Bricks missing at the canopy",created:T(70),by:"GM",assignee:HM,events:[sysE(T(70),"Ticket created by GM","GM","hotel"),asg(T(70)),msgE(T(55),"GM","hotel","Waiting on a mason to quote.")]}));
+  out.push(mkI("FI-111",{hotel:"CIDVL",loc:"Room 105",cat:"hvac",pri:"med",title:"PTAC smells musty when it starts",created:T(9),by:"Tech A",assignee:HM,events:[sysE(T(9),"Ticket created by Tech A","Tech A","hotel"),asg(T(9)),msgE(T(2),"Tech A","hotel","Cleaned the coil. Smell came back after a day.")]}));
+  const c112={at:T(8),by:MT,what:"Replaced the gate arm and sensor.",vendor:"Gate Pros",cost:920,warrantyTo:ahead(80)};
+  out.push(mkI("FI-112",{hotel:"MN206",loc:"Parking lot",cat:"other",pri:"med",title:"Parking gate arm broken",created:T(20),by:"GM",assignee:FD,esc:T(19),closedAt:c112.at,closes:[c112],events:[sysE(T(20),"Ticket created by GM","GM","hotel"),asg(T(20)),escE(T(19),"MN206","GM","needs a vendor for the arm and sensor"),sysE(c112.at,closeText(MT,c112),MT,"fac")]}));
+  out.push(mkI("FI-113",{hotel:"MN206",loc:"Whole property",cat:"fire",pri:"urgent",title:"Annual sprinkler inspection: repairs required",desc:"Inspector listed gauges, painted heads and a missing hose valve cap.",need:"Complete the vendor's repair list and get the re-inspection scheduled.",created:T(30),by:"GM",assignee:FD,esc:T(30),
+    appr:{amt:3200,vendor:"Fire protection vendor quote",why:"Repair list from the annual inspection.",by:"GM",at:T(24),st:"approved",dec:MT,decAt:T(22),note:"Approved. Book the re-inspection.",bids:[{name:"Fire protection quote",kind:"img",data:bidSvg("Fire protection","$3,200")}]},
+    events:[sysE(T(30),"Ticket created by GM","GM","hotel"),asg(T(30)),escE(T(30),"MN206","GM","life safety repair list from the inspector"),sysE(T(24),"Approval requested: "+money(3200)+" · goes to Matt (VP) or the AM · 1 bid attached","GM","hotel"),sysE(T(22),MT+" approved "+money(3200)+": Approved. Book the re-inspection.",MT,"fac")]}));
+  out.push(mkI("FI-117",{hotel:"MN206",loc:"Whole property",cat:"plumb",pri:"urgent",title:"No hot water on floors 3 and 4",desc:"Boiler tripped and will not restart. Guests are calling the desk.",need:"Get a boiler tech in today. We are moving guests as we can.",created:T(0,0.4),by:"Maintenance",assignee:FD,esc:T(0,0.4),crit:{at:Date.now()-25*6e4,by:"Maintenance",rooms:18,ack:null},
+    events:[sysE(T(0,0.4),"Ticket created by Maintenance","Maintenance","hotel"),sysE(T(0,0.4),"CRITICAL alert sent: Facility Director (Matt), VP (Matt), HPD, GM and AM emailed · 18 rooms affected","Maintenance","hotel"),escE(T(0,0.4),"MN206","Maintenance","boiler will not restart")]}));
+  out.push(mkI("FI-114",{hotel:"MSPTH",loc:"Room 220",cat:"plumb",pri:"high",title:"Ceiling leak, room is out of order",created:T(12),by:"GM",assignee:FD,esc:T(10),events:[sysE(T(12),"Ticket created by GM","GM","hotel"),asg(T(12)),escE(T(10),"MSPTH","GM","leak is coming from the room above"),msgE(T(9),MT,"fac","Plumber found a bad supply line above. Waiting on drywall.")]}));
+  out.push(mkI("FI-118",{hotel:"MSPTH",loc:"Lobby",cat:"bldg",pri:"med",title:"Replace two worn door closers",desc:"Front and side doors are slamming.",need:"Two closers, parts and install.",created:T(4),by:"Maintenance",assignee:HM,
+    appr:{amt:240,vendor:"Local door hardware, quote 88",why:"Doors slam and one will not latch.",by:"Maintenance",at:T(3),st:"pending",dec:"",decAt:null,note:"",bids:[{name:"Door hardware quote 88",kind:"img",data:bidSvg("Door hardware","$240")}]},
+    events:[sysE(T(4),"Ticket created by Maintenance","Maintenance","hotel"),asg(T(4)),sysE(T(3),"Approval requested: "+money(240)+" · goes to HPD · 1 bid attached","Maintenance","hotel")]}));
   out.push(demoLpiTicket());
   return out}
-function freshI(){const s={issues:[],seq:123,role:"hotel",hotel:"OKCAL",view:"list",team:["Facilities Lead","Regional Engineer","Corp Facilities Director"],defAssignee:"Facilities Lead",sla:{urgent:2,high:7,med:30,low:60},lim:{dir:2500,own:10000},imported:false};I=s;s.issues=seedIssues();return s}
-function loadI(){try{const t=localStorage.getItem(IKEY);if(t){const s=JSON.parse(t);if(s&&s.issues&&s.sla)return s}}catch(e){}return freshI()}
+function freshI(){const s={v:2,issues:[],seq:119,role:"hotel",hotel:"OKCAL",view:"list",team:[HMN,FDN],defAssignee:HMN,sla:{urgent:2,high:7,med:30,low:60},lim:{hpd:250},imported:false};I=s;s.issues=seedIssues();return s}
+function loadI(){try{const t=localStorage.getItem(IKEY);if(t){const s=JSON.parse(t);if(s&&s.issues&&s.sla){if(s.v===2)return s;if(s.imported){s.v=2;s.lim={hpd:250,vp:10000};s.defAssignee=HMN;s.team=[HMN,FDN].concat((s.team||[]).filter(n=>["Facilities Lead","Regional Engineer","Corp Facilities Director"].indexOf(n)<0&&n!==HMN&&n!==FDN));s.issues.forEach(i=>{if(i.esc===undefined)i.esc=null;if(i.crit===undefined)i.crit=null});return s}}}}catch(e){}return freshI()}
 function saveI(){try{localStorage.setItem(IKEY,JSON.stringify(I))}catch(e){}}
 I=loadI();
 
@@ -432,23 +572,29 @@ function sinceUpd(i){return Math.max(0,days(TODAY,dayOf(i.updated)))}
 function pendAppr(i){return isOpen(i)&&!!i.appr&&i.appr.st==="pending"}
 function msgCount(i){return i.events.filter(e=>e.type==="msg").length}
 function lastVendor(i){const c=lastClose(i);return (c&&c.vendor)||(i.appr&&i.appr.vendor)||""}
-function approver(a){return a>=I.lim.own?"Ownership (capital)":a>=I.lim.dir?"Corp Facilities Director":"Facilities Lead"}
-function hotels(){const s={OKCAL:1};I.issues.forEach(i=>{s[i.hotel]=1});return Object.keys(s).sort()}
+function apprTier(a){return a<=I.lim.hpd?"hpd":"vm"}
+function approver(a,h){return apprTier(a)==="hpd"?"HPD":VP+" (VP) or the hotel's AM"}
+function canApproveThis(i){const a=i.appr;if(!a||a.st!=="pending"||!A.user)return false;const t=apprTier(a.amt),u=A.user;if(u.role==="hpd")return t==="hpd";if(t!=="vm")return false;if(u.role==="fac")return u.fd===VP;if(u.role==="am")return u.hotel===i.hotel;return false}
+function assigneeLabel(i){return i.assignee===FDN?FDN+(fdOf(i.hotel)?" ("+fdOf(i.hotel)+")":""):(i.assignee||"Not assigned")}
+function canEsc(i){return isOpen(i)&&i.assignee===HMN&&I.role!=="owner"}
+function hotels(){const s={};HOTELS.forEach(h=>{s[h.code]=1});I.issues.forEach(i=>{s[i.hotel]=1});return Object.keys(s)}
 function scope(){return I.issues.filter(i=>!I.hotel||i.hotel===I.hotel)}
 function canCreate(){return I.role!=="owner"}
 function canClose(){return I.role!=="owner"}
-function canEdit(){return I.role==="fac"}
-function canApprove(){return I.role!=="hotel"}
+function canEdit(){return I.role==="fac"||I.role==="adm"}
+function canAck(){return I.role==="hpd"||I.role==="fac"||I.role==="adm"}
 function history(p){const k=nloc(p.loc);if(!k)return[];return I.issues.filter(o=>o.id!==p.id&&o.hotel===p.hotel&&nloc(o.loc)===k).sort((a,b)=>b.created-a.created)}
 function warrantyFor(p){const k=nloc(p.loc),out=[];if(!k)return out;
   I.issues.forEach(o=>{if(o.id===p.id||o.hotel!==p.hotel||nloc(o.loc)!==k)return;o.closes.forEach(c=>{if(c.warrantyTo&&pd(c.warrantyTo)>=TODAY)out.push({t:o,c:c,same:o.cat===p.cat})})});
   return out.sort((a,b)=>(b.same?1:0)-(a.same?1:0))}
-function urg(i){return[overdue(i)?0:1,i.pri?PORD.indexOf(i.pri):4,i.created]}
-function cmpOpen(a,b){const x=urg(a),y=urg(b);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2]}
+function urg(i){return[i.crit&&isOpen(i)?0:1,overdue(i)?0:1,i.pri?PORD.indexOf(i.pri):4,i.created]}
+function cmpOpen(a,b){const x=urg(a),y=urg(b);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2]||x[3]-y[3]}
 
 /* ---- views ---- */
 function tagsFor(i){const t=[];
   if(!isOpen(i)){const c=lastClose(i);t.push('<span class="tag mute">Closed '+fd(c.at)+'</span>');if(c.warrantyTo&&pd(c.warrantyTo)>=TODAY)t.push('<span class="tag info">Warranty to '+fdy(c.warrantyTo)+'</span>');return t.join(" ")}
+  if(i.crit)t.push('<span class="tag bad">CRITICAL</span>');
+  if(i.esc)t.push('<span class="tag info">Escalated</span>');else t.push('<span class="tag mute">At the hotel</span>');
   if(i.pri)t.push('<span class="tag '+(i.pri==="urgent"?"bad":i.pri==="high"?"warn":"mute")+'">'+PRI[i.pri]+'</span>');else t.push('<span class="tag warn">Needs priority</span>');
   if(overdue(i)){const n=overdueDays(i);t.push('<span class="tag bad">'+n+' day'+(n===1?"":"s")+' past due</span>')}else if(i.due)t.push('<span class="tag mute">Due '+fd(i.due)+'</span>');else t.push('<span class="tag warn">No due date</span>');
   if(!i.assignee)t.push('<span class="tag bad">Unassigned</span>');
@@ -459,43 +605,48 @@ function tagsFor(i){const t=[];
   if(i.confirm)t.push('<span class="tag warn">Check: marked resolved in Mitti</span>');
   else if(sinceUpd(i)>=7)t.push('<span class="tag warn">No update in '+sinceUpd(i)+' days</span>');
   return t.join(" ")}
-function icard(i){return '<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+esc(i.id)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(i.hotel)+' · '+(i.loc?esc(i.loc):"no location")+' · '+esc(CATS[i.cat]||"Other")+'</div><div class="itags">'+tagsFor(i)+'</div><div class="muted small">'+(i.assignee?"Assigned to "+esc(i.assignee):"Not assigned")+' · opened '+ageDays(i)+'d ago · '+msgCount(i)+' update'+(msgCount(i)===1?"":"s")+'</div></button>'}
+function icard(i){return '<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+esc(i.id)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(hname(i.hotel))+' · '+(i.loc?esc(i.loc):"no location")+' · '+esc(CATS[i.cat]||"Other")+'</div><div class="itags">'+tagsFor(i)+'</div><div class="muted small">'+(i.assignee?"Assigned to "+esc(assigneeLabel(i)):"Not assigned")+' · opened '+ageDays(i)+'d ago · '+msgCount(i)+' update'+(msgCount(i)===1?"":"s")+'</div></button>'}
 function listHTML(){const f=cur.if||"open",q=(cur.q||"").trim().toLowerCase();
   let L=scope().filter(i=>{
-    if(q){const hay=[i.id,i.title,i.loc,i.hotel,i.assignee,i.desc,CATS[i.cat],lastVendor(i)].join(" ").toLowerCase();return hay.indexOf(q)>=0}
-    if(f==="open")return isOpen(i);if(f==="closed")return !isOpen(i);if(f==="unassigned")return isOpen(i)&&!i.assignee;if(f==="overdue")return overdue(i);if(f==="approval")return pendAppr(i);return true});
+    if(q){const hay=[i.id,i.title,i.loc,i.hotel,hname(i.hotel),i.assignee,i.desc,CATS[i.cat],lastVendor(i)].join(" ").toLowerCase();return hay.indexOf(q)>=0}
+    if(f==="open")return isOpen(i);if(f==="closed")return !isOpen(i);if(f==="crit")return isOpen(i)&&!!i.crit;if(f==="athotel")return isOpen(i)&&!i.esc;if(f==="esc")return isOpen(i)&&!!i.esc;if(f==="unassigned")return isOpen(i)&&!i.assignee;if(f==="overdue")return overdue(i);if(f==="approval")return pendAppr(i);return true});
   L.sort((a,b)=>{const ao=isOpen(a),bo=isOpen(b);if(ao!==bo)return ao?-1:1;return ao?cmpOpen(a,b):lastClose(b).at-lastClose(a).at});
   return (q?'<div class="muted small">Searching open and closed tickets for "'+esc(cur.q.trim())+'": '+L.length+' found</div>':"")+(L.length?L.map(icard).join(""):'<div class="card" style="padding:18px">Nothing here.</div>')}
-function roleBar(showHotel){const hs=hotels();
-  return '<div class="row" style="margin-top:10px"><span class="small muted">Preview as</span>'+Object.keys(ROLES).map(k=>'<button class="chip" data-act="i:role" data-r="'+k+'" aria-pressed="'+(I.role===k)+'">'+ROLES[k]+'</button>').join("")
-   +(showHotel?'<select id="ihotel" aria-label="Hotel" style="width:auto;min-width:200px">'+(I.role!=="hotel"?'<option value="">All hotels</option>':"")+hs.map(n=>'<option'+(I.hotel===n?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select>':"")+'</div><div class="small muted" style="margin-top:4px">In the real version, your login decides what you see.</div>'}
+function roleBar(showHotel){return acctBar(showHotel,"ihotel",I.hotel,true)}
 function issuesNav(){const od=I.issues.filter(overdue).length;
   return '<nav class="nav" aria-label="Sections"><button data-act="i:tab" data-v="list" '+(I.view!=="port"?'aria-current="page"':"")+'>Issues</button><button data-act="i:tab" data-v="port" '+(I.view==="port"?'aria-current="page"':"")+'>Rollup'+(od&&I.role!=="hotel"?'<span class="badge">'+od+'</span>':"")+'</button><button data-act="go" data-m="home">Home</button></nav>'}
 function viewIssues(){const L=scope(),open=L.filter(isOpen),f=cur.if||"open";
-  const c={open:open.length,unassigned:open.filter(i=>!i.assignee).length,overdue:open.filter(overdue).length,approval:open.filter(pendAppr).length,closed:L.length-open.length};
-  let h=header(I.hotel||"All hotels","Facility issues",ROLES[I.role])+'<div class="demo">Prototype: emails and reminders are previewed, not sent. Data stays on this device.</div>'+roleBar(true);
+  const c={open:open.length,crit:open.filter(i=>i.crit).length,athotel:open.filter(i=>!i.esc).length,esc:open.filter(i=>i.esc).length,overdue:open.filter(overdue).length,approval:open.filter(pendAppr).length,closed:L.length-open.length};
+  let h=header(I.hotel?hname(I.hotel):"All hotels","Facility issues",ROLES[I.role])+'<div class="demo">Prototype: emails and reminders are previewed, not sent. Data stays on this device.</div>'+roleBar(true)+critBanner();
   if(canCreate())h+='<div style="margin-top:12px"><button class="btn" data-act="i:new" style="width:100%">+ Report an issue</button></div>';
-  h+='<div class="chips" role="group" aria-label="Filter tickets">'+[["open","Open",c.open],["unassigned","Unassigned",c.unassigned],["overdue","Past due",c.overdue],["approval","Waiting approval",c.approval],["closed","Closed",c.closed]].map(x=>'<button class="chip" data-act="i:filter" data-f="'+x[0]+'" aria-pressed="'+(f===x[0]&&!(cur.q||"").trim())+'">'+x[1]+' ('+x[2]+')</button>').join("")+'</div>';
+  h+='<div class="chips" role="group" aria-label="Filter tickets">'+[["open","Open",c.open]].concat(c.crit?[["crit","Critical",c.crit]]:[]).concat([["athotel","At the hotel",c.athotel],["esc","Escalated",c.esc],["overdue","Past due",c.overdue],["approval","Waiting approval",c.approval],["closed","Closed",c.closed]]).map(x=>'<button class="chip" data-act="i:filter" data-f="'+x[0]+'" aria-pressed="'+(f===x[0]&&!(cur.q||"").trim())+'">'+x[1]+' ('+x[2]+')</button>').join("")+'</div>';
   h+='<input type="search" id="isearch" placeholder="Find a room, vendor, or word (searches closed tickets too)" value="'+esc(cur.q||"")+'" aria-label="Search tickets"><div id="ilist" class="list" style="margin-top:12px">'+listHTML()+'</div>';
   return h}
 function kv(a,b){return '<div><span>'+esc(a)+'</span><b>'+esc(b)+'</b></div>'}
-function apprCard(i){const a=i.appr;if(!a)return"";
-  const tag=a.st==="pending"?'<span class="tag warn">Waiting for '+esc(approver(a.amt))+'</span>':a.st==="approved"?'<span class="tag ok">Approved</span>':'<span class="tag bad">Denied</span>';
+function bidsHTML(list,key){if(!list||!list.length)return"";
+  return '<div class="thumbs">'+list.map((b,k)=>b.kind==="pdf"?'<a class="btn sec" download="'+esc(b.name)+'.pdf" href="'+b.data+'" style="min-height:0;padding:8px 12px">📄 '+esc(b.name)+'</a>':'<img alt="Bid: '+esc(b.name)+'" title="'+esc(b.name)+'" data-act="i:bidzoom" data-k="'+k+'" data-key="'+key+'" src="'+b.data+'">').join("")+'</div>'}
+function apprCard(i){const a=i.appr;if(!a)return"";const nb=(a.bids||[]).length;
+  const tag=a.st==="pending"?'<span class="tag warn">Waiting for '+esc(approver(a.amt,i.hotel))+'</span>':a.st==="approved"?'<span class="tag ok">Approved</span>':'<span class="tag bad">Denied</span>';
   return '<div class="card" style="padding:14px 16px;display:grid;gap:8px;margin-top:12px"><div class="row" style="justify-content:space-between"><b style="font:700 22px var(--display);letter-spacing:.04em;text-transform:uppercase">Spend approval · '+money(a.amt)+'</b>'+tag+'</div>'
    +'<div class="small">'+(a.vendor?'Vendor / quote: '+esc(a.vendor)+'<br>':"")+(a.why?esc(a.why)+'<br>':"")+'<span class="muted">Requested by '+esc(a.by)+' on '+fd(a.at)+(a.dec?" · "+(a.st==="approved"?"Approved":"Denied")+" by "+esc(a.dec)+" on "+fd(a.decAt)+(a.note?": "+esc(a.note):""):"")+'</span></div>'
-   +(a.st==="pending"&&canApprove()?'<div class="row"><button class="btn good" data-act="i:decide" data-v="approved">Approve</button><button class="btn sec" data-act="i:decide" data-v="denied">Deny</button></div>':"")+'</div>'}
+   +(nb?'<div class="small muted">'+nb+' bid'+(nb===1?"":"s")+' attached. Tap to enlarge.</div>'+bidsHTML(a.bids,"a"):(a.amt>I.lim.hpd?'<div class="warnbox">No bid attached yet. Attach the bid so the approver can see it.</div>':""))
+   +(a.st==="pending"&&canApproveThis(i)?'<div class="row"><button class="btn good" data-act="i:decide" data-v="approved">Approve</button><button class="btn sec" data-act="i:decide" data-v="denied">Deny</button></div>':(a.st==="pending"?'<div class="small muted">Only '+esc(approver(a.amt,i.hotel))+' can approve this amount.</div>':""))
+   +(a.st==="pending"&&I.role!=="owner"&&isOpen(i)?'<div><button class="linkbtn" data-act="i:addbid">Add a bid</button></div>':"")+'</div>'}
 function thread(i){return '<div class="thr">'+i.events.map((e,k)=>{
   if(e.type==="sys")return '<div class="msg sys">• '+esc(e.text)+' <span class="when">'+fdt(e.t)+'</span>'+(e.photo?'<img alt="Attached photo" data-act="i:zoom" data-k="e'+k+'" src="'+e.photo+'">':"")+'</div>';
   return '<div class="msg"><div class="row" style="justify-content:space-between"><span class="who2">'+esc(e.by)+(e.role?' <span class="tag mute">'+esc(ROLES[e.role]||e.role)+'</span>':"")+'</span><span class="when">'+fdt(e.t)+'</span></div><div>'+esc(e.text).replace(/\n/g,"<br>")+'</div>'+(e.photo?'<img alt="Attached photo" data-act="i:zoom" data-k="e'+k+'" src="'+e.photo+'">':"")+'</div>'}).join("")+'</div>'}
 function viewTicket(){const i=getI(cur.tk);if(!i){cur.tk=null;return viewIssues()}
   const open=isOpen(i);
-  let h='<div class="cbar"><button class="btn sec" data-act="i:list">← Issues</button><h2>'+esc(i.id)+'</h2><span class="muted small">'+esc(i.hotel)+' · '+esc(ROLES[I.role])+'</span></div>';
+  let h='<div class="cbar"><button class="btn sec" data-act="i:list">← Issues</button><h2>'+esc(i.id)+'</h2><span class="muted small">'+esc(hname(i.hotel))+' · '+esc(ROLES[I.role])+'</span></div>';
+  if(open&&i.crit)h+='<div class="critbox" role="alert"><b>CRITICAL · guests or revenue affected · '+i.crit.rooms+' room'+(i.crit.rooms===1?"":"s")+'</b><div class="small">Raised by '+esc(i.crit.by)+' '+Math.max(1,Math.round((Date.now()-i.crit.at)/6e4))+' min ago. '+(i.crit.ack?'<b>'+esc(i.crit.ack.by)+' is on it</b> since '+fdt(i.crit.ack.at)+'.':'<b>Nobody has said "I am on it" yet.</b> At 30 minutes it moves up to '+VP+' (VP).')+'</div>'+(!i.crit.ack&&canAck()?'<button class="btn good" data-act="i:ack" style="margin-top:8px">I am on it</button>':"")+'</div>';
   h+='<div class="card" style="padding:16px;display:grid;gap:12px"><div style="font:700 28px/1.1 var(--display);letter-spacing:.02em">'+esc(i.title)+'</div><div class="itags">'+tagsFor(i)+'</div>'
-   +'<div class="kv">'+kv("Location",i.loc||"Not set")+kv("Category",CATS[i.cat]||"Other")+kv("Assigned to",i.assignee||"Not assigned")+kv("Due",i.due?fdy(i.due):"Not set")+kv("Reported by",i.by+" · "+fd(i.created))+kv(open?"Open for":"Was open for",ageDays(i)+" days")+'</div></div>';
+   +'<div class="kv">'+kv("Location",i.loc||"Not set")+kv("Category",CATS[i.cat]||"Other")+kv("Assigned to",assigneeLabel(i))+kv("Stage",i.esc?"Escalated "+fdy(i.esc):"At the hotel")+kv("Due",i.due?fdy(i.due):"Not set")+kv("Reported by",i.by+" · "+fd(i.created))+kv(open?"Open for":"Was open for",ageDays(i)+" days")+'</div></div>';
   /* actions */
   const acts=[];
   if(open&&canEdit())acts.push('<button class="btn sec" data-act="i:edit">Assign / edit</button>');
   if(open&&canCreate()&&(!i.appr||i.appr.st==="denied"))acts.push('<button class="btn sec" data-act="i:reqappr">Request approval</button>');
+  if(canEsc(i))acts.push('<button class="btn escb" data-act="i:escalate">Escalate to facilities</button>');
+  if(open&&canCreate()&&!i.crit)acts.push('<button class="btn sec" data-act="i:markcrit">Mark critical</button>');
   if(open&&canClose())acts.push('<button class="btn good" data-act="i:close">Close ticket</button>');
   if(!open&&canClose())acts.push('<button class="btn" data-act="i:reopen">Reopen ticket</button>');
   if(acts.length)h+='<div class="row" style="margin-top:12px">'+acts.join("")+'</div>';
@@ -513,45 +664,45 @@ function viewTicket(){const i=getI(cur.tk);if(!i){cur.tk=null;return viewIssues(
   h+='<div class="h2">Updates</div>'+thread(i);
   h+='<div class="card" style="padding:14px;display:grid;gap:10px;margin-top:12px"><label for="ctext" class="small muted">Add an update for everyone on this ticket</label><textarea id="ctext" placeholder="What happened, who you talked to, what is next">'+esc(cur.cdraft||"")+'</textarea>'
    +(cur.cphoto?'<div class="thumbs"><img src="'+cur.cphoto+'" alt="Photo to attach"></div>':"")
-   +'<div class="row"><label class="btn sec" for="cph">📷 Add photo<input type="file" id="cph" accept="image/*" data-photo="cph" style="position:absolute;opacity:0;width:1px;height:1px"></label><button class="btn" data-act="i:send" style="flex:1">Post update</button></div><div class="small muted">Posting emails the assignee, the person who reported it, and the GM.</div></div>';
+   +'<div class="row"><label class="btn sec" for="cph">📷 Add photo<input type="file" id="cph" accept="image/*" data-photo="cph" style="position:absolute;opacity:0;width:1px;height:1px"></label><button class="btn" data-act="i:send" style="flex:1">Post update</button></div><div class="small muted">Posting emails the assignee, the person who reported it, and the GM. Facility Director and HPD are copied once it is escalated.</div></div>';
   return h}
 
 function viewPort(){
   const L=I.role==="hotel"?scope():I.issues,open=L.filter(isOpen),od=open.filter(overdue),un=open.filter(i=>!i.assignee),pe=open.filter(pendAppr),old=open.filter(i=>ageDays(i)>90),pamt=pe.reduce((s,i)=>s+i.appr.amt,0);
-  let h=header(I.role==="hotel"?I.hotel:"All hotels","Facility rollup",ROLES[I.role])+roleBar(false);
+  let h=header(I.role==="hotel"?hname(I.hotel):"All hotels","Facility rollup",ROLES[I.role])+roleBar(false)+critBanner(open.filter(i=>i.crit));
   h+='<div class="card" style="padding:16px;margin-top:12px"><div class="stat"><div><b>'+open.length+'</b><span class="muted small">open</span></div><div><b>'+od.length+'</b><span class="muted small">past due</span></div><div><b>'+un.length+'</b><span class="muted small">unassigned</span></div><div><b>'+pe.length+'</b><span class="muted small">waiting approval ('+money(pamt)+')</span></div><div><b>'+old.length+'</b><span class="muted small">open 90+ days</span></div></div></div>';
   const H=Array.from(new Set(open.map(i=>i.hotel))).sort((a,b)=>open.filter(i=>i.hotel===b&&overdue(i)).length-open.filter(i=>i.hotel===a&&overdue(i)).length||(a<b?-1:1));
-  h+='<div class="h2">By hotel</div><div class="card scroll"><table><thead><tr><th>Hotel</th><th class="n">Open</th><th class="n">Past due</th><th class="n">Unassigned</th><th class="n">Approval</th><th class="n">Oldest (days)</th></tr></thead><tbody>'+(H.length?H.map(n=>{const o=open.filter(i=>i.hotel===n);return '<tr><td>'+esc(n)+'</td><td class="n">'+o.length+'</td><td class="n">'+o.filter(overdue).length+'</td><td class="n">'+o.filter(i=>!i.assignee).length+'</td><td class="n">'+o.filter(pendAppr).length+'</td><td class="n">'+Math.max.apply(null,o.map(ageDays))+'</td></tr>'}).join(""):'<tr><td colspan="6" class="muted">No open tickets.</td></tr>')+'</tbody></table></div>';
+  h+='<div class="h2">By hotel</div><div class="card scroll"><table><thead><tr><th>Hotel</th><th class="n">Open</th><th class="n">Past due</th><th class="n">Unassigned</th><th class="n">Approval</th><th class="n">Oldest (days)</th></tr></thead><tbody>'+(H.length?H.map(n=>{const o=open.filter(i=>i.hotel===n);return '<tr><td>'+esc(hname(n))+'</td><td class="n">'+o.length+'</td><td class="n">'+o.filter(overdue).length+'</td><td class="n">'+o.filter(i=>!i.assignee).length+'</td><td class="n">'+o.filter(pendAppr).length+'</td><td class="n">'+Math.max.apply(null,o.map(ageDays))+'</td></tr>'}).join(""):'<tr><td colspan="6" class="muted">No open tickets.</td></tr>')+'</tbody></table></div>';
   const B=[["0 to 30 days",0,30],["31 to 90",31,90],["91 to 180",91,180],["181 to 365",181,365],["Over a year",366,99999]].map(b=>[b[0],open.filter(i=>ageDays(i)>=b[1]&&ageDays(i)<=b[2]).length]),mx=Math.max(1,Math.max.apply(null,B.map(b=>b[1])));
   h+='<div class="h2">How long tickets have been open</div><div class="card" style="padding:12px 16px">'+B.map(b=>'<div class="bucket"><span class="small">'+b[0]+'</span><div class="bar"><i style="width:'+Math.round(b[1]/mx*100)+'%"></i></div><b>'+b[1]+'</b></div>').join("")+'</div>';
-  if(pe.length)h+='<div class="h2">Waiting for approval</div><div class="list">'+pe.sort((a,b)=>b.appr.amt-a.appr.amt).map(i=>'<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+money(i.appr.amt)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(i.hotel)+' · asked '+days(TODAY,dayOf(i.appr.at))+' days ago · goes to '+esc(approver(i.appr.amt))+'</div></button>').join("")+'</div>';
+  if(pe.length)h+='<div class="h2">Waiting for approval</div><div class="list">'+pe.sort((a,b)=>b.appr.amt-a.appr.amt).map(i=>'<button class="card icard" data-act="i:open" data-id="'+esc(i.id)+'"><div class="ih"><b>'+money(i.appr.amt)+'</b> · '+esc(i.title)+'</div><div class="muted small">'+esc(hname(i.hotel))+' · asked '+days(TODAY,dayOf(i.appr.at))+' days ago · goes to '+esc(approver(i.appr.amt,i.hotel))+'</div></button>').join("")+'</div>';
   const R=remind(L);
   h+='<div class="h2">What the system would send today</div><p class="muted small" style="margin-top:-4px">Each rule emails a person so nobody has to chase tickets by hand.</p><div class="card scroll"><table><thead><tr><th>Rule</th><th>Goes to</th><th class="n">Tickets</th></tr></thead><tbody>'+R.map(r=>'<tr><td>'+esc(r.rule)+(r.items.length?'<div class="row" style="margin-top:6px;gap:6px">'+r.items.slice(0,6).map(i=>'<button class="linkbtn" data-act="i:open" data-id="'+esc(i.id)+'" style="min-height:0">'+esc(i.id)+'</button>').join("")+(r.items.length>6?'<span class="muted small">+'+(r.items.length-6)+' more</span>':"")+'</div>':"")+'</td><td>'+esc(r.to)+'</td><td class="n">'+r.items.length+'</td></tr>').join("")+'</tbody></table></div>';
   const closedWk=L.filter(i=>!isOpen(i)&&days(TODAY,dayOf(lastClose(i).at))<=7).length,top=od.slice().sort((a,b)=>overdueDays(b)-overdueDays(a)).slice(0,5);
-  h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GM, HPD, Corp Facilities Director\nSubject: Facility issues · "+(I.role==="hotel"?I.hotel:"all hotels")+" · week of "+fd(TODAY)+"\n\n"+open.length+" open · "+od.length+" past due · "+un.length+" unassigned · "+pe.length+" waiting on approval ("+money(pamt)+"). "+closedWk+" closed in the last 7 days.\n"+(top.length?"\nMost overdue:\n"+top.map(i=>" - "+i.id+" "+i.hotel+": "+i.title+" ("+overdueDays(i)+" days past due"+(i.assignee?", "+i.assignee:", unassigned")+")").join("\n"):"\nNothing is past due."))+'</pre></div>';
-  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px"><p class="small" style="margin:0 0 8px"><b>Due dates start from priority:</b> Urgent '+I.sla.urgent+' days, High '+I.sla.high+', Medium '+I.sla.med+', Low '+I.sla.low+'. Proposed, you set them.</p><p class="small" style="margin:0 0 8px"><b>Routing:</b> every new ticket goes to the default facilities contact for that hotel, so nothing sits unassigned. Facilities can reassign.</p><p class="small" style="margin:0 0 8px"><b>Spend approval:</b> under '+money(I.lim.dir)+' goes to the Facilities Lead, '+money(I.lim.dir)+' and up to the Corp Facilities Director, '+money(I.lim.own)+' and up to Ownership as capital. Proposed thresholds.</p><p class="small" style="margin:0"><b>Closed tickets stay searchable</b> by room, vendor and word, with cost and warranty dates, so a repeat problem shows what was done last time.</p></div>';
+  h+='<div class="h2">Weekly email preview</div><div class="card"><pre class="mail">'+esc("To: GM, HPD, Facility Director\nSubject: Facility issues · "+(I.role==="hotel"?hname(I.hotel):"all hotels")+" · week of "+fd(TODAY)+"\n\n"+open.length+" open · "+od.length+" past due · "+un.length+" unassigned · "+pe.length+" waiting on approval ("+money(pamt)+"). "+closedWk+" closed in the last 7 days.\n"+(top.length?"\nMost overdue:\n"+top.map(i=>" - "+i.id+" "+hname(i.hotel)+": "+i.title+" ("+overdueDays(i)+" days past due"+(i.assignee?", "+i.assignee:", unassigned")+")").join("\n"):"\nNothing is past due."))+'</pre></div>';
+  const ne=open.filter(i=>i.esc).length,nh=open.length-ne;
+  h+='<div class="h2">Rules in this prototype</div><div class="card" style="padding:16px"><p class="small" style="margin:0 0 8px"><b>Every maintenance ticket starts here.</b> It is assigned to the hotel\'s own maintenance team. If they cannot fix it, they tap <b>Escalate to facilities</b> and the Facility Director gets the ticket with every detail, photo and note from the start. Right now '+nh+' open tickets are at the hotel and '+ne+' are escalated.</p><p class="small" style="margin:0 0 8px"><b>Critical</b> is for anything that hurts guests or revenue: hot water out, a burst pipe, HVAC failure, rooms out of order. It alerts the Facility Director, VP, HPD, GM and AM at once and must be acknowledged within 30 minutes or it moves up to '+VP+' (VP). Proposed.</p><p class="small" style="margin:0 0 8px"><b>Due dates start from priority:</b> Urgent '+I.sla.urgent+' days, High '+I.sla.high+', Medium '+I.sla.med+', Low '+I.sla.low+'. Proposed, you set them.</p><p class="small" style="margin:0 0 8px"><b>Spend approval:</b> '+money(I.lim.hpd)+' and under goes to the HPD. Anything above goes to '+VP+' (VP) or the hotel\'s AM, and either one can approve. Every approval records who approved, when, and their note, and Accounting can download the log from the Portfolio screen. Bids attach to the request.</p><p class="small" style="margin:0"><b>Closed tickets stay searchable</b> by room, vendor and word, with cost and warranty dates, so a repeat problem shows what was done last time.</p></div>';
   h+='<div class="h2">Data</div><div class="card" style="padding:16px;display:grid;gap:12px"><div class="small muted">Import your Mitti export to see your real tickets here. The file is read in this browser and stays on this device. Nothing is uploaded.</div><div class="row"><label class="btn" for="icsv">Import Mitti export (CSV)<input type="file" id="icsv" accept=".csv,text/csv" style="position:absolute;opacity:0;width:1px;height:1px"></label><button class="btn sec" data-act="i:export">Export tickets (CSV)</button><button class="btn sec" data-act="i:resetI">Reset to demo tickets</button></div></div>';
   return h}
 function remind(L){const open=L.filter(isOpen);
   return[
-   {rule:"Nobody assigned after 2 days",to:"Facilities Lead",items:open.filter(i=>!i.assignee&&ageDays(i)>=2)},
+   {rule:"Critical not acknowledged in 30 minutes",to:VP+" (VP), then phone call from HPD",items:open.filter(i=>i.crit&&!i.crit.ack&&(Date.now()-i.crit.at)>30*6e4)},
+   {rule:"At the hotel 5+ days with no update",to:"GM, with a prompt to update or escalate",items:open.filter(i=>!i.esc&&!i.crit&&sinceUpd(i)>=5)},
+   {rule:"Nobody assigned after 2 days",to:"Facility Director",items:open.filter(i=>!i.assignee&&ageDays(i)>=2)},
    {rule:"Past due",to:"Assignee, hotel GM and HPD (daily for Urgent and High)",items:open.filter(overdue)},
    {rule:"Waiting on approval for 3+ days",to:"The approver for that amount",items:open.filter(i=>pendAppr(i)&&days(TODAY,dayOf(i.appr.at))>=3)},
    {rule:"No update in 7+ days",to:"Assignee",items:open.filter(i=>i.assignee&&sinceUpd(i)>=7)},
-   {rule:"Fire, life safety or elevator that is past due or unassigned",to:"Corp Facilities Director, same day",items:open.filter(i=>LIFE[i.cat]&&(overdue(i)||!i.assignee))},
-   {rule:"No priority set",to:"Facilities Lead",items:open.filter(i=>!i.pri)}].concat(open.some(i=>i.confirm)?[{rule:"Marked resolved in Mitti but still open",to:"Facilities Lead to confirm",items:open.filter(i=>i.confirm)}]:[])}
+   {rule:"Fire, life safety or elevator that is past due or unassigned",to:"Facility Director, same day",items:open.filter(i=>LIFE[i.cat]&&(overdue(i)||!i.assignee))},
+   {rule:"No priority set",to:"Facility Director",items:open.filter(i=>!i.pri)}].concat(open.some(i=>i.confirm)?[{rule:"Marked resolved in Mitti but still open",to:"Facility Director to confirm",items:open.filter(i=>i.confirm)}]:[])}
 function mod(m,ic,name,sub,on){return '<button class="mod" '+(on?'data-act="go" data-m="'+m+'"':"disabled")+'><span class="ic" aria-hidden="true">'+ic+'</span><b>'+name+'</b><span class="muted">'+esc(sub)+'</span></button>'}
-function viewHome(){const sc=scope(),open=sc.filter(isOpen),od=open.filter(overdue).length,c=counts();
-  return '<div class="top"><div><h1>PRESERVE</h1><div class="sub">Hawkeye Hotels · OKCAL pilot</div></div>'+(S.tech?'<button class="who" data-act="who" aria-label="Change name">'+esc(S.tech)+' ▾</button>':"")+'</div><div class="demo">Prototype: nothing here is sent anywhere yet. Data stays on this device.</div>'
-   +'<div class="mods">'+mod("issues","🛠️","Facility issues",open.length+" open"+(od?" · "+od+" past due":""),true)+mod("pm","✅","Preventive maintenance",Q.key.slice(0,4)+" Q"+Q.q+" · "+c.done+" of "+ROOMS.length+" rooms done",true)+mod("","🧼","Deep clean","Coming 2027",false)+mod("lpi","📄","Licenses, permits and inspections",lpHome(),true)+'</div>'}
 
 /* ---- sheets ---- */
 function catFromSec(s){return /HVAC/i.test(s)?"hvac":/Bathroom/i.test(s)?"plumb":/Electrical|Lighting/i.test(s)?"elec":/Smoke|Sprinkler/i.test(s)?"fire":/Walls|Window/i.test(s)?"bldg":"other"}
 function openNew(pre){pre=pre||{};const hs=hotels(),hot=pre.hotel||(I.role==="hotel"?I.hotel:(I.hotel||hs[0]));if(hs.indexOf(hot)<0){hs.push(hot);hs.sort()}
-  cur.pending={kind:"issue",photos:(pre.photos||[]).slice(),fromRepair:pre.fromRepair||null,fromLpi:pre.fromLpi||null,f:{hotel:hot,loc:pre.loc||"",cat:pre.cat||"",pri:"",title:pre.title||"",desc:pre.desc||"",need:"",appr:false,amt:"",vendor:"",why:""}};
+  cur.pending={kind:"issue",photos:(pre.photos||[]).slice(),fromRepair:pre.fromRepair||null,fromLpi:pre.fromLpi||null,bids:[],f:{hotel:hot,loc:pre.loc||"",cat:pre.cat||"",pri:"",title:pre.title||"",desc:pre.desc||"",need:"",appr:false,amt:"",vendor:"",why:"",crit:false,rooms:""}};
   const f=cur.pending.f;
   sheet('<h3>Report an issue</h3>'
-   +'<div><label class="small muted" for="nh">Hotel</label>'+(I.role==="hotel"?'<div><b>'+esc(hot)+'</b></div>':'<select id="nh" data-f="hotel">'+hs.map(n=>'<option'+(n===hot?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select>')+'</div>'
+   +'<div><label class="small muted" for="nh">Hotel</label>'+(I.role==="hotel"?'<div><b>'+esc(hname(hot))+'</b></div>':'<select id="nh" data-f="hotel">'+hs.map(n=>'<option value="'+esc(n)+'"'+(n===hot?" selected":"")+'>'+esc(hname(n))+'</option>').join("")+'</select>')+'</div>'
    +'<div><label class="small muted" for="nloc">Where? Room number or area</label><input type="text" id="nloc" data-f="loc" list="locs" placeholder="214, Lobby, Pool" autocomplete="off" value="'+esc(f.loc)+'"><datalist id="locs">'+AREAS.map(a=>'<option value="'+esc(a)+'">').join("")+ROOMS.map(r=>'<option value="'+r.n+'">').join("")+'</datalist><div id="lochist" style="display:grid;gap:8px;margin-top:8px"></div></div>'
    +'<div><label class="small muted" for="ncat">What kind of problem?</label><select id="ncat" data-f="cat"><option value="">Choose…</option>'+Object.keys(CATS).map(k=>'<option value="'+k+'"'+(f.cat===k?" selected":"")+'>'+CATS[k]+'</option>').join("")+'</select></div>'
    +'<div><div class="small muted" style="margin-bottom:6px">How urgent?</div><div class="pri" id="npri">'+PORD.map(k=>'<button class="tgl" data-act="i:pri" data-p="'+k+'" aria-pressed="false"><span><b>'+PRI[k]+'</b><br><span class="muted small" style="font-weight:400">'+PHELP[k]+'</span></span></button>').join("")+'</div></div>'
@@ -559,14 +710,22 @@ function openNew(pre){pre=pre||{};const hs=hotels(),hot=pre.hotel||(I.role==="ho
    +'<div><label class="small muted" for="ndesc">What is wrong?</label><textarea id="ndesc" data-f="desc" placeholder="What you see, when it started, who is affected">'+esc(f.desc)+'</textarea></div>'
    +'<div><label class="small muted" for="nneed">What do you think needs to happen? (optional)</label><textarea id="nneed" data-f="need"></textarea></div>'
    +'<div><div class="thumbs" id="nthumbs"></div><label class="photo" for="iph" id="iphlab"><input type="file" id="iph" accept="image/*" data-photo="iph"><span style="font-size:30px;width:64px;text-align:center">📷</span><span><b>Add a photo</b><br><span class="muted small" id="iphn">Up to 5. Take one or choose from your photos.</span></span></label></div>'
+   +'<button class="tgl" data-act="i:needcrit" aria-pressed="false"><span><b>Critical: guests or revenue are affected</b><br><span class="muted small" style="font-weight:400">Hot water out, burst pipe, HVAC down, rooms out of order. Alerts facilities, the VP, HPD, GM and AM right now.</span></span><i>No</i></button>'
+   +'<div id="critf" style="display:none"><label class="small muted" for="nrooms">How many rooms are out of order or affected?</label><input type="number" id="nrooms" data-f="rooms" inputmode="numeric" min="1" placeholder="12"></div>'
    +'<button class="tgl" data-act="i:needappr" aria-pressed="false">This needs a spend approval<i>No</i></button>'
-   +'<div id="appr" style="display:grid;gap:10px"><div><label class="small muted" for="namt">Estimated cost ($)</label><input type="number" id="namt" data-f="amt" inputmode="decimal" min="0" placeholder="3800"><div class="small muted" id="apprwho" style="margin-top:4px"></div></div><div><label class="small muted" for="nven">Vendor / quote</label><input type="text" id="nven" data-f="vendor" placeholder="Vendor name and quote number"></div><div><label class="small muted" for="nwhy">Why is this needed?</label><textarea id="nwhy" data-f="why"></textarea></div></div>'
-   +'<div class="row"><button class="btn" id="nsave" data-act="i:savenew" style="flex:1" disabled>Send to facilities team</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');
+   +'<div id="appr" style="display:grid;gap:10px"><div><label class="small muted" for="namt">Estimated cost ($)</label><input type="number" id="namt" data-f="amt" inputmode="decimal" min="0" placeholder="3800"><div class="small muted" id="apprwho" style="margin-top:4px"></div></div><div><label class="small muted" for="nven">Vendor / quote</label><input type="text" id="nven" data-f="vendor" placeholder="Vendor name and quote number"></div><div><label class="small muted" for="nwhy">Why is this needed?</label><textarea id="nwhy" data-f="why"></textarea></div>'+bidField("nbph")+'</div>'
+   +'<div class="row"><button class="btn" id="nsave" data-act="i:savenew" style="flex:1" disabled>Save ticket</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');
   if($("#appr"))$("#appr").style.display="none";
-  thumbsNew();lochist();chkNew()}
-function newOk(){const f=cur.pending.f;return !!(f.hotel&&f.loc.trim()&&f.cat&&f.pri&&f.title.trim()&&(!f.appr||+f.amt>0))}
+  thumbsNew();bidThumbs();lochist();chkNew()}
+function newOk(){const f=cur.pending.f;return !!(f.hotel&&f.loc.trim()&&f.cat&&f.pri&&f.title.trim()&&(!f.appr||+f.amt>0)&&(!f.crit||+f.rooms>0))}
 function chkNew(){const b=$("#nsave");if(b)b.disabled=!newOk()}
-function apprwho(){const el=$("#apprwho"),a=+cur.pending.f.amt;if(el)el.textContent=a>0?"Goes to: "+approver(a):""}
+function apprwho(){const el=$("#apprwho"),a=+cur.pending.f.amt;if(el)el.textContent=a>0?"Goes to: "+approver(a,cur.pending.f.hotel):""}
+function bidField(id){return '<div><div id="bidthumb" style="display:grid;gap:6px"></div><label class="photo" for="'+id+'" id="bidlab"><input type="file" id="'+id+'" accept="image/*,application/pdf" data-bid="1"><span style="font-size:30px;width:64px;text-align:center">📎</span><span><b>Attach the bid</b><br><span class="muted small" id="bidn">Photo or PDF. Up to 3 bids so approvers can compare.</span></span></label></div>'}
+function bidThumbs(){const t=$("#bidthumb");if(!t||!cur.pending)return;const L=cur.pending.bids||[];t.innerHTML=L.map((b,k)=>'<div class="row" style="justify-content:space-between"><span class="small">'+(b.kind==="pdf"?"📄 ":"🖼 ")+esc(b.name)+'</span><button class="linkbtn" data-act="i:rmbid" data-k="'+k+'" style="min-height:0">Remove</button></div>').join("");const lab=$("#bidlab");if(lab)lab.hidden=L.length>=3;const m=$("#bidn");if(m)m.textContent=L.length?L.length+" of 3 attached.":"Photo or PDF. Up to 3 bids so approvers can compare."}
+function addBid(input){const f=input.files&&input.files[0];input.value="";if(!f||!cur.pending)return;const L=cur.pending.bids||(cur.pending.bids=[]);if(L.length>=3)return;const nm=f.name.replace(/\.[^.]+$/,"")||"Bid "+(L.length+1);
+  if(/pdf/i.test(f.type)||/\.pdf$/i.test(f.name)){if(f.size>500*1024){const m=$("#bidn");if(m)m.textContent="That PDF is over 500 KB. In this beta, take a photo of the bid instead. The live version has no size limit.";return}
+    const fr=new FileReader();fr.onload=()=>{L.push({name:nm,kind:"pdf",data:String(fr.result)});bidThumbs();const b=$("#asave");if(b)b.disabled=false};fr.readAsDataURL(f)}
+  else readPhoto(f).then(u=>{if(u){L.push({name:nm,kind:"img",data:u});bidThumbs();const b=$("#asave");if(b)b.disabled=false}})}
 function thumbsNew(){const t=$("#nthumbs");if(!t)return;t.innerHTML=cur.pending.photos.map((p,k)=>'<img src="'+p+'" alt="Photo '+(k+1)+'">').join("");const n=cur.pending.photos.length,lab=$("#iphlab");if(lab)lab.hidden=n>=5;const m=$("#iphn");if(m)m.textContent=n?n+" of 5 added. Add another if it helps.":"Up to 5. Take one or choose from your photos."}
 function lochist(){const el=$("#lochist");if(!el||!cur.pending||!cur.pending.f)return;const f=cur.pending.f;if(!f.loc.trim()){el.innerHTML="";return}
   const p={id:"",hotel:f.hotel,loc:fixLoc(f.loc),cat:f.cat},hs=history(p),ws=warrantyFor(p);let h="";
@@ -580,8 +739,9 @@ function openEdit(i){cur.pending={kind:"edit",id:i.id};const opt=(v,t,s)=>'<opti
    +'<div><label class="small muted" for="edue">Due date (set from priority, change if needed)</label><input type="date" id="edue" value="'+esc(i.due)+'"></div>'
    +'<div><label class="small muted" for="ecat">Category</label><select id="ecat">'+Object.keys(CATS).map(k=>opt(k,CATS[k],k===i.cat)).join("")+'</select></div>'
    +'<div class="row"><button class="btn" data-act="i:saveedit" style="flex:1">Save</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
-function openAppr(i){cur.pending={kind:"appr",id:i.id};
-  sheet('<h3>Request approval</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="aamt">Estimated cost ($)</label><input type="number" id="aamt" inputmode="decimal" min="0" placeholder="3800"><div class="small muted" id="aw" style="margin-top:4px"></div></div><div><label class="small muted" for="aven">Vendor / quote</label><input type="text" id="aven" placeholder="Vendor name and quote number"></div><div><label class="small muted" for="awhy">Why is this needed?</label><textarea id="awhy"></textarea></div><div class="row"><button class="btn" id="asave" data-act="i:saveappr" style="flex:1" disabled>Send for approval</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
+function openAppr(i,addOnly){cur.pending={kind:"appr",id:i.id,bids:[],addOnly:!!addOnly};
+  if(addOnly){sheet('<h3>Add a bid</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div>'+bidField("bph")+'<div class="row"><button class="btn" id="asave" data-act="i:saveappr" style="flex:1" disabled>Add</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');bidThumbs();return}
+  sheet('<h3>Request approval</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="aamt">Estimated cost ($)</label><input type="number" id="aamt" inputmode="decimal" min="0" placeholder="3800"><div class="small muted" id="aw" style="margin-top:4px"></div></div><div><label class="small muted" for="aven">Vendor / quote</label><input type="text" id="aven" placeholder="Vendor name and quote number"></div><div><label class="small muted" for="awhy">Why is this needed?</label><textarea id="awhy"></textarea></div>'+bidField("bph")+'<div class="row"><button class="btn" id="asave" data-act="i:saveappr" style="flex:1" disabled>Send for approval</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');bidThumbs()}
 function openDecide(i,v){cur.pending={kind:"decide",id:i.id,v:v};
   sheet('<h3>'+(v==="approved"?"Approve ":"Deny ")+money(i.appr.amt)+'</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><div><label class="small muted" for="dnote">'+(v==="approved"?"Note (optional)":"Reason (required)")+'</label><textarea id="dnote"></textarea></div><div class="row"><button class="btn '+(v==="approved"?"good":"")+'" data-act="i:savedecide" style="flex:1">'+(v==="approved"?"Approve, go ahead":"Deny")+'</button><button class="btn sec" data-act="closesheet">Cancel</button></div>')}
 function openClose(i){cur.pending={kind:"close",id:i.id,photo:null};
@@ -625,37 +785,52 @@ function exportCSV(){const cols=["ID","Hotel","Location","Category","Priority","
 /* ---- actions ---- */
 function iact(a,ds,el,ev){
   if(a==="tab"){I.view=ds.v;cur.tk=null;saveI();render();return}
-  if(a==="role"){I.role=ds.r;if(I.role==="hotel"&&!I.hotel)I.hotel=hotels()[0];saveI();render();return}
-  if(a==="filter"){cur.if=ds.f;cur.q="";render();return}
+    if(a==="filter"){cur.if=ds.f;cur.q="";render();return}
   if(a==="open"){closeSheet();cur.mod="issues";cur.tk=ds.id;cur.cdraft="";cur.cphoto=null;render();return}
   if(a==="list"){cur.tk=null;render();return}
   if(a==="new"){openNew();return}
-  if(a==="fromrepair"){const r=S.repairs.filter(x=>x.id===ds.r)[0];if(!r)return;const it=ITEMS[r.item];cur.mod="issues";cur.tk=null;I.view="list";if(I.role==="owner")I.role="hotel";if(I.role==="hotel")I.hotel="OKCAL";render();
+  if(a==="fromrepair"){const r=S.repairs.filter(x=>x.id===ds.r)[0];if(!r)return;const it=ITEMS[r.item];cur.mod="issues";cur.tk=null;I.view="list";render();
     openNew({hotel:"OKCAL",loc:"Room "+r.room,title:(it?it.label:"Repair")+", room "+r.room,desc:r.note||"",cat:catFromSec(it?it.sec:""),photos:r.photo?[r.photo]:[],fromRepair:r.id});return}
   if(a==="pri"){cur.pending.f.pri=ds.p;$$("#npri .tgl").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===ds.p));chkNew();return}
+  if(a==="needcrit"){const f=cur.pending.f;f.crit=!f.crit;el.setAttribute("aria-pressed",f.crit);el.querySelector("i").textContent=f.crit?"Yes":"No";$("#critf").style.display=f.crit?"block":"none";chkNew();return}
+  if(a==="rmbid"){cur.pending.bids.splice(+ds.k,1);bidThumbs();return}
   if(a==="needappr"){const f=cur.pending.f;f.appr=!f.appr;el.setAttribute("aria-pressed",f.appr);el.querySelector("i").textContent=f.appr?"Yes":"No";$("#appr").style.display=f.appr?"grid":"none";chkNew();return}
-  if(a==="savenew"){if(!newOk())return;const f=cur.pending.f,now=Date.now(),id="FI-"+(I.seq++),as=I.defAssignee;
-    const i=mkI(id,{hotel:f.hotel,loc:fixLoc(f.loc),cat:f.cat,pri:f.pri,title:f.title.trim(),desc:f.desc.trim(),need:f.need.trim(),created:now,by:S.tech,assignee:as,events:[sysE(now,"Ticket created by "+S.tech,S.tech,I.role),sysE(now,"Routed to "+as+" (default for "+f.hotel+")")]});
+  if(a==="savenew"){if(!newOk())return;const f=cur.pending.f,now=Date.now(),id="FI-"+(I.seq++),crit=!!f.crit,as=crit?FDN:HMN,by=S.tech;
+    const i=mkI(id,{hotel:f.hotel,loc:fixLoc(f.loc),cat:f.cat,pri:crit?"urgent":f.pri,title:f.title.trim(),desc:f.desc.trim(),need:f.need.trim(),created:now,by:by,assignee:as,esc:crit?now:null,events:[sysE(now,"Ticket created by "+by,by,I.role)]});
     i.photos=cur.pending.photos.slice();
-    if(f.appr){i.appr={amt:+f.amt,vendor:f.vendor.trim(),why:f.why.trim(),by:S.tech,at:now,st:"pending",dec:"",decAt:null,note:""};i.events.push(sysE(now,"Approval requested: "+money(+f.amt)+" · goes to "+approver(+f.amt),S.tech,I.role))}
+    if(crit){i.crit={at:now,by:by,rooms:+f.rooms,ack:null};i.events.push(sysE(now,"CRITICAL alert sent: "+FDN+(fdOf(f.hotel)?" ("+fdOf(f.hotel)+")":"")+", "+VP+" (VP), HPD, GM and AM emailed · "+(+f.rooms)+" room"+(+f.rooms===1?"":"s")+" affected",by,I.role));i.events.push(sysE(now,"Escalated to "+FDN+(fdOf(f.hotel)?" ("+fdOf(f.hotel)+")":"")+" (critical tickets skip the hotel queue)"))}
+    else i.events.push(sysE(now,"Assigned to hotel maintenance"));
+    if(f.appr){i.appr={amt:+f.amt,vendor:f.vendor.trim(),why:f.why.trim(),by:by,at:now,st:"pending",dec:"",decAt:null,note:"",bids:(cur.pending.bids||[]).slice()};i.events.push(sysE(now,"Approval requested: "+money(+f.amt)+" · goes to "+approver(+f.amt,f.hotel)+(i.appr.bids.length?" · "+i.appr.bids.length+" bid"+(i.appr.bids.length===1?"":"s")+" attached":""),by,I.role))}
     if(cur.pending.fromRepair){const r=S.repairs.filter(x=>x.id===cur.pending.fromRepair)[0];if(r){r.fac=id;save()}}
-    if(cur.pending.fromLpi){const li=lpFind(cur.pending.fromLpi);if(li){i.lpi=li.id;li.ticket=id;li.log.push({t:now,by:S.tech,text:"Repair ticket "+id+" created."});lpSave();i.events.splice(1,0,sysE(now,"Created from the "+LT[li.t].name+" record",S.tech,I.role))}}
+    if(cur.pending.fromLpi){const li=lpFind(cur.pending.fromLpi);if(li){i.lpi=li.id;li.ticket=id;li.log.push({t:now,by:by,text:"Repair ticket "+id+" created."});lpSave();i.events.splice(1,0,sysE(now,"Created from the "+LT[li.t].name+" record",by,I.role))}}
     I.issues.unshift(i);saveI();cur.mod="issues";cur.tk=id;cur.cdraft="";cur.cphoto=null;
-    sheet('<h3>Sent to facilities</h3><div><b>'+esc(id)+"</b> · "+esc(i.title)+'</div><ul class="small" style="margin:0;padding-left:20px;display:grid;gap:6px"><li>Emailed now: '+esc(as)+' (assigned) and your HPD.</li><li>Due '+fdy(i.due)+' ('+PRI[i.pri]+' priority).</li>'+(i.appr?'<li>Approval request goes to '+esc(approver(i.appr.amt))+'.</li>':"")+'<li>Reminders go out if there is no update for 7 days or it passes its due date.</li><li>The GM, HPD and Corp Facilities Director get the weekly rollup.</li></ul><button class="btn" data-act="closesheet">Done</button>');
+    sheet(crit?'<h3>Critical alert sent</h3><div><b>'+esc(id)+"</b> · "+esc(i.title)+'</div><ul class="small" style="margin:0;padding-left:20px;display:grid;gap:6px"><li>Emailed now: '+esc(FDN+(fdOf(f.hotel)?" ("+fdOf(f.hotel)+")":""))+', '+esc(VP)+' (VP), your HPD, GM and AM.</li><li>Someone must tap <b>I am on it</b> within 30 minutes or it moves up to '+esc(VP)+' (VP).</li><li>'+(+f.rooms)+' room'+(+f.rooms===1?"":"s")+' affected. Keep the ticket updated as things change.</li></ul><button class="btn" data-act="closesheet">Done</button>'
+     :'<h3>Ticket saved</h3><div><b>'+esc(id)+"</b> · "+esc(i.title)+'</div><ul class="small" style="margin:0;padding-left:20px;display:grid;gap:6px"><li>Assigned to hotel maintenance. Due '+fdy(i.due)+' ('+PRI[i.pri]+' priority).</li><li>If maintenance cannot fix it, tap <b>Escalate to facilities</b> on the ticket. The Facility Director gets everything entered here from the start.</li>'+(i.appr?'<li>Approval request goes to '+esc(approver(i.appr.amt,f.hotel))+'.</li>':"")+'<li>Reminders go out if there is no update for 5 days or it passes its due date.</li></ul><button class="btn" data-act="closesheet">Done</button>');
     render();return}
   const i=cur.tk?getI(cur.tk):null;
   if(a==="edit"&&i){openEdit(i);return}
   if(a==="saveedit"&&i){const by=S.tech,as=($("#eas2").value.trim()||$("#eas").value),pri=$("#epri").value||null,due=$("#edue").value||"",cat=$("#ecat").value,ev=[];
     if(as&&I.team.indexOf(as)<0)I.team.push(as);
-    if(as!==i.assignee){ev.push(as?"Assigned to "+as+" by "+by+" (email sent)":"Unassigned by "+by);i.assignee=as}
+    if(as!==i.assignee){ev.push(as?"Assigned to "+(as===FDN&&fdOf(i.hotel)?FDN+" ("+fdOf(i.hotel)+")":as)+" by "+by+" (email sent)":"Unassigned by "+by);i.assignee=as;if(as===FDN&&!i.esc)i.esc=Date.now()}
     if(pri!==i.pri){ev.push("Priority "+(i.pri?PRI[i.pri]:"none")+" to "+(pri?PRI[pri]:"none"));i.pri=pri}
     if(due!==i.due){ev.push(due?"Due date set to "+fdy(due):"Due date cleared");i.due=due}
     if(cat!==i.cat){ev.push("Category changed to "+CATS[cat]);i.cat=cat}
     const now=Date.now();ev.forEach(t=>i.events.push(sysE(now,t,by,I.role)));if(ev.length)i.updated=now;saveI();closeSheet();render();return}
   if(a==="reqappr"&&i){openAppr(i);return}
-  if(a==="saveappr"&&i){const amt=+$("#aamt").value;if(!(amt>0))return;const now=Date.now();i.appr={amt:amt,vendor:$("#aven").value.trim(),why:$("#awhy").value.trim(),by:S.tech,at:now,st:"pending",dec:"",decAt:null,note:""};i.events.push(sysE(now,"Approval requested: "+money(amt)+" · goes to "+approver(amt),S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
-  if(a==="decide"&&i){openDecide(i,ds.v);return}
-  if(a==="savedecide"&&i){const v=cur.pending.v,note=$("#dnote").value.trim();if(v==="denied"&&!note){$("#dnote").placeholder="Add a reason so the hotel knows what to change";$("#dnote").focus();return}
+  if(a==="addbid"&&i){openAppr(i,true);return}
+  if(a==="escalate"&&i){cur.pending={kind:"esc",id:i.id};sheet('<h3>Escalate to facilities</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><p class="small" style="margin:0">Goes to the '+esc(FDN+(fdOf(i.hotel)?" ("+fdOf(i.hotel)+")":""))+' with everything on this ticket: the description, photos, history for this room and any warranty.</p><div><label class="small muted" for="enote">What has maintenance tried or found? (required)</label><textarea id="enote" placeholder="Checked the breaker and filter, still no cold air"></textarea></div><div class="row"><button class="btn escb" data-act="i:saveesc" style="flex:1">Escalate</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');return}
+  if(a==="saveesc"&&i){const n=$("#enote").value.trim();if(!n){$("#enote").placeholder="Add a line so facilities does not start from zero";$("#enote").focus();return}const now=Date.now();i.assignee=FDN;i.esc=now;i.events.push(escE(now,i.hotel,S.tech,n));i.updated=now;saveI();closeSheet();render();
+    sheet('<h3>Escalated</h3><p style="margin:0">Emailed now: '+esc(FDN+(fdOf(i.hotel)?" ("+fdOf(i.hotel)+")":""))+', with your HPD and GM copied. Everything on the ticket went with it.</p><button class="btn" data-act="closesheet">Done</button>');return}
+  if(a==="markcrit"&&i){cur.pending={kind:"crit",id:i.id};sheet('<h3>Mark as critical</h3><div class="muted small">'+esc(i.id)+" · "+esc(i.title)+'</div><p class="small" style="margin:0">Use this when guests or revenue are affected: hot water out, a burst pipe, HVAC down, rooms out of order. It alerts the Facility Director, VP, HPD, GM and AM right now.</p><div><label class="small muted" for="crooms">How many rooms are out of order or affected? (required)</label><input type="number" id="crooms" inputmode="numeric" min="1"></div><div class="row"><button class="btn escb" data-act="i:savecrit" style="flex:1">Send critical alert</button><button class="btn sec" data-act="closesheet">Cancel</button></div>');return}
+  if(a==="savecrit"&&i){const n=+$("#crooms").value;if(!(n>0)){$("#crooms").focus();return}const now=Date.now();i.crit={at:now,by:S.tech,rooms:n,ack:null};if(!i.esc){i.esc=now;i.assignee=FDN}i.pri="urgent";i.due=dueFrom(now,"urgent");
+    i.events.push(sysE(now,"CRITICAL alert sent: "+FDN+(fdOf(i.hotel)?" ("+fdOf(i.hotel)+")":"")+", "+VP+" (VP), HPD, GM and AM emailed · "+n+" room"+(n===1?"":"s")+" affected",S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
+  if(a==="ack"&&i&&i.crit&&canAck()){const now=Date.now();i.crit.ack={by:S.tech,at:now};i.events.push(sysE(now,S.tech+' is on it (critical acknowledged)',S.tech,I.role));i.updated=now;saveI();render();return}
+  if(a==="saveappr"&&i){const bids=(cur.pending&&cur.pending.bids)||[];
+    if(cur.pending.addOnly&&i.appr){if(!bids.length)return;i.appr.bids=(i.appr.bids||[]).concat(bids).slice(0,3);const now=Date.now();i.events.push(sysE(now,S.tech+" added "+bids.length+" bid"+(bids.length===1?"":"s")+" to the approval request",S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
+    const amt=+$("#aamt").value;if(!(amt>0))return;const now=Date.now();i.appr={amt:amt,vendor:$("#aven").value.trim(),why:$("#awhy").value.trim(),by:S.tech,at:now,st:"pending",dec:"",decAt:null,note:"",bids:bids.slice()};i.events.push(sysE(now,"Approval requested: "+money(amt)+" · goes to "+approver(amt,i.hotel)+(bids.length?" · "+bids.length+" bid"+(bids.length===1?"":"s")+" attached":""),S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
+  if(a==="bidzoom"&&i&&i.appr){const b=(i.appr.bids||[])[+ds.k];if(b)sheet('<img alt="Bid" src="'+b.data+'" style="width:100%;border-radius:10px;background:#fff"><div class="small muted">'+esc(b.name)+'</div><button class="btn sec" data-act="closesheet">Close</button>');return}
+  if(a==="decide"&&i&&canApproveThis(i)){openDecide(i,ds.v);return}
+  if(a==="savedecide"&&i&&canApproveThis(i)){const v=cur.pending.v,note=$("#dnote").value.trim();if(v==="denied"&&!note){$("#dnote").placeholder="Add a reason so the hotel knows what to change";$("#dnote").focus();return}
     const now=Date.now();Object.assign(i.appr,{st:v,dec:S.tech,decAt:now,note:note});i.events.push(sysE(now,S.tech+(v==="approved"?" approved ":" denied ")+money(i.appr.amt)+(note?": "+note:""),S.tech,I.role));i.updated=now;saveI();closeSheet();render();return}
   if(a==="close"&&i){openClose(i);return}
   if(a==="saveclose"&&i){const what=$("#cwhat").value.trim();if(!what){$("#cwhat").placeholder="Add a short note on what fixed it";$("#cwhat").focus();return}
@@ -669,7 +844,7 @@ function iact(a,ds,el,ev){
   if(a==="keep"&&i){i.confirm=false;i.events.push(sysE(Date.now(),S.tech+" confirmed this is still open",S.tech,I.role));i.updated=Date.now();saveI();render();return}
   if(a==="send"&&i){const t=($("#ctext")?$("#ctext").value:cur.cdraft||"").trim();if(!t&&!cur.cphoto)return;const now=Date.now();i.events.push(msgE(now,S.tech,I.role,t||"Photo added",cur.cphoto));i.updated=now;cur.cdraft="";cur.cphoto=null;saveI();cur.toBottom=true;render();return}
   if(a==="zoom"&&i){const k=ds.k,src=k.charAt(0)==="p"?i.photos[+k.slice(1)]:i.events[+k.slice(1)].photo;if(src)sheet('<img alt="Photo" src="'+src+'" style="width:100%;border-radius:10px"><button class="btn sec" data-act="closesheet">Close</button>');return}
-  if(a==="doimport"){const list=cur.pending.list;I.issues=list;I.imported=true;list.forEach(x=>{if(x.assignee&&I.team.indexOf(x.assignee)<0)I.team.push(x.assignee)});
+  if(a==="doimport"){const list=cur.pending.list;list.forEach(x=>{if(x.assignee&&!x.esc)x.esc=x.created});I.issues=list;I.imported=true;list.forEach(x=>{if(x.assignee&&I.team.indexOf(x.assignee)<0)I.team.push(x.assignee)});
     I.hotel=I.role==="hotel"?hotels().filter(n=>list.some(x=>x.hotel===n))[0]||hotels()[0]:"";cur.if="open";cur.q="";cur.tk=null;I.view="list";saveI();closeSheet();render();return}
   if(a==="export"){exportCSV();return}
   if(a==="resetI"){try{localStorage.removeItem(IKEY)}catch(e){}I=freshI();cur.tk=null;cur.if="open";cur.q="";saveI();render();return}
@@ -686,15 +861,15 @@ var LP=null;
 
 /* ---- demo ticket used by the demo elevator record ---- */
 function demoLpiTicket(){const T=d=>Date.now()-d*864e5;
-  const i=mkI("FI-115",{hotel:"OKCAL",loc:"Elevators",cat:"elev",pri:"high",title:"Elevator inspection: replace door sensor",desc:"Annual state inspection found a failing car door sensor. The part is $439. The permit renewal waits on this repair.",need:"Replace the sensor and schedule the re-inspection.",created:T(13),by:"GM A",assignee:"Facilities Lead",
-    appr:{amt:439,vendor:"Elevator vendor quote",why:"Required to pass the re-inspection.",by:"GM A",at:T(13),st:"pending",dec:"",decAt:null,note:""},
-    events:[sysE(T(13),"Ticket created by GM A from the Elevator permit record","GM A","hotel"),sysE(T(13),"Routed to Facilities Lead (default for OKCAL)"),sysE(T(13),"Approval requested: $439 · goes to Facilities Lead","GM A","hotel")]});
+  const i=mkI("FI-115",{hotel:"OKCAL",loc:"Elevators",cat:"elev",pri:"high",title:"Elevator inspection: replace door sensor",desc:"Annual state inspection found a failing car door sensor. The part is $439. The permit renewal waits on this repair.",need:"Replace the sensor and schedule the re-inspection.",created:T(13),by:"GM",assignee:FDN,esc:T(13),
+    appr:{amt:439,vendor:"Elevator vendor quote",why:"Required to pass the re-inspection.",by:"GM",at:T(13),st:"pending",dec:"",decAt:null,note:"",bids:[{name:"Elevator vendor quote",kind:"img",data:bidSvg("Elevator vendor","$439")}]},
+    events:[sysE(T(13),"Ticket created by GM from the Elevator permit record","GM","hotel"),sysE(T(13),"Assigned to hotel maintenance"),sysE(T(13),"Escalated to Facility Director (Matt) by GM: inspector listed a required part (email sent)","GM","hotel"),sysE(T(13),"Approval requested: $439 · goes to Matt (VP) or the AM · 1 bid attached","GM","hotel")]});
   i.lpi="OKCAL|elev";return i}
 
 /* ---- state ---- */
 function lpSave(){try{localStorage.setItem(LPK,JSON.stringify(LP))}catch(e){}}
 function lpFresh(){
-  const hs=[{code:"OKCAL",name:"OKCAL",entity:"Demo Lodging LLC",gm:"GM A",hpd:"HPD North",st:"OK"},{code:"DEMOB",name:"Demo Hotel B",entity:"Demo Lodging B LLC",gm:"GM B",hpd:"HPD North",st:"IA"},{code:"DEMOC",name:"Demo Hotel C",entity:"Demo Lodging C LLC",gm:"GM C",hpd:"HPD South",st:"MN"},{code:"DEMOD",name:"Demo Hotel D",entity:"Demo Lodging D LLC",gm:"GM D",hpd:"HPD South",st:"WI"}];
+  const hs=HOTELS.map(h=>({code:h.code,name:h.short,entity:"",gm:"GM",hpd:h.hpd,st:h.st,sample:!h.live}));
   const items=[];
   hs.forEach(h=>LTYPES.forEach(t=>{const r=hash(h.code+t[0])%100;let exp="",na=false;
     if(["liquor","gen","boil","cpo"].indexOf(t[0])>=0&&r<60)na=true;
@@ -704,16 +879,16 @@ function lpFresh(){
     else exp=ahead(70+(r*13)%600);
     items.push({id:h.code+"|"+t[0],h:h.code,t:t[0],exp:exp,na:na,num:"",docs:[],log:[],ticket:null})}));
   const by=id=>items.filter(x=>x.id===id)[0],T=d=>Date.now()-d*864e5;
-  let x=by("OKCAL|elev");x.exp=ahead(-12);x.ticket="FI-115";x.log.push({t:T(14),by:"GM A",text:"Annual inspection done. The inspector listed one repair: door sensor, $439 part."},{t:T(13),by:"GM A",text:"Repair ticket FI-115 created."});
+  let x=by("OKCAL|elev");x.exp=ahead(-12);x.ticket="FI-115";x.log.push({t:T(14),by:"GM",text:"Annual inspection done. The inspector listed one repair: door sensor, $439 part."},{t:T(13),by:"GM",text:"Repair ticket FI-115 created."});
   x=by("OKCAL|fire");x.exp=ahead(20);
   x=by("OKCAL|servsafe");x.exp=ahead(40);
   x=by("OKCAL|biz");x.exp="";x.na=false;
   x=by("OKCAL|liquor");x.exp="";x.na=true;
-  x=by("OKCAL|hotel");x.exp=ahead(240);x.num="H-20418";x.log.push({t:T(125),by:"GM A",text:"Renewed: new expiration "+fdy(ahead(240))+" (was "+fdy(ahead(-125))+"). 1 document uploaded."});
-  LP={hotels:hs,items:items,role:"gm",hotel:"OKCAL",hpd:"HPD North",view:"list",imported:false};
+  x=by("OKCAL|hotel");x.exp=ahead(240);x.num="H-20418";x.log.push({t:T(125),by:"GM",text:"Renewed: new expiration "+fdy(ahead(240))+" (was "+fdy(ahead(-125))+"). 1 document uploaded."});
+  LP={v:2,hotels:hs,items:items,role:"gm",hotel:"OKCAL",hpd:"HPD",view:"list",imported:false};
   if(typeof I!=="undefined"&&I&&!I.imported&&!getI("FI-115")){I.issues.unshift(demoLpiTicket());saveI()}
   return LP}
-function lpLoad(){try{const t=localStorage.getItem(LPK);if(t){const s=JSON.parse(t);if(s&&s.items&&s.hotels)return s}}catch(e){}return lpFresh()}
+function lpLoad(){try{const t=localStorage.getItem(LPK);if(t){const s=JSON.parse(t);if(s&&s.items&&s.hotels&&(s.v===2||s.imported))return s}}catch(e){}return lpFresh()}
 LP=lpLoad();
 
 /* ---- derived ---- */
@@ -737,7 +912,7 @@ function lpTag(it){const s=lpStat(it);
 function lpTicketTag(it){const t=lpTicket(it);if(!t)return"";return isOpen(t)?' <span class="tag info">Repair ticket '+esc(t.id)+' open</span>':' <span class="tag warn">Repair done: upload new certificate</span>'}
 
 /* ---- views ---- */
-function lpRoleBar(){return '<div class="row" style="margin-top:10px"><span class="small muted">Preview as</span>'+Object.keys(LPROLE).map(k=>'<button class="chip" data-act="l:role" data-r="'+k+'" aria-pressed="'+(LP.role===k)+'">'+LPROLE[k]+'</button>').join("")+(LP.role==="hpd"?'<select id="lhpd" aria-label="HPD" style="width:auto;min-width:180px">'+lpHpds().map(n=>'<option'+(LP.hpd===n?" selected":"")+'>'+esc(n)+'</option>').join("")+'</select>':"")+'</div><div class="small muted" style="margin-top:4px">In the real version, your login decides what you see.</div>'}
+function lpRoleBar(){return acctBar(false)}
 function lpNav(){const c=lpCounts(lpAll());
   return '<nav class="nav" aria-label="Sections"><button data-act="l:tab" data-v="list" '+(LP.view!=="port"?'aria-current="page"':"")+'>Licenses</button><button data-act="l:tab" data-v="port" '+(LP.view==="port"?'aria-current="page"':"")+'>Rollup'+(c.past?'<span class="badge">'+c.past+'</span>':"")+'</button><button data-act="go" data-m="home">Home</button></nav>'}
 function viewLpi(){const h=lpHotel(LP.hotel)||LP.hotels[0];
@@ -746,6 +921,7 @@ function viewLpi(){const h=lpHotel(LP.hotel)||LP.hotels[0];
   const L2=items.filter(i=>f==="all"||["past","missing","soon"].indexOf(lpStat(i).k)>=0).sort(lpCmp);
   let out=header(h.name,"Licenses and permits",LPROLE[LP.role])+'<div class="demo">Prototype: reminders are previewed, not sent. Data stays on this device.</div>'+lpRoleBar();
   out+='<div class="row" style="margin-top:10px"><select id="lhotel" aria-label="Hotel" style="width:auto;min-width:240px">'+LP.hotels.map(x=>'<option value="'+esc(x.code)+'"'+(x.code===h.code?" selected":"")+'>'+esc(x.name)+'</option>').join("")+'</select></div>';
+  if(!canSeeAll())out=out.replace(/<div class="row" style="margin-top:10px"><select id="lhotel"[\s\S]*?<\/select><\/div>/,"");
   out+='<div class="card" style="padding:16px;margin-top:12px"><div class="stat"><div><b>'+c.past+'</b><span class="muted small">past due</span></div><div><b>'+c.missing+'</b><span class="muted small">no date on file</span></div><div><b>'+c.soon+'</b><span class="muted small">due soon</span></div><div><b>'+c.ok+'</b><span class="muted small">current</span></div></div><div class="small muted" style="margin-top:8px">GM: '+esc(h.gm||"not set")+' · HPD: '+esc(h.hpd||"not set")+'. Upload the new certificate and enter the new date. Reminders restart on their own.</div></div>';
   out+='<div class="chips" role="group" aria-label="Filter">'+[["action","Needs action ("+(c.past+c.missing+c.soon)+")"],["all","All items ("+(items.length-c.na)+" required)"]].map(x=>'<button class="chip" data-act="l:filter" data-f="'+x[0]+'" aria-pressed="'+(f===x[0])+'">'+x[1]+'</button>').join("")+'</div>';
   out+='<div class="list">'+(L2.length?L2.map(it=>'<button class="card icard" data-act="l:open" data-id="'+esc(it.id)+'"><div class="ih">'+esc(LT[it.t].name)+'</div><div class="itags">'+lpTag(it)+lpTicketTag(it)+'</div><div class="muted small">'+(it.exp&&!it.na?'Expires '+fdy(it.exp)+' · ':"")+it.docs.length+' document'+(it.docs.length===1?"":"s")+(it.num?' · No. '+esc(it.num):"")+'</div></button>').join(""):'<div class="card" style="padding:18px">Everything for this hotel is current.</div>')+'</div>';
@@ -849,18 +1025,21 @@ function lact(a,ds,el,ev){
     render();sheet('<h3>Saved</h3><div><b>'+esc(LT[it.t].name)+'</b> is current through '+fdy(d)+'.</div><p class="small" style="margin:0">Reminders restart on their own. The next one goes to the GM on '+fdy(iso(nxt))+', '+lpLead(it.t)+' days before it expires.</p><button class="btn" data-act="closesheet">Done</button>');return}
   if(a==="na"&&it){it.na=!it.na;it.log.push({t:Date.now(),by:S.tech,text:it.na?"Marked not required for this hotel.":"Marked required again."});lpSave();render();return}
   if(a==="zoom"&&it){const d=it.docs[+ds.k];if(d)sheet('<img alt="Document" src="'+d.photo+'" style="width:100%;border-radius:10px"><button class="btn sec" data-act="closesheet">Close</button>');return}
-  if(a==="ticket"&&it){const h=lpHotel(it.h)||{name:it.h},t=LT[it.t];cur.mod="issues";cur.tk=null;cur.li=null;I.view="list";if(I.role==="owner")I.role="hotel";if(I.role==="hotel")I.hotel=h.name;render();
-    openNew({hotel:h.name,loc:it.t==="elev"?"Elevators":it.t==="pool"?"Pool":"Whole property",title:t.name+": repair needed",desc:"Found during the "+t.name.toLowerCase()+". Attach the inspector's list so facilities can see exactly what is required.",cat:({elev:"elev",fire:"fire",ext:"fire",spr:"fire",pool:"pool",boil:"hvac"})[it.t]||"other",fromLpi:it.id});return}
+  if(a==="ticket"&&it){const h=lpHotel(it.h)||{name:it.h},t=LT[it.t];cur.mod="issues";cur.tk=null;cur.li=null;I.view="list";if(I.role!=="hotel")I.hotel=it.h;render();
+    openNew({hotel:it.h,loc:it.t==="elev"?"Elevators":it.t==="pool"?"Pool":"Whole property",title:t.name+": repair needed",desc:"Found during the "+t.name.toLowerCase()+". Attach the inspector's list so facilities can see exactly what is required.",cat:({elev:"elev",fire:"fire",ext:"fire",spr:"fire",pool:"pool",boil:"hvac"})[it.t]||"other",fromLpi:it.id});return}
 }
+
+if(typeof aBoot==="function")aBoot();
 
 function act(a,ds,el,ev){
   if(a==="closebg"){ if(cur.pending&&cur.pending.kind)return; if(ev&&el===ev.target) closeSheet(); return }
   if(a==="closesheet"){closeSheet();return}
   if(a==="pick"){S.tech=ds.n;cur.mod="home";save();render();return}
-  if(a==="who"){S.tech=null;cur.room=null;cur.tk=null;cur.li=null;save();render();return}
+  if(a==="who"){A.user=null;aSave();S.tech=null;cur.room=null;cur.tk=null;cur.li=null;cur.mod="home";save();render();return}
   if(a==="go"){cur.mod=ds.m;cur.room=null;cur.tk=null;cur.li=null;render();return}
   if(a.slice(0,2)==="i:"){iact(a.slice(2),ds,el,ev);return}
   if(a.slice(0,2)==="l:"){lact(a.slice(2),ds,el,ev);return}
+  if(a.slice(0,2)==="a:"){aact(a.slice(2),ds,el,ev);return}
   if(a==="tab"){S.view=ds.v;cur.room=null;save();render();return}
   if(a==="filter"){cur.filter=ds.f;render();return}
   if(a==="room"){var n=ds.n;if(status(n)==="done"||status(n)==="repairs"){return}if(!S.rooms[n].attrs){openSetup(n);return}startDraft(n);render();return}
@@ -887,12 +1066,14 @@ document.addEventListener("input",function(e){var t=e.target;
   if(t.id==="ldate"){lchk();return}
   if(t.id==="isearch"){cur.q=t.value;var l=$("#ilist");if(l)l.innerHTML=listHTML();return}
   if(t.id==="ctext"){cur.cdraft=t.value;return}
-  if(t.id==="aamt"){var ab=$("#asave"),aw=$("#aw");if(ab)ab.disabled=!(+t.value>0);if(aw)aw.textContent=+t.value>0?"Goes to: "+approver(+t.value):"";return}
+  if(t.id==="aamt"){var ab=$("#asave"),aw=$("#aw");if(ab)ab.disabled=!(+t.value>0);if(aw)aw.textContent=+t.value>0?"Goes to: "+approver(+t.value,(cur.tk&&getI(cur.tk)||{}).hotel):"";return}
   if(t.dataset&&t.dataset.f&&cur.pending&&cur.pending.f){cur.pending.f[t.dataset.f]=t.value;if(t.dataset.f==="loc")lochist();if(t.dataset.f==="amt")apprwho();chkNew()}});
 document.addEventListener("change",function(e){var t=e.target;
   if(t.id==="ldate"){lchk();return}
   if(t.id==="lhotel"){LP.hotel=t.value;lpSave();render();return}
-  if(t.id==="lhpd"){LP.hpd=t.value;lpSave();render();return}
+  if(t.id==="sih"){cur.si.hotel=t.value;return}
+  if(t.id==="sif"){cur.si.fd=t.value;return}
+  if(t.dataset&&t.dataset.bid){addBid(t);return}
   if(t.id==="lcsv"&&t.files&&t.files[0]){lpImportFile(t.files[0]);t.value="";return}
   if(t.id==="ihotel"){I.hotel=t.value;saveI();render();return}
   if(t.id==="epri"&&t.value){var ed=$("#edue");if(ed)ed.value=dueFrom(Date.now(),t.value);return}
